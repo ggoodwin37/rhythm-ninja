@@ -1,0 +1,19 @@
+{
+  "name": "rhythm-ninja",
+  "version": "0.0.1",
+  "description": "Collaborative web drum machine",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ggoodwin37/rhythm-ninja.git"
+  },
+  "author": "Gideon Goodwin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ggoodwin37/rhythm-ninja/issues"
+  },
+  "homepage": "https://github.com/ggoodwin37/rhythm-ninja"
+}
