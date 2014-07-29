@@ -4,7 +4,6 @@ var MainView = require('./views/main');
 var Router = require('./router');
 
 window.app = {
-	config: config,
 	init: function() {
 		var self = this;
 
@@ -22,4 +21,5 @@ window.app = {
 	}
 };
 
+// TODO gideong: figure out how to pass in a config here.
 window.app.init();
