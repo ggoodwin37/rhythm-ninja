@@ -16,7 +16,6 @@ window.app = {
 				el: document.body
 			});
 			self.router.history.start({pushState: true});
-			self.me.fetch();
 		});
 	}
 };
