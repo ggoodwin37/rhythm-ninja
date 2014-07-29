@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/ggoodwin37/rhythm-ninja",
   "dependencies": {
+    "getconfig": "^0.3.0",
     "hapi": "^6.2.1",
-    "moonboots": "^2.0.6"
+    "moonboots_hapi": "^2.4.0",
+    "templatizer": "^0.3.6"
   }
 }
