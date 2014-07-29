@@ -1,20 +1,14 @@
 var domready = require('domready');
 
-var config = require('./client-config.json');
 var MainView = require('./views/main');
 var Router = require('./router');
-var Howls = require('./models/howls');
-var Me = require('./models/me');
 
 window.app = {
 	config: config,
 	init: function() {
 		var self = this;
 
-		this.me = new Me();
-
-		this.howls = new Howls();
-		this.howls.fetchRealtime();
+		//this.me = new Me();
 
 		this.router = new Router();
 

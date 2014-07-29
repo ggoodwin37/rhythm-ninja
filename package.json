@@ -17,6 +17,10 @@
   },
   "homepage": "https://github.com/ggoodwin37/rhythm-ninja",
   "dependencies": {
+    "ampersand-dom": "^1.2.1",
+    "ampersand-view": "^6.0.8",
+    "ampersand-view-switcher": "^1.0.2",
+    "domready": "^1.0.5",
     "getconfig": "^0.3.0",
     "hapi": "^6.2.1",
     "moonboots_hapi": "^2.4.0",
