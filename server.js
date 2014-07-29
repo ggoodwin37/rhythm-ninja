@@ -11,10 +11,10 @@ server.pack.register({
 		moonboots: {
 			main: __dirname + '/client/app.js',
 			developmentMode: config.isDev,
-			stylesheets: [
-				__dirname + '/public/css/bootstrap.css',
-				__dirname + '/public/css/main.css'
-			],
+			// stylesheets: [
+			// 	__dirname + '/public/css/bootstrap.css',
+			// 	__dirname + '/public/css/main.css'
+			// ],
 			beforeBuildJS: function() {
 				if (config.isDev) {
 					templatizer(__dirname + '/templates', __dirname + '/client/templates.js');
