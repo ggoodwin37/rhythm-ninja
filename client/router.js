@@ -19,16 +19,15 @@ module.exports = Router.extend({
 		this.trigger('page', new HomePage());
 	},
 	set: function(setName) {
-		debugger;
-		this.trigger('page', new SetPage(setName));
+		this.trigger('page', new SetPage({setName: setName}));
 	},
 	pattern: function(setName, patternName) {
-		this.trigger('page', new PatternPage(setName, patternName));
+		this.trigger('page', new PatternPage({setName: setName, patternName: patternName}));
 	},
 	pool: function(setName) {
-		this.trigger('page', new PoolPage(setName));
+		this.trigger('page', new PoolPage({setName: setName}));
 	},
 	song: function(setName) {
-		this.trigger('page', new SongPage(setName));
+		this.trigger('page', new SongPage({setName: setName}));
 	}
 });
