@@ -20,5 +20,5 @@ window.app = {
 	}
 };
 
-// TODO gideong: figure out how to pass in a config here.
+// TODO: figure out how to pass in a config here.
 window.app.init();
