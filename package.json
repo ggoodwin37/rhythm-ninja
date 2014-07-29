@@ -18,6 +18,7 @@
   "homepage": "https://github.com/ggoodwin37/rhythm-ninja",
   "dependencies": {
     "ampersand-dom": "^1.2.1",
+    "ampersand-router": "^1.0.2",
     "ampersand-view": "^6.0.8",
     "ampersand-view-switcher": "^1.0.2",
     "domready": "^1.0.5",
