@@ -21,7 +21,7 @@ module.exports = Router.extend({
 
 	// TODO: need to get the model for the given set (or set.pattern) and pass to each page.
 	set: function(setName) {
-		this.trigger('page', new SetPage();
+		this.trigger('page', new SetPage());
 	},
 	pattern: function(setName, patternName) {
 		this.trigger('page', new PatternPage());
