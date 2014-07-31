@@ -1,4 +1,4 @@
 {
-	"apiUrlBase": "http://localhost:8080",
+	"apiUrlBase": "http://localhost:8080/api",
 	"webSocketUrlBase": "ws://localhost:8080"
 }
