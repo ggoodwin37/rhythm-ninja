@@ -16,9 +16,7 @@ var server = new hapi.Server(config.serverPort, config.serverHost, {
 });
 
 var resources = {
-	// TODO: resources here.
-	// wolves: require('./resources/users'),
-	// howls: require('./resources/tweets')
+	test1: require('./api/resources/test1')
 };
 
 var dulcimer = require('dulcimer');
@@ -28,9 +26,7 @@ dulcimer.connect({
 	bucket: 'rhythm-ninja'
 });
 
-// TODO: models
-// var Tweet = require('./models/tweet');
-// var User = require('./models/user');
+var Test1Model = require('./api/models/test1');
 
 server.pack.register(require('lout'), function () {});
 
@@ -70,7 +66,7 @@ server.pack.register([
 ], function (err) {
 	if (err) throw err;
 
-	// TODO: /api/{etc*}
+	// TODO: /api/{etc*}  <- actually, do we need to specify api routes here or did mudskipper handle that?
 
 	// server.route(require('./resources/client')());
 	// server.route({
