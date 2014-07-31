@@ -15,7 +15,7 @@ module.exports = View.extend({
 				}), '[role=test1]');
 			},
 			error: function(model, response, options) {
-				console.log('pool model fetch error. response: ' + JSON.stringify(response);
+				console.log('pool model fetch error. response: ' + JSON.stringify(response));
 			}
 		});
 
