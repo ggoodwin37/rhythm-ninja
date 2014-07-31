@@ -8,7 +8,7 @@ var server = new hapi.Server(config.serverPort, config.serverHost, {
 	//     path: __dirname + '/templates'
 	// },
 
-	// haven't tested cors yet, can
+	// haven't tested cors yet
 	// cors: {
 	//     origin: ['*'],
 	//     headers: ['Authorization', 'Content-Type', 'If-None-Match', 'Auth-Token']
@@ -24,8 +24,8 @@ var resources = {
 var dulcimer = require('dulcimer');
 dulcimer.connect({
 	type: 'level',
-	path: __dirname + '/db',
-	bucket: 'TODO' // TODO
+	path: __dirname + '/api/db',
+	bucket: 'rhythm-ninja'
 });
 
 // TODO: models
@@ -46,7 +46,9 @@ server.pack.register([
 	{
 		plugin: require('moonboots_hapi'),
 		options: {
-			appPath: '/{p*}',
+			// TODO: not optimal. I want '/' and '/set/{p*}' to both be handled by moonboots. how to specify
+			//   multiple routes to handle, without making multiple moonboots instances?
+			appPath: '/set/{p*}',
 			moonboots: {
 				main: __dirname + '/client/app.js',
 				developmentMode: config.isDev,
@@ -54,6 +56,8 @@ server.pack.register([
 					__dirname + '/dist/css/main.css'
 				],
 				beforeBuildJS: function() {
+
+					// TODO: investigate the build-time streaming approach
 					if (config.isDev) {
 						var templatizer = require('templatizer');
 						templatizer(__dirname + '/templates', __dirname + '/client/templates.js');
@@ -66,7 +70,8 @@ server.pack.register([
 ], function (err) {
 	if (err) throw err;
 
-	// TODO: what server routes do we need here? api/mudskipper?
+	// TODO: /api/{etc*}
+
 	// server.route(require('./resources/client')());
 	// server.route({
 	//     method: 'GET',

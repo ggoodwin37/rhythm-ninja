@@ -10,10 +10,10 @@ var Test1Model = require('./models/test1');
 module.exports = Router.extend({
 	routes: {
 		'': 'home',
-		':set': 'set',
-		':set/pattern/:pattern': 'pattern',
-		':set/pool': 'pool',
-		':set/song': 'song'
+		'set/:set': 'set',
+		'set/:set/pattern/:pattern': 'pattern',
+		'set/:set/pool': 'pool',
+		'set/:set/song': 'song'
 	},
 
 	home: function() {
