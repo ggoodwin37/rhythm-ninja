@@ -28,9 +28,7 @@ module.exports = Router.extend({
 		this.trigger('page', new PatternPage());
 	},
 	pool: function(setName) {
-		// TODO gideong: what's the real pattern here? we need to do a server fetch for this test model.
-		//  we should render the rest of the page now, though.
-		var test1Model = new Test1Model({id: 'fake-id', name: 'fake-name'});
+		var test1Model = new Test1Model();
 		this.trigger('page', new PoolPage({model: test1Model}));
 	},
 	song: function(setName) {
