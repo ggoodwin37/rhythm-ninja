@@ -3,7 +3,10 @@ var domready = require('domready');
 var MainView = require('./views/main');
 var Router = require('./router');
 
+var clientConfig = require('./client-config.json');
+
 window.app = {
+	config: clientConfig,
 	init: function() {
 		var self = this;
 
