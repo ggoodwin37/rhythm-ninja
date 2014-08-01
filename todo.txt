@@ -1,5 +1,4 @@
 - begin working on API
-  - tests against API.
   - read/write from db
   - parent/child
   - figure out how to fetch all or part or what, relational shit, etc.

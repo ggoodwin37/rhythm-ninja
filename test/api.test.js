@@ -1,5 +1,6 @@
 var Lab = require('lab');
 var Hapi = require('hapi');
+var getApiPlugin = require('../api/api');
 
 // Test shortcuts
 var expect = Lab.expect;
@@ -10,61 +11,47 @@ var it = Lab.test;
 
 var server, table;
 
-describe('plugin', function () {
-    it('can be added to hapi', function (done) {
-        server = new Hapi.Server();
-        server.pack.require('../', internals, function (err) {
-            expect(err).to.not.exist;
-
-            done();
-        });
-    });
-
-    it('can add more routes after being loaded', function (done) {
-        server.plugins.mudskipper.route(internals_add, function () {
-            table = server.table();
-            done();
-        });
-    });
+before(function(done) {
+	server = new Hapi.Server(8080, 'localhost');
+	server.pack.register(getApiPlugin(), function (err) {
+		if (err) throw err;
+		server.start(function () {
+			console.log('test is running at', server.info.uri);
+			done();
+		});
+	});
 });
 
-describe('root', function () {
-    var hypermedia;
+describe('plugin', function () {
+	it('starts a serverInstance', function(done) {
+		expect(server).to.exist;
+		done();
+	});
 
-    it('registered the additional route', function (done) {
-        var found = table.filter(function (route) {
-            return (route.method === 'get' && route.path === '/tests');
-        });
+	it('has a route table', function(done) {
+		table = server.table();
+		expect(table).to.exist;
+		done();
+	});
+});
 
-        expect(found).to.have.length(1);
+describe('api', function () {
+	it('has expected routes', function(done) {
+		expect(table.some(function(route) {
+			return route.path == '/api/test1/{test1_id}';
+		})).to.equal(true);
+		done();
+	});
 
-        done();
-    });
-
-    it('registers a route', function (done) {
-        var found = table.filter(function (route) {
-            return (route.method === 'get' && route.path === '/api');
-        });
-
-        expect(found).to.have.length(1);
-
-        done();
-    });
-
-    it('responds to index', function (done) {
+    it('responds to test1 get', function (done) {
         server.inject({
             method: 'get',
-            url: '/api'
+            url: '/api/test1/test-id'
         }, function (res) {
             expect(res.statusCode).to.equal(200);
             expect(res.result).to.be.an('object');
-            expect(res.result).to.have.keys('reply', 'hypermedia');
-            expect(res.result.reply).to.deep.equal('root');
-            expect(res.result.hypermedia).to.be.an('object');
-            hypermedia = res.result.hypermedia;
-
+            expect(res.result).to.have.keys('id', 'name');
             done();
         });
     });
 });
-
