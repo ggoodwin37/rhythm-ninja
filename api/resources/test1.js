@@ -7,11 +7,14 @@ module.exports = {
 			var id = request.params.test1_id;
 			var test1Instance = Test1Model.get(id, function(err, result) {
 				if (err) {
+					if (err.type == 'NotFoundError') {
+						return reply().code(404);
+					}
 					console.log('GET error:');
 					inspect(err);
-					reply(new Error(err));
+					return reply(new Error(err));
 				}
-				reply(result);
+				reply(result.toJSON());
 			});
 		}
 	},
@@ -22,9 +25,9 @@ module.exports = {
 				if (err) {
 					console.log('POST error:');
 					inspect(err);
-					reply(new Error(err));
+					return reply(new Error(err));
 				}
-				reply(test1Instance);
+				reply(test1Instance.toJSON());
 			});
 		}
 	},
@@ -33,11 +36,14 @@ module.exports = {
 			var id = request.params.test1_id;
 			var test1Instance = Test1Model.update(id, request.payload, function(err, result) {
 				if (err) {
+					if (err.type == 'NotFoundError') {
+						return reply().code(404);
+					}
 					console.log('PUT error:');
 					inspect(err);
-					reply(new Error(err));
+					return reply(new Error(err));
 				}
-				reply(result);
+				reply(result.toJSON());
 			});
 		}
 	},
@@ -46,11 +52,14 @@ module.exports = {
 			var id = request.params.test1_id;
 			Test1Model['delete'](id, function(err, result) {
 				if (err) {
+					if (err.type == 'NotFoundError') {
+						return reply().code(404);
+					}
 					console.log('DELETE error:');
 					inspect(err);
-					reply(new Error(err));
+					return reply(new Error(err));
 				}
-				reply(result);
+				reply('ok');
 			});
 		}
 	}

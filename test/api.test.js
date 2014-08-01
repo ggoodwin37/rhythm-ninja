@@ -22,6 +22,10 @@ before(function(done) {
 	});
 });
 
+// TODO: figure out how to clean up. What if test dies before we can delete the test object? next run would fail.
+//  maybe create a dedicated test bucket that just gets nuked at the start of each test?
+// see Model.wipe();
+
 describe('plugin', function () {
 	it('starts a serverInstance', function(done) {
 		expect(server).to.exist;
@@ -36,7 +40,7 @@ describe('plugin', function () {
 });
 
 describe('api', function () {
-	var test1Id = 'reserved-test1-id';
+	var test1Id;
 	var test1Name = 'test-name-content';
 
 	function getRouteKey(route) {
@@ -44,12 +48,12 @@ describe('api', function () {
 		return routeKey;
 	}
 
-	it('can dump all routes', function(done) {
-		table.forEach(function(route) {
-			console.log('server has route: ' + getRouteKey(route));
-		});
-		done();
-	});
+	// it('can dump all routes', function(done) {
+	// 	table.forEach(function(route) {
+	// 		console.log('server has route: ' + getRouteKey(route));
+	// 	});
+	// 	done();
+	// });
 
 	it('has expected routes', function(done) {
 		var expectedRoutes = [
@@ -66,26 +70,17 @@ describe('api', function () {
 		done();
 	});
 
-	it('does not have a test1 object that doesn\'t yet exist', function (done) {
-		server.inject({
-			method: 'get',
-			url: '/api/test1/' + test1Id
-		}, function (res) {
-			expect(res.statusCode).to.equal(404);
-			done();
-		});
-	});
-
 	it('can create a test1 object', function (done) {
 		server.inject({
 			method: 'post',
-			url: '/api/test1/' + test1Id,
-			body: JSON.stringify({name: test1Name})
+			url: '/api/test1',
+			payload: JSON.stringify({testField: test1Name})
 		}, function (res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
-			expect(res.result).to.have.keys('id', 'name');
-			expect(res.result.name).to.equal(test1Name);
+			expect(res.result).to.have.keys('id', 'testField');
+			expect(res.result.testField).to.equal(test1Name);
+			test1Id = res.result.id;
 			done();
 		});
 	});
@@ -97,8 +92,8 @@ describe('api', function () {
 		}, function (res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
-			expect(res.result).to.have.keys('id', 'name');
-			expect(res.result.name).to.equal(test1Name);
+			expect(res.result).to.have.keys('id', 'testField');
+			expect(res.result.testField).to.equal(test1Name);
 			done();
 		});
 	});
@@ -107,12 +102,12 @@ describe('api', function () {
 		server.inject({
 			method: 'put',
 			url: '/api/test1/' + test1Id,
-			body: JSON.stringify({name: test1Name + 'mod'})
+			payload: JSON.stringify({testField: test1Name + 'mod'})
 		}, function (res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
-			expect(res.result).to.have.keys('id', 'name');
-			expect(res.result.name).to.equal(test1Name + 'mod');
+			expect(res.result).to.have.keys('id', 'testField');
+			expect(res.result.testField).to.equal(test1Name + 'mod');
 			done();
 		});
 	});
