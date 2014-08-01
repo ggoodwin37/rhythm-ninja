@@ -39,18 +39,28 @@ describe('api', function () {
 	var test1Id = 'reserved-test1-id';
 	var test1Name = 'test-name-content';
 
+	function getRouteKey(route) {
+		var routeKey = route.method.toLowerCase() + ' ' + route.path;
+		return routeKey;
+	}
+
+	it('can dump all routes', function(done) {
+		table.forEach(function(route) {
+			console.log('server has route: ' + getRouteKey(route));
+		});
+		done();
+	});
+
 	it('has expected routes', function(done) {
 		var expectedRoutes = [
 			'get /api/test1/{test1_id}',
 			'put /api/test1/{test1_id}',
 			'delete /api/test1/{test1_id}',
-			'post /api/test1/{test1_id}'
+			'post /api/test1'
 		];
 		expectedRoutes.forEach(function(expectedRoute) {
 			expect(table.some(function(route) {
-				var val = route.method.toLowerCase() + ' ' + route.path;
-				//console.log('server has route: ' + val);
-				return val == expectedRoute;
+				return getRouteKey(route) == expectedRoute;
 			})).to.equal(true);
 		});
 		done();
