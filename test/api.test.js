@@ -36,9 +36,15 @@ describe('plugin', function () {
 });
 
 describe('api', function () {
+	var test1Id = 'reserved-test1-id';
+	var test1Name = 'test-name-content';
+
 	it('has expected routes', function(done) {
 		var expectedRoutes = [
-			'get /api/test1/{test1_id}'
+			'get /api/test1/{test1_id}',
+			'put /api/test1/{test1_id}',
+			'delete /api/test1/{test1_id}',
+			'post /api/test1/{test1_id}'
 		];
 		expectedRoutes.forEach(function(expectedRoute) {
 			expect(table.some(function(route) {
@@ -50,14 +56,73 @@ describe('api', function () {
 		done();
 	});
 
-	it('responds to test1 get', function (done) {
+	it('does not have a test1 object that doesn\'t yet exist', function (done) {
 		server.inject({
 			method: 'get',
-			url: '/api/test1/test-id'
+			url: '/api/test1/' + test1Id
+		}, function (res) {
+			expect(res.statusCode).to.equal(404);
+			done();
+		});
+	});
+
+	it('can create a test1 object', function (done) {
+		server.inject({
+			method: 'post',
+			url: '/api/test1/' + test1Id,
+			body: JSON.stringify({name: test1Name})
 		}, function (res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
 			expect(res.result).to.have.keys('id', 'name');
+			expect(res.result.name).to.equal(test1Name);
+			done();
+		});
+	});
+
+	it('can retrieve test1 object', function (done) {
+		server.inject({
+			method: 'get',
+			url: '/api/test1/' + test1Id
+		}, function (res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result).to.be.an('object');
+			expect(res.result).to.have.keys('id', 'name');
+			expect(res.result.name).to.equal(test1Name);
+			done();
+		});
+	});
+
+	it('can update test1 object', function (done) {
+		server.inject({
+			method: 'put',
+			url: '/api/test1/' + test1Id,
+			body: JSON.stringify({name: test1Name + 'mod'})
+		}, function (res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result).to.be.an('object');
+			expect(res.result).to.have.keys('id', 'name');
+			expect(res.result.name).to.equal(test1Name + 'mod');
+			done();
+		});
+	});
+
+	it('can delete test1 object', function (done) {
+		server.inject({
+			method: 'delete',
+			url: '/api/test1/' + test1Id
+		}, function (res) {
+			expect(res.statusCode).to.equal(200);
+			done();
+		});
+	});
+
+	it('should not find the object we just deleted', function (done) {
+		server.inject({
+			method: 'get',
+			url: '/api/test1/' + test1Id
+		}, function (res) {
+			expect(res.statusCode).to.equal(404);
 			done();
 		});
 	});
