@@ -35,5 +35,8 @@
     "templatizer": "^0.3.6",
     "underscore": "^1.6.0",
     "ws": "^0.4.31"
+  },
+  "devDependencies": {
+    "lab": "^3.2.1"
   }
 }
