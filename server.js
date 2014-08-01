@@ -1,3 +1,5 @@
+// TODO gideong: refactor this and move it down into a subdir.
+
 var hapi = require('hapi');
 var config = require('getconfig');
 
@@ -33,7 +35,10 @@ server.pack.register(require('lout'), function () {});
 server.pack.register([
 	{
 		plugin: require('mudskipper'),
-		options: { resources: resources }
+		options: {
+			namespace: 'api',
+			resources: resources
+		}
 	},
 	// {
 	//     plugin: require('./notify'),
