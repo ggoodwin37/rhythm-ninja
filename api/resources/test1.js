@@ -5,9 +5,12 @@ module.exports = {
 		method: 'GET',
 		path: '/api/test1',
 		handler: function(request, reply) {
-			console.log('woohoo we have a test1.show handler firing.');
-			// was able to successfully hit this at /test1/{id}
-			// ...
+			var id = 'api-response_' + request.params.test1_id;
+			var name = 'name-from-api';
+			reply({
+				id: id,
+				name: name
+			});
 		}
 	}
 
