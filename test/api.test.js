@@ -37,9 +37,16 @@ describe('plugin', function () {
 
 describe('api', function () {
 	it('has expected routes', function(done) {
-		expect(table.some(function(route) {
-			return route.path == '/api/test1/{test1_id}';
-		})).to.equal(true);
+		var expectedRoutes = [
+			'get /api/test1/{test1_id}'
+		];
+		expectedRoutes.forEach(function(expectedRoute) {
+			expect(table.some(function(route) {
+				var val = route.method.toLowerCase() + ' ' + route.path;
+				//console.log('server has route: ' + val);
+				return val == expectedRoute;
+			})).to.equal(true);
+		});
 		done();
 	});
 
