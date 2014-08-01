@@ -44,14 +44,9 @@ describe('plugin', function () {
 	});
 });
 
-describe('api', function () {
+describe('test-api', function () {
 	var test1Id;
 	var test1Name = 'test-name-content';
-
-	function getRouteKey(route) {
-		var routeKey = route.method.toLowerCase() + ' ' + route.path;
-		return routeKey;
-	}
 
 	// it('can dump all routes', function(done) {
 	// 	table.forEach(function(route) {
@@ -148,3 +143,8 @@ describe('api', function () {
 		});
 	});
 });
+
+function getRouteKey(route) {
+	var routeKey = route.method.toLowerCase() + ' ' + route.path;
+	return routeKey;
+}
