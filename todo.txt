@@ -1,4 +1,5 @@
 - begin working on API
-  - send a hardcoded response
-  - mudskipper
-  - retrieve from db
+  - tests against API.
+  - read/write from db
+  - parent/child
+  - figure out how to fetch all or part or what, relational shit, etc.
