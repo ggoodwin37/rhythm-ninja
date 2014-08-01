@@ -5,14 +5,15 @@ var PatternPage = require('./pages/pattern');
 var PoolPage = require('./pages/pool');
 var SetPage = require('./pages/set');
 var SongPage = require('./pages/song');
+var Test1Model = require('./models/test1');
 
 module.exports = Router.extend({
 	routes: {
 		'': 'home',
-		':set': 'set',
-		':set/pattern/:pattern': 'pattern',
-		':set/pool': 'pool',
-		':set/song': 'song'
+		'set/:set': 'set',
+		'set/:set/pattern/:pattern': 'pattern',
+		'set/:set/pool': 'pool',
+		'set/:set/song': 'song'
 	},
 
 	home: function() {
@@ -27,7 +28,8 @@ module.exports = Router.extend({
 		this.trigger('page', new PatternPage());
 	},
 	pool: function(setName) {
-		this.trigger('page', new PoolPage());
+		var test1Model = new Test1Model();
+		this.trigger('page', new PoolPage({model: test1Model}));
 	},
 	song: function(setName) {
 		this.trigger('page', new SongPage());

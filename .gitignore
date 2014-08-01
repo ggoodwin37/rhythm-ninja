@@ -14,4 +14,4 @@ client/templates.js
 dist/css
 
 # probably shouldn't track database
-db
+api/db
