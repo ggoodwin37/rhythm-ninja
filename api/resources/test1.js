@@ -1,17 +1,75 @@
+var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var Test1Model = require('../models/test1');
 
 module.exports = {
 	show: {
-		method: 'GET',
-		path: '/api/test1',
 		handler: function(request, reply) {
-			var id = 'api-response_' + request.params.test1_id;
-			var name = 'name-from-api';
-			reply({
-				id: id,
-				name: name
+			var id = request.params.test1_id;
+			var test1Instance = Test1Model.get(id, function(err, result) {
+				if (err) {
+					if (err.type == 'NotFoundError') {
+						return reply().code(404);
+					}
+					console.log('GET error:');
+					inspect(err);
+					return reply(new Error(err));
+				}
+				reply(result.toJSON());
+			});
+		}
+	},
+	create: {
+		handler: function(request, reply) {
+			var test1Instance = Test1Model.create(request.payload);
+			test1Instance.save(function(err) {
+				if (err) {
+					console.log('POST error:');
+					inspect(err);
+					return reply(new Error(err));
+				}
+				reply(test1Instance.toJSON());
+			});
+		}
+	},
+	update: {
+		handler: function(request, reply) {
+			var id = request.params.test1_id;
+			var test1Instance = Test1Model.update(id, request.payload, function(err, result) {
+				if (err) {
+					if (err.type == 'NotFoundError') {
+						return reply().code(404);
+					}
+					console.log('PUT error:');
+					inspect(err);
+					return reply(new Error(err));
+				}
+				reply(result.toJSON());
+			});
+		}
+	},
+	destroy: {
+		handler: function(request, reply) {
+			var id = request.params.test1_id;
+			Test1Model.get(id, function(err, result) {
+				if (err) {
+					if (err.type == 'NotFoundError') {
+						return reply().code(404);
+					}
+					console.log('DELETE lookup error:');
+					inspect(err);
+					return reply(new Error(err));
+				}
+
+				var test1Instance = result;
+				test1Instance['delete'](function(err) {
+					if (err) {
+						console.log('DELETE error:');
+						inspect(err);
+						return reply(new Error(err));
+					}
+					reply('ok');
+				});
 			});
 		}
 	}
-
 };
