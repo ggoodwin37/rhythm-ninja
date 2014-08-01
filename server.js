@@ -1,7 +1,6 @@
-// TODO gideong: refactor this and move it down into a subdir.
-
 var hapi = require('hapi');
 var config = require('getconfig');
+var getApiPlugin = require('./api/api');
 
 var server = new hapi.Server(config.serverPort, config.serverHost, {
 	// not using any server views right now.
@@ -17,38 +16,18 @@ var server = new hapi.Server(config.serverPort, config.serverHost, {
 	// }
 });
 
-var resources = {
-	test1: require('./api/resources/test1')
-};
-
-var dulcimer = require('dulcimer');
-dulcimer.connect({
-	type: 'level',
-	path: __dirname + '/api/db',
-	bucket: 'rhythm-ninja'
-});
-
-var Test1Model = require('./api/models/test1');
-
 server.pack.register(require('lout'), function () {});
 
-server.pack.register([
-	{
-		plugin: require('mudskipper'),
-		options: {
-			namespace: 'api',
-			resources: resources
-		}
-	},
+var serverPackList = [
 	// {
-	//     plugin: require('./notify'),
-	//     options: { publicUrl: 'http://' + config.serverHost + ':' + config.serverPort }
+	// 	plugin: require('./notify'),
+	// 	options: { publicUrl: 'http://' + config.serverHost + ':' + config.serverPort }
 	// },
 	{
 		plugin: require('moonboots_hapi'),
 		options: {
 			// TODO: not optimal. I want '/' and '/set/{p*}' to both be handled by moonboots. how to specify
-			//   multiple routes to handle, without making multiple moonboots instances?
+			//   multiple routes to handle, without making multiple moonboots instances? probably just use a regex.
 			appPath: '/set/{p*}',
 			moonboots: {
 				main: __dirname + '/client/app.js',
@@ -68,7 +47,11 @@ server.pack.register([
 			}
 		}
 	}
-], function (err) {
+];
+
+serverPackList.push(getApiPlugin());
+
+server.pack.register(serverPackList, function (err) {
 	if (err) throw err;
 
 	// TODO: /api/{etc*}  <- actually, do we need to specify api routes here or did mudskipper handle that?
