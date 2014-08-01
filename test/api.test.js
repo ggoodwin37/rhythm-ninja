@@ -1,6 +1,7 @@
 var Lab = require('lab');
 var Hapi = require('hapi');
 var getApiPlugin = require('../api/api');
+var Test1Model = require('../api/models/test1');
 
 // Test shortcuts
 var expect = Lab.expect;
@@ -17,14 +18,18 @@ before(function(done) {
 		if (err) throw err;
 		server.start(function () {
 			console.log('test is running at', server.info.uri);
-			done();
+
+			// clear all test1Models
+			// TODO: figure out how to clean up non-wipeable stuff (once we start testing real data types)
+			Test1Model.wipe(function(err) {
+				if (err) {
+					console.log('Error wiping test1');
+				}
+				done();
+			});
 		});
 	});
 });
-
-// TODO: figure out how to clean up. What if test dies before we can delete the test object? next run would fail.
-//  maybe create a dedicated test bucket that just gets nuked at the start of each test?
-// see Model.wipe();
 
 describe('plugin', function () {
 	it('starts a serverInstance', function(done) {
@@ -108,6 +113,16 @@ describe('api', function () {
 			expect(res.result).to.be.an('object');
 			expect(res.result).to.have.keys('id', 'testField');
 			expect(res.result.testField).to.equal(test1Name + 'mod');
+			done();
+		});
+	});
+
+	it('should not delete non-existent object', function (done) {
+		server.inject({
+			method: 'delete',
+			url: '/api/test1/' + 'bogus'
+		}, function (res) {
+			expect(res.statusCode).to.equal(404);
 			done();
 		});
 	});

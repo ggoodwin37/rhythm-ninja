@@ -50,16 +50,25 @@ module.exports = {
 	destroy: {
 		handler: function(request, reply) {
 			var id = request.params.test1_id;
-			Test1Model['delete'](id, function(err, result) {
+			Test1Model.get(id, function(err, result) {
 				if (err) {
 					if (err.type == 'NotFoundError') {
 						return reply().code(404);
 					}
-					console.log('DELETE error:');
+					console.log('DELETE lookup error:');
 					inspect(err);
 					return reply(new Error(err));
 				}
-				reply('ok');
+
+				var test1Instance = result;
+				test1Instance['delete'](function(err) {
+					if (err) {
+						console.log('DELETE error:');
+						inspect(err);
+						return reply(new Error(err));
+					}
+					reply('ok');
+				});
 			});
 		}
 	}
