@@ -75,6 +75,7 @@ describe('api', function () {
 		done();
 	});
 
+	// this test is causing a count leak, huh? using -l when running tests to avoid this.
 	it('can create a test1 object', function (done) {
 		server.inject({
 			method: 'post',
