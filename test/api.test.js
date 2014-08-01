@@ -50,15 +50,15 @@ describe('api', function () {
 		done();
 	});
 
-    it('responds to test1 get', function (done) {
-        server.inject({
-            method: 'get',
-            url: '/api/test1/test-id'
-        }, function (res) {
-            expect(res.statusCode).to.equal(200);
-            expect(res.result).to.be.an('object');
-            expect(res.result).to.have.keys('id', 'name');
-            done();
-        });
-    });
+	it('responds to test1 get', function (done) {
+		server.inject({
+			method: 'get',
+			url: '/api/test1/test-id'
+		}, function (res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result).to.be.an('object');
+			expect(res.result).to.have.keys('id', 'name');
+			done();
+		});
+	});
 });
