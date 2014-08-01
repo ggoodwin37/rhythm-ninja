@@ -6,6 +6,7 @@ module.exports = {
 		path: '/api/test1',
 		handler: function(request, reply) {
 			console.log('woohoo we have a test1.show handler firing.');
+			// was able to successfully hit this at /test1/{id}
 			// ...
 		}
 	}
