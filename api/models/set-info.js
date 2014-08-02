@@ -1,9 +1,6 @@
 var dulcimer = require('dulcimer');
 
 var SetInfoFactory = new dulcimer.Model({
-	name: {
-		type: 'string'
-	},
 	swing: {
 		type: 'numeric'
 	},
