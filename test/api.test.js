@@ -31,7 +31,7 @@ before(function(done) {
 	});
 });
 
-describe('plugin', function () {
+describe('server', function () {
 	it('starts a serverInstance', function(done) {
 		expect(server).to.exist;
 		done();
@@ -42,18 +42,19 @@ describe('plugin', function () {
 		expect(table).to.exist;
 		done();
 	});
+
+	it('can dump all routes', function(done) {
+		table.forEach(function(route) {
+			console.log('server has route: ' + getRouteKey(route));
+		});
+		done();
+	});
+
 });
 
 describe('test-api', function () {
 	var test1Id;
 	var test1Name = 'test-name-content';
-
-	// it('can dump all routes', function(done) {
-	// 	table.forEach(function(route) {
-	// 		console.log('server has route: ' + getRouteKey(route));
-	// 	});
-	// 	done();
-	// });
 
 	it('has expected routes', function(done) {
 		var expectedRoutes = [
