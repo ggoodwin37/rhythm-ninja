@@ -1,3 +1,5 @@
+```javascript
+
 var exampleSet = {
 	setInfo: {
 		name: 'my-example-set',
@@ -84,3 +86,4 @@ var exampleSet = {
 };
 
 module.exports = exampleSet;
+```

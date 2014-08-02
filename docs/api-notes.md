@@ -1,3 +1,4 @@
+```
 /api/set/<set-name>
   get, (create if not existing), put, delete
 
@@ -16,3 +17,4 @@
   get, delete
 /api/set/<set-name>/sample
   post
+```
