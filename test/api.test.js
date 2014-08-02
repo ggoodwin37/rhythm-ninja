@@ -177,15 +177,41 @@ describe('set-api', function () {
 		});
 	});
 
+	var setDoc;
+
 	it('should lazy create and return a new document', function(done) {
 		server.inject({
 			method: 'get',
 			url: baseUrl
 		}, function(res) {
 			expect(res.statusCode).to.equal(200);
+
+			console.log('========== new doc:');
 			inspect(res.result);
+			console.log('===================');
+
 			expect(res.result).to.be.an('object');
 			expect(res.result).to.have.keys('name', 'setInfo', 'pool', 'patterns', 'song');
+			setDoc = res.result;
+			done();
+		});
+	});
+
+	it('should handle updates to set data', function(done) {
+		setDoc.setInfo.bpm = 160;
+
+		console.log('========== updating local doc:');
+		inspect(setDoc);
+		console.log('==============================');
+
+		server.inject({
+			method: 'put',
+			url: baseUrl,
+			payload: JSON.stringify(setDoc)
+		}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result).to.be.an('object');
+			expect(res.result.setInfo.bpm).to.equal(160);
 			done();
 		});
 	});

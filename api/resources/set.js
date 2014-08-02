@@ -1,33 +1,33 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
+var async = require('async');
 var SetFactory = require('../models/set');
 var SetInfoFactory = require('../models/set-info');
 var SongFactory = require('../models/song');
 var PoolEntryFactory = require('../models/pool-entry');
 var PatternFactory = require('../models/pattern');
 
-function createDefaultPoolEntry() {
-	return PoolEntryFactory.create();
-}
-
-function createDefaultPattern() {
-	return PatternFactory.create();
-}
-
 function createSet(setName, reply) {
 	var setInfo = SetInfoFactory.create();
-	// TODO: might want to have these be empty initially, but stick something in here for now for testing.
-	var pool = [createDefaultPoolEntry()];
-	var patterns = [createDefaultPattern()];
+	var pool = [];
+	var patterns = [];
 	var song = SongFactory.create();
 
 	var setInstance = SetFactory.create({
+		name: setName,
 		setInfo: setInfo,
 		pool: pool,
 		patterns: patterns,
 		song: song
 	});
 
-	return reply(setInstance.toJSON());
+	// need to save each foreign object separately.
+	async.series([
+		function(callback) { setInfo.save(callback); },
+		function(callback) { song.save(callback); },
+		function(callback) { setInstance.save(callback); }
+	], function(err, results) {
+		reply(setInstance.toJSON());
+	});
 }
 
 module.exports = {
