@@ -35,7 +35,7 @@ module.exports = {
 	show: {
 		handler: function(request, reply) {
 			var setName = request.params.set_id;
-			SetFactory.getByIndex('name', setName, function(err, result) {
+			SetFactory.findByIndex('name', setName, function(err, result) {
 				if (err) {
 					if (err.type == 'NotFoundError') {
 						console.log('lazy creating set with name: ' + setName);
@@ -51,7 +51,7 @@ module.exports = {
 		handler: function(request, reply) {
 			// TODO: does this handle updating children as well?
 			var setName = request.params.set_id;
-			SetFactory.getByIndex('name', setName, function(err, result) {
+			SetFactory.findByIndex('name', setName, function(err, result) {
 				if (err) {
 					if (err.type == 'NotFoundError') {
 						return reply().code(404);
@@ -69,7 +69,7 @@ module.exports = {
 	destroy: {
 		handler: function(request, reply) {
 			var setName = request.params.set_id;
-			SetFactory.getByIndex('name', setName, function(err, result) {
+			SetFactory.findByIndex('name', setName, function(err, result) {
 				if (err) {
 					if (err.type == 'NotFoundError') {
 						return reply().code(404);
