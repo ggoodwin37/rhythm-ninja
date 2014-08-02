@@ -156,6 +156,7 @@ describe('test-api', function () {
 describe('set-api', function () {
 	var setName = 'reserved-test-asdjfjjadsfh';
 	var baseUrl = '/api/set/' + setName;
+	var basePoolUrl = '/api/setPool/' + setName;
 
 	it('should delete any existing test documents, if they exist', function(done) {
 		server.inject({
@@ -186,9 +187,9 @@ describe('set-api', function () {
 		}, function(res) {
 			expect(res.statusCode).to.equal(200);
 
-			console.log('========== new doc:');
-			inspect(res.result);
-			console.log('===================');
+			// console.log('========== new doc:');
+			// inspect(res.result);
+			// console.log('===================');
 
 			expect(res.result).to.be.an('object');
 			expect(res.result).to.have.keys('name', 'setInfo', 'pool', 'patterns', 'song');
@@ -200,9 +201,9 @@ describe('set-api', function () {
 	it('should handle updates to set data', function(done) {
 		setDoc.setInfo.bpm = 160;
 
-		console.log('========== updating local doc:');
-		inspect(setDoc);
-		console.log('==============================');
+		// console.log('========== updating local doc:');
+		// inspect(setDoc);
+		// console.log('==============================');
 
 		server.inject({
 			method: 'put',
@@ -212,7 +213,56 @@ describe('set-api', function () {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
 			expect(res.result.setInfo.bpm).to.equal(160);
+			setDoc = res.result;
 			done();
 		});
 	});
+
+	// TODO: fix this, some data hierarchy or serialization bug.
+	it('should have an empty pool to start with', function(done) {
+		expect(setDoc.pool.length).to.equal(0);
+		server.inject({
+			method: 'get',
+			url: baseUrl
+		}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.pool.length).to.equal(0);
+			server.inject({
+				method: 'get',
+				url: basePoolUrl
+			}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				inspect(res.result);
+				expect(res.result.length).to.equal(0);
+				done();
+			});
+		});
+	});
+
+	// it('should handle adding an entry to pool', function(done) {
+	// 	expect(setDoc.pool.length).to.equal(0);
+	// 	var newPoolEntry = {
+	// 		name: 'test-pool-entry',
+	// 		volume: 0.75,
+	// 		sampleType: 'local',
+	// 		sampleId: 'test-sample-id'
+	// 	};
+	// 	setDoc.pool.push(newPoolEntry);
+	// 	server.inject({
+	// 		method: 'put',
+	// 		url: basePoolUrl,
+	// 		payload: JSON.stringify(setDoc.pool)
+	// 	}, function(res) {
+	// 		server.inject({
+	// 			method: 'get',
+	// 			url: baseUrl
+	// 		}, function(res) {
+	// 			inspect(res);
+	// 			setDoc = res;
+	// 			expect(setDoc.pool.length).to.equal(1);
+	// 			expect(setDoc.pool[0].volume).to.equal(0.75);
+	// 			done();
+	// 		});
+	// 	});
+	// });
 });
