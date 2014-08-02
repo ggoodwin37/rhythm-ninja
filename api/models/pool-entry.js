@@ -2,16 +2,24 @@ var dulcimer = require('dulcimer');
 
 var PoolEntryFactory = new dulcimer.Model({
 	name: {
-		type: 'string'
+		type: 'string',
+		required: true,
+		default: 'default'
 	},
 	volume: {
-		type: 'numeric'
+		type: 'numeric',
+		required: true,
+		default: 1.0
 	},
 	sampleType: {
-		type: 'string'
+		type: 'string',
+		required: true,
+		default: 'local'
 	},
 	sampleId: {
-		type: 'string'
+		type: 'string',
+		required: true,
+		default: 'default'
 	}
 }, {
 	name: 'pool-entry',

@@ -2,13 +2,19 @@ var dulcimer = require('dulcimer');
 
 var PatternFactory = new dulcimer.Model({
 	name: {
-		type: 'string'
+		type: 'string',
+		required: true,
+		default: 'default'
 	},
 	length: {
-		type: 'integer'
+		type: 'integer',
+		required: true,
+		default: 16
 	},
 	locked: {
-		type: 'boolean'
+		type: 'boolean',
+		required: true,
+		default: false
 	},
 	rows: {
 		foreignCollection: 'pattern-row'

@@ -3,7 +3,9 @@ var dulcimer = require('dulcimer');
 var SetFactory = new dulcimer.Model({
 	name: {
 		type: 'string',
-		index: true
+		index: true,
+		required: true,
+		default: 'default'
 	},
 	setInfo: {
 		foreignKey: 'set-info'
