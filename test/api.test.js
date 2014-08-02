@@ -1,5 +1,7 @@
 var Lab = require('lab');
 var Hapi = require('hapi');
+var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
+
 var getApiPlugin = require('../api/api');
 var Test1Model = require('../api/models/test1');
 
@@ -9,6 +11,12 @@ var before = Lab.before;
 var after = Lab.after;
 var describe = Lab.experiment;
 var it = Lab.test;
+
+
+function getRouteKey(route) {
+	var routeKey = route.method.toLowerCase() + ' ' + route.path;
+	return routeKey;
+}
 
 var server, table;
 
@@ -145,7 +153,40 @@ describe('test-api', function () {
 	});
 });
 
-function getRouteKey(route) {
-	var routeKey = route.method.toLowerCase() + ' ' + route.path;
-	return routeKey;
-}
+describe('set-api', function () {
+	var setName = 'reserved-test-asdjfjjadsfh';
+	var baseUrl = '/api/set/' + setName;
+
+	it('should delete any existing test documents, if they exist', function(done) {
+		server.inject({
+			method: 'delete',
+			url: baseUrl
+		}, function(res) {
+			expect(res.statusCode == 200 || res.statusCode == 404).to.equal(true);
+			done();
+		});
+	});
+
+	it('should fail to delete a non-existent document', function(done) {
+		server.inject({
+			method: 'delete',
+			url: baseUrl
+		}, function(res) {
+			expect(res.statusCode).to.equal(404);
+			done();
+		});
+	});
+
+	it('should lazy create and return a new document', function(done) {
+		server.inject({
+			method: 'get',
+			url: baseUrl
+		}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			inspect(res.result);
+			expect(res.result).to.be.an('object');
+			expect(res.result).to.have.keys('name', 'setInfo', 'pool', 'patterns', 'song');
+			done();
+		});
+	});
+});
