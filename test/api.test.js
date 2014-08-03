@@ -1,6 +1,7 @@
 var Lab = require('lab');
 var Hapi = require('hapi');
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
+var async = require('async');
 
 var getApiPlugin = require('../api/api');
 var Test1Model = require('../api/models/test1');
@@ -221,21 +222,31 @@ describe('set-api', function () {
 	// TODO: fix this, some data hierarchy or serialization bug.
 	it('should have an empty pool to start with', function(done) {
 		expect(setDoc.pool.length).to.equal(0);
-		server.inject({
-			method: 'get',
-			url: baseUrl
-		}, function(res) {
-			expect(res.statusCode).to.equal(200);
-			expect(res.result.pool.length).to.equal(0);
-			server.inject({
-				method: 'get',
-				url: basePoolUrl
-			}, function(res) {
-				expect(res.statusCode).to.equal(200);
-				inspect(res.result);
-				expect(res.result.length).to.equal(0);
-				done();
-			});
+		async.series([
+			function(callback) {
+				server.inject({
+					method: 'get',
+					url: baseUrl
+				}, function(res) {
+					expect(res.statusCode).to.equal(200);
+					expect(res.result.pool.length).to.equal(0);
+					callback();
+				});
+			},
+			function(callback) {
+				server.inject({
+					method: 'get',
+					url: basePoolUrl
+				}, function(res) {
+					console.log('2:'); inspect(res.result);
+					expect(res.statusCode).to.equal(200);
+					inspect(res.result);
+					expect(res.result.length).to.equal(0);
+					callback();
+				});
+			}
+		], function() {
+			done();
 		});
 	});
 

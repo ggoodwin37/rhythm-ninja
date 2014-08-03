@@ -10,8 +10,6 @@ module.exports = {
 					if (err.type == 'NotFoundError') {
 						return reply().code(404);
 					}
-					console.log('GET error:');
-					inspect(err);
 					return reply(new Error(err));
 				}
 				reply(result.toJSON());
@@ -23,8 +21,6 @@ module.exports = {
 			var test1Instance = Test1Model.create(request.payload);
 			test1Instance.save(function(err) {
 				if (err) {
-					console.log('POST error:');
-					inspect(err);
 					return reply(new Error(err));
 				}
 				reply(test1Instance.toJSON());
@@ -39,8 +35,6 @@ module.exports = {
 					if (err.type == 'NotFoundError') {
 						return reply().code(404);
 					}
-					console.log('PUT error:');
-					inspect(err);
 					return reply(new Error(err));
 				}
 				reply(result.toJSON());
@@ -55,16 +49,12 @@ module.exports = {
 					if (err.type == 'NotFoundError') {
 						return reply().code(404);
 					}
-					console.log('DELETE lookup error:');
-					inspect(err);
 					return reply(new Error(err));
 				}
 
 				var test1Instance = result;
 				test1Instance['delete'](function(err) {
 					if (err) {
-						console.log('DELETE error:');
-						inspect(err);
 						return reply(new Error(err));
 					}
 					reply('ok');
