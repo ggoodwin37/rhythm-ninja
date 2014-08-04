@@ -1,4 +1,5 @@
 var dulcimer = require('dulcimer');
+var SongRowFactory = require('./song-row');
 
 var SongFactory = new dulcimer.Model({
 	locked: {
@@ -7,7 +8,7 @@ var SongFactory = new dulcimer.Model({
 		default: false
 	},
 	rows: {
-		foreignCollection: 'song-row'
+		foreignCollection: SongRowFactory
 	}
 }, {
 	name: 'song',
