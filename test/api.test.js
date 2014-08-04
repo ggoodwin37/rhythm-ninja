@@ -410,7 +410,6 @@ describe('set-api-pattern', function() {
 		};
 		server.inject({method: 'post', url: baseSetPatternRowUrl, payload: JSON.stringify(rowData)}, function(res) {
 			expect(res.statusCode).to.equal(200);
-//			inspect(res.result);
 			expect(res.result.steps.length).to.equal(16);
 			expect(res.result.steps[1]).to.equal(101);
 			done();

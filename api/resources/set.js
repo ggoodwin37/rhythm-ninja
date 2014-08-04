@@ -3,8 +3,6 @@ var async = require('async');
 var SetFactory = require('../models/set');
 var SetInfoFactory = require('../models/set-info');
 var SongFactory = require('../models/song');
-var PoolEntryFactory = require('../models/pool-entry');
-var PatternFactory = require('../models/pattern');
 
 function createSet(setName, reply) {
 	var setInfo = SetInfoFactory.create();
