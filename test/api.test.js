@@ -154,7 +154,6 @@ describe('test-api', function () {
 describe('set-api', function () {
 	var setName = 'reserved-test-asdjfjjadsfh';
 	var baseUrl = '/api/set/' + setName;
-	var basePoolUrl = '/api/setPool/' + setName;
 
 	it('should delete any existing test documents', function(done) {
 		server.inject({
@@ -191,7 +190,10 @@ describe('set-api', function () {
 
 			expect(res.result).to.be.an('object');
 			expect(res.result.name).to.equal(setName);
+
 			setDoc = res.result;
+			console.log('client sees key: ' + setDoc.key);
+
 			done();
 		});
 	});
@@ -216,35 +218,37 @@ describe('set-api', function () {
 		});
 	});
 
-	// TODO: fix this, some data hierarchy or serialization bug.
-	// it('should have an empty pool to start with', function(done) {
-	// 	expect(setDoc.pool.length).to.equal(0);
-	// 	async.series([
-	// 		function(callback) {
-	// 			server.inject({
-	// 				method: 'get',
-	// 				url: baseUrl
-	// 			}, function(res) {
-	// 				expect(res.statusCode).to.equal(200);
-	// 				expect(res.result.pool.length).to.equal(0);
-	// 				setDoc = res.result;
-	// 				callback();
-	// 			});
-	// 		},
-	// 		function(callback) {
-	// 			server.inject({
-	// 				method: 'get',
-	// 				url: basePoolUrl
-	// 			}, function(res) {
-	// 				expect(res.statusCode).to.equal(200);
-	// 				expect(res.result.length).to.equal(0);
-	// 				callback();
-	// 			});
-	// 		}
-	// 	], function() {
-	// 		done();
-	// 	});
-	// });
+	it('should start with an empty pool on set endpoint', function(done) {
+		expect(setDoc.pool.length).to.equal(0);
+		server.inject({method: 'get', url: baseUrl}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.pool.length).to.equal(0);
+			setDoc = res.result;
+			done();
+		});
+	});
+
+	var basePoolUrl = '/api/set/' + setName + '/poolEntry';
+	var poolEntryId;
+	it('should allow me to create a new poolEntry for the set', function(done) {
+		var poolEntry = {
+			name: 'test-pool-entry-post',
+			volume: 1.0,
+			sampleType: 'local',
+			sampleId: 'abcd-efgh'
+		};
+		server.inject({method: 'post', url: basePoolUrl, payload: JSON.stringify(poolEntry)}, function(res) {
+			expect(res.statusCode).to.equal(200);
+
+			inspect(res.result);
+			// expect(res.result.pool.length).to.equal(0);
+			// setDoc = res.result;
+			// TODO
+			done();
+		});
+	});
+
+
 
 	// TODO: this is weird, running this test as-is apparently causes some database corruption or something.
 	//  after this fails the first time, earlier tests start failing on subsequent runs, until I nuke the db.
