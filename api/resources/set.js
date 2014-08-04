@@ -31,33 +31,12 @@ function createSet(setName, reply) {
 }
 
 module.exports = {
-	// TODO: require these in
 	hasMany: [
 		{
-			poolEntry: {
-				show: function(request, reply) {
-					return reply('nyi');
-				},
-				create: function(request, reply) {
-					return reply('nyi');
-				},
-				destroy: function(request, reply) {
-					return reply('nyi');
-				}
-			}
+			poolEntry: require('./set-has-pool-entry')
 		},
 		{
-			pattern: {
-				show: function(request, reply) {
-					return reply('nyi');
-				},
-				create: function(request, reply) {
-					return reply('nyi');
-				},
-				destroy: function(request, reply) {
-					return reply('nyi');
-				}
-			}
+			pattern: require('./set-has-pattern')
 		}
 	],
 	show: {
