@@ -26,7 +26,7 @@ function createSet(setName, reply) {
 		function(callback) { song.save(callback); },
 		function(callback) { setInstance.save(callback); }
 	], function(err, results) {
-		reply(setInstance.toJSON());
+		reply(setInstance);
 	});
 }
 
@@ -43,7 +43,7 @@ module.exports = {
 					}
 					return reply(new Error(err));
 				}
-				reply(result.toJSON());
+				reply(result);
 			});
 		}
 	},
@@ -61,7 +61,7 @@ module.exports = {
 				}
 				SetFactory.update(result.key, request.payload, function(updateErr, updateResult) {
 					if (updateErr) return reply(new Error(updateErr));
-					return reply(updateResult.toJSON());
+					return reply(updateResult);
 				});
 			});
 		}

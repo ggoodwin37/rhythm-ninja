@@ -12,7 +12,7 @@ module.exports = {
 					}
 					return reply(new Error(err));
 				}
-				reply(result.toJSON());
+				reply(result);
 			});
 		}
 	},
@@ -23,7 +23,7 @@ module.exports = {
 				if (err) {
 					return reply(new Error(err));
 				}
-				reply(test1Instance.toJSON());
+				reply(test1Instance);
 			});
 		}
 	},
@@ -37,7 +37,7 @@ module.exports = {
 					}
 					return reply(new Error(err));
 				}
-				reply(result.toJSON());
+				reply(result);
 			});
 		}
 	},

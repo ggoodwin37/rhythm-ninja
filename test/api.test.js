@@ -89,7 +89,6 @@ describe('test-api', function () {
 		}, function (res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
-			expect(res.result).to.have.keys('id', 'testField');
 			expect(res.result.testField).to.equal(test1Name);
 			test1Id = res.result.id;
 			done();
@@ -103,7 +102,6 @@ describe('test-api', function () {
 		}, function (res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
-			expect(res.result).to.have.keys('id', 'testField');
 			expect(res.result.testField).to.equal(test1Name);
 			done();
 		});
@@ -117,7 +115,6 @@ describe('test-api', function () {
 		}, function (res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
-			expect(res.result).to.have.keys('id', 'testField');
 			expect(res.result.testField).to.equal(test1Name + 'mod');
 			done();
 		});
@@ -193,7 +190,7 @@ describe('set-api', function () {
 			// console.log('===================');
 
 			expect(res.result).to.be.an('object');
-			expect(res.result).to.have.keys('name', 'setInfo', 'pool', 'patterns', 'song');
+			expect(res.result.name).to.equal(setName);
 			setDoc = res.result;
 			done();
 		});
@@ -238,9 +235,7 @@ describe('set-api', function () {
 					method: 'get',
 					url: basePoolUrl
 				}, function(res) {
-					console.log('2:'); inspect(res.result);
 					expect(res.statusCode).to.equal(200);
-					inspect(res.result);
 					expect(res.result.length).to.equal(0);
 					callback();
 				});

@@ -15,7 +15,7 @@ module.exports = {
 					}
 					return reply(new Error(err));
 				}
-				return reply(setInstance.pool.toJSON());  // fails: .pool is just an array and doesn't have toJSON. use a collection here.
+				return reply(setInstance.pool);
 			});
 		}
 	},
@@ -36,7 +36,7 @@ module.exports = {
 					function(callback) { poolEntry.save(callback); },
 					function(callback) { setInstance.save(callback); }
 				], function() {
-					return reply(setInstance.pool.toJSON());
+					return reply(setInstance.pool);
 				});
 			});
 		}
