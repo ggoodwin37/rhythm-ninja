@@ -38,7 +38,7 @@ module.exports = {
 				show: function(request, reply) {
 					return reply('nyi');
 				},
-				destroy: function(request, reply) {
+				create: function(request, reply) {
 					return reply('nyi');
 				},
 				destroy: function(request, reply) {
@@ -51,7 +51,7 @@ module.exports = {
 				show: function(request, reply) {
 					return reply('nyi');
 				},
-				destroy: function(request, reply) {
+				create: function(request, reply) {
 					return reply('nyi');
 				},
 				destroy: function(request, reply) {

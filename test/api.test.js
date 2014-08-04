@@ -156,7 +156,7 @@ describe('set-api', function () {
 	var baseUrl = '/api/set/' + setName;
 	var basePoolUrl = '/api/setPool/' + setName;
 
-	it('should delete any existing test documents, if they exist', function(done) {
+	it('should delete any existing test documents', function(done) {
 		server.inject({
 			method: 'delete',
 			url: baseUrl
