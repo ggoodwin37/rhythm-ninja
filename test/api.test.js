@@ -402,6 +402,7 @@ describe('set-api-pattern', function() {
 	});
 
 	var baseSetPatternRowUrl;
+	var patternRowId1;
 	it('should accept a new pattern row', function(done) {
 		baseSetPatternRowUrl = baseSetPatternUrl + '/' + patternId2 + '/rows';
 		var rowData = {
@@ -410,9 +411,73 @@ describe('set-api-pattern', function() {
 		};
 		server.inject({method: 'post', url: baseSetPatternRowUrl, payload: JSON.stringify(rowData)}, function(res) {
 			expect(res.statusCode).to.equal(200);
+			expect(res.result.poolEntry).to.equal('test-pool-entry');
 			expect(res.result.steps.length).to.equal(16);
 			expect(res.result.steps[1]).to.equal(101);
+			patternRowId1 = res.result.key;
 			done();
 		});
 	});
+
+	it('should let me edit an existing pattern row', function(done) {
+		var rowData = {
+			steps: [0, 1, 22, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+		};
+		server.inject({method: 'put', url: baseSetPatternRowUrl + '/' + patternRowId1, payload: JSON.stringify(rowData)}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.poolEntry).to.equal('test-pool-entry');
+			expect(res.result.steps.length).to.equal(16);
+			expect(res.result.steps[1]).to.equal(1);
+			server.inject({method: 'get', url: baseSetUrl}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.patterns.length).to.equal(1);
+				expect(res.result.patterns[0].rows.length).to.equal(1);
+				expect(res.result.patterns[0].rows[0].poolEntry).to.equal('test-pool-entry');
+				expect(res.result.patterns[0].rows[0].steps.length).to.equal(16);
+				expect(res.result.patterns[0].rows[0].steps[1]).to.equal(1);
+				expect(res.result.patterns[0].rows[0].steps[2]).to.equal(22);
+				done();
+			});
+		});
+	});
+
+	var patternRowId2;
+	it('should accept a second pattern row', function(done) {
+		baseSetPatternRowUrl = baseSetPatternUrl + '/' + patternId2 + '/rows';
+		var rowData = {
+			poolEntry: 'test-pool-entry-2',
+			length: 2,
+			steps: [9, 8]  // not consistent since pattern now has length 16, but not expecting any code to catch this yet.
+		};
+		server.inject({method: 'post', url: baseSetPatternRowUrl, payload: JSON.stringify(rowData)}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.poolEntry).to.equal('test-pool-entry-2');
+			expect(res.result.steps.length).to.equal(2);
+			expect(res.result.steps[1]).to.equal(8);
+			patternRowId2 = res.result.key;
+			server.inject({method: 'get', url: baseSetUrl}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.patterns.length).to.equal(1);
+				expect(res.result.patterns[0].rows.length).to.equal(2);
+				expect(res.result.patterns[0].rows[1].key).to.equal(patternRowId2);
+				expect(res.result.patterns[0].rows[1].steps.length).to.equal(2);
+				expect(res.result.patterns[0].rows[1].steps[0]).to.equal(9);
+				done();
+			});
+		});
+	});
+
+	it('should let me delete the first pattern row', function(done) {
+		server.inject({method: 'delete', url: baseSetPatternRowUrl + '/' + patternRowId1}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			server.inject({method: 'get', url: baseSetPatternUrl + '/' + patternId2}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.rows.length).to.equal(1);
+				expect(res.result.rows[0].key).to.equal(patternRowId2);
+				expect(res.result.rows[0].steps[0]).to.equal(9);
+				done();
+			});
+		});
+	});
+
 });
