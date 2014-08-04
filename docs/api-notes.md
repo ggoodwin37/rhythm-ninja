@@ -2,8 +2,10 @@
 /api/set/<set-name>
   get, (create if not existing), put, delete
 
-/api/set-pool/<set-name>
-  get, put
+/api/set/<set-name>/poolEntry/<id>
+  get, delete
+/api/set/<set-name>/poolEntry
+  post
 
 /api/set-song/<set-name>
   get, put
