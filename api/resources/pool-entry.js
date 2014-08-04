@@ -1,3 +1,4 @@
+// TODO: move this into the set handler.
 var inspect = require('eyes').inspector({hideFunctions: false, maxLength: null});
 var async = require('async');
 var SetFactory = require('../models/set');
@@ -40,6 +41,11 @@ module.exports = {
 				// 	return reply(setInstance.pool);
 				// });
 			});
+		}
+	},
+	destroy: {
+		handler: function(request, reply) {
+			return reply('ok');
 		}
 	}
 };

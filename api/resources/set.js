@@ -31,7 +31,35 @@ function createSet(setName, reply) {
 }
 
 module.exports = {
-	hasMany: ['pattern', 'sample'],
+	// TODO: require these in
+	hasMany: [
+		{
+			poolEntry: {
+				show: function(request, reply) {
+					return reply('nyi');
+				},
+				destroy: function(request, reply) {
+					return reply('nyi');
+				},
+				destroy: function(request, reply) {
+					return reply('nyi');
+				}
+			}
+		},
+		{
+			pattern: {
+				show: function(request, reply) {
+					return reply('nyi');
+				},
+				destroy: function(request, reply) {
+					return reply('nyi');
+				},
+				destroy: function(request, reply) {
+					return reply('nyi');
+				}
+			}
+		}
+	],
 	show: {
 		handler: function(request, reply) {
 			var setName = request.params.set_id;
