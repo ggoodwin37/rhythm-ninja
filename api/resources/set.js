@@ -1,5 +1,6 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var async = require('async');
+var handlingError = require('../handling-error');
 var SetFactory = require('../models/set');
 var SetInfoFactory = require('../models/set-info');
 var SongFactory = require('../models/song');
@@ -57,13 +58,7 @@ module.exports = {
 			// TODO: does this handle updating children as well?
 			var setName = request.params.set_id;
 			SetFactory.findByIndex('name', setName, function(err, result) {
-				if (err) {
-					if (err.type == 'NotFoundError') {
-						return reply().code(404);
-					} else {
-						return reply(new Error(err));
-					}
-				}
+				if (handlingError(err, reply)) return;
 				SetFactory.update(result.key, request.payload, function(updateErr, updateResult) {
 					if (updateErr) return reply(new Error(updateErr));
 					return reply(updateResult);
@@ -75,13 +70,7 @@ module.exports = {
 		handler: function(request, reply) {
 			var setName = request.params.set_id;
 			SetFactory.findByIndex('name', setName, function(err, result) {
-				if (err) {
-					if (err.type == 'NotFoundError') {
-						return reply().code(404);
-					} else {
-						return reply(new Error(err));
-					}
-				}
+				if (handlingError(err, reply)) return;
 				result['delete'](function(deleteErr) {
 					if (deleteErr) return reply(new Error(deleteErr));
 					return reply('ok');

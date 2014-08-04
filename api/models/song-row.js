@@ -1,8 +1,7 @@
 var dulcimer = require('dulcimer');
 
 var SongRowFactory = new dulcimer.Model({
-	// TODO: this is conceptually a 'weak' ref, should I still use a foreignkey here?
-	pattern: {
+	patternId: {
 		type: 'string',
 		required: true,
 		default: 'default'

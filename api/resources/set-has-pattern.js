@@ -44,13 +44,13 @@ module.exports = {
 			if (handlingError(err, reply)) return;
 			// TODO: consider using extend pattern here instead
 			var mergeObject = {};
-			if (updatedPatternData.name) {
+			if (typeof updatedPatternData.name != 'undefined') {
 				mergeObject['name'] = updatedPatternData.name;
 			}
-			if (updatedPatternData.length) {
+			if (typeof updatedPatternData.length != 'undefined') {
 				mergeObject['length'] = updatedPatternData.length;
 			}
-			if (updatedPatternData.locked) {
+			if (typeof updatedPatternData.locked != 'undefined') {
 				mergeObject['locked'] = updatedPatternData.locked;
 			}
 			PatternFactory.update(patternModel.key, mergeObject, function(err, updatedModel) {
