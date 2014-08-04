@@ -6,6 +6,11 @@ var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var async = require('async');
 
 module.exports = {
+	hasMany: [
+		{
+			rows: require('./pattern-has-rows')
+		}
+	],
 	show: function(request, reply) {
 		var patternId = request.params.pattern_id;
 		// TODO: validate set/authenticate

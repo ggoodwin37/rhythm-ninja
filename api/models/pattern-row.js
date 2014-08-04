@@ -9,7 +9,7 @@ var PatternRowFactory = new dulcimer.Model({
 	steps: {
 		type: 'array',
 		required: true,
-		default: [1, 2, 3]  // TODO: just playin
+		default: []
 	}
 }, {
 	name: 'pattern-row',

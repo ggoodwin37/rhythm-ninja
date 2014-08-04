@@ -401,22 +401,19 @@ describe('set-api-pattern', function() {
 		});
 	});
 
-	// TODO: move this out to dedicated row endpoint
-	// it('should accept a new pattern row', function(done) {
-	// 	var patternData = {
-	// 		name: 'pattern-updated',
-	// 		rows: [
-	// 			{
-	// 				poolEntry: 'test-pool-entry',
-	// 				steps: [0, 101, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-	// 			}
-	// 		]
-	// 	};
-	// 	var updatedPattern = setDoc.patterns[0];
-	// 	updatedPattern.rows.push(patternData);
-	// 	server.inject({method: 'put', url: baseSetPatternUrl + '/' + patternId2, payload: JSON.stringify(patternData)}, function(res) {
-	// 		expect(res.statusCode).to.equal(200);
-	// 		done();
-	// 	});
-	// });
+	var baseSetPatternRowUrl;
+	it('should accept a new pattern row', function(done) {
+		baseSetPatternRowUrl = baseSetPatternUrl + '/' + patternId2 + '/rows';
+		var rowData = {
+			poolEntry: 'test-pool-entry',
+			steps: [0, 101, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+		};
+		server.inject({method: 'post', url: baseSetPatternRowUrl, payload: JSON.stringify(rowData)}, function(res) {
+			expect(res.statusCode).to.equal(200);
+//			inspect(res.result);
+			expect(res.result.steps.length).to.equal(16);
+			expect(res.result.steps[1]).to.equal(101);
+			done();
+		});
+	});
 });
