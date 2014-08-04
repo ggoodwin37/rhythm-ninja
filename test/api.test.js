@@ -1,5 +1,8 @@
 var Lab = require('lab');
 var Hapi = require('hapi');
+var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
+var async = require('async');
+
 var getApiPlugin = require('../api/api');
 var Test1Model = require('../api/models/test1');
 
@@ -9,6 +12,12 @@ var before = Lab.before;
 var after = Lab.after;
 var describe = Lab.experiment;
 var it = Lab.test;
+
+
+function getRouteKey(route) {
+	var routeKey = route.method.toLowerCase() + ' ' + route.path;
+	return routeKey;
+}
 
 var server, table;
 
@@ -31,7 +40,7 @@ before(function(done) {
 	});
 });
 
-describe('plugin', function () {
+describe('server', function () {
 	it('starts a serverInstance', function(done) {
 		expect(server).to.exist;
 		done();
@@ -42,23 +51,19 @@ describe('plugin', function () {
 		expect(table).to.exist;
 		done();
 	});
+
+	it('can dump all routes', function(done) {
+		table.forEach(function(route) {
+			console.log('server has route: ' + getRouteKey(route));
+		});
+		done();
+	});
+
 });
 
-describe('api', function () {
+describe('test-api', function () {
 	var test1Id;
 	var test1Name = 'test-name-content';
-
-	function getRouteKey(route) {
-		var routeKey = route.method.toLowerCase() + ' ' + route.path;
-		return routeKey;
-	}
-
-	// it('can dump all routes', function(done) {
-	// 	table.forEach(function(route) {
-	// 		console.log('server has route: ' + getRouteKey(route));
-	// 	});
-	// 	done();
-	// });
 
 	it('has expected routes', function(done) {
 		var expectedRoutes = [
@@ -84,7 +89,6 @@ describe('api', function () {
 		}, function (res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
-			expect(res.result).to.have.keys('id', 'testField');
 			expect(res.result.testField).to.equal(test1Name);
 			test1Id = res.result.id;
 			done();
@@ -98,7 +102,6 @@ describe('api', function () {
 		}, function (res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
-			expect(res.result).to.have.keys('id', 'testField');
 			expect(res.result.testField).to.equal(test1Name);
 			done();
 		});
@@ -112,7 +115,6 @@ describe('api', function () {
 		}, function (res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
-			expect(res.result).to.have.keys('id', 'testField');
 			expect(res.result.testField).to.equal(test1Name + 'mod');
 			done();
 		});
@@ -147,4 +149,102 @@ describe('api', function () {
 			done();
 		});
 	});
+});
+
+describe('set-api', function () {
+	var setName = 'reserved-test-asdjfjjadsfh';
+	var baseUrl = '/api/set/' + setName;
+
+	it('should delete any existing test documents', function(done) {
+		server.inject({
+			method: 'delete',
+			url: baseUrl
+		}, function(res) {
+			expect(res.statusCode == 200 || res.statusCode == 404).to.equal(true);
+			done();
+		});
+	});
+
+	it('should fail to delete a non-existent document', function(done) {
+		server.inject({
+			method: 'delete',
+			url: baseUrl
+		}, function(res) {
+			expect(res.statusCode).to.equal(404);
+			done();
+		});
+	});
+
+	var setDoc;
+
+	it('should lazy create and return a new document', function(done) {
+		server.inject({
+			method: 'get',
+			url: baseUrl
+		}, function(res) {
+			expect(res.statusCode).to.equal(200);
+
+			// console.log('========== new doc:');
+			// inspect(res.result);
+			// console.log('===================');
+
+			expect(res.result).to.be.an('object');
+			expect(res.result.name).to.equal(setName);
+
+			setDoc = res.result;
+			console.log('client sees key: ' + setDoc.key);
+
+			done();
+		});
+	});
+
+	it('should handle updates to set data', function(done) {
+		setDoc.setInfo.bpm = 160;
+
+		// console.log('========== updating local doc:');
+		// inspect(setDoc);
+		// console.log('==============================');
+
+		server.inject({
+			method: 'put',
+			url: baseUrl,
+			payload: JSON.stringify(setDoc)
+		}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result).to.be.an('object');
+			expect(res.result.setInfo.bpm).to.equal(160);
+			setDoc = res.result;
+			done();
+		});
+	});
+
+	it('should start with an empty pool on set endpoint', function(done) {
+		expect(setDoc.pool.length).to.equal(0);
+		server.inject({method: 'get', url: baseUrl}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.pool.length).to.equal(0);
+			setDoc = res.result;
+			done();
+		});
+	});
+
+	var baseSetPoolUrl = '/api/set/' + setName + '/poolEntry';
+	var poolEntryId;
+	it('should allow me to create a new poolEntry and add it to the set for me', function(done) {
+		var poolEntry = {
+			name: 'test-pool-entry-post',
+			volume: 0.75,
+			sampleType: 'local',
+			sampleId: 'abcd-efgh'
+		};
+		server.inject({method: 'post', url: baseSetPoolUrl, payload: JSON.stringify(poolEntry)}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.volume).to.equal(0.75);
+			done();
+		});
+	});
+
+	// TODO: read back set and verify that pool has 1 in it with 0.75
+	// TODO: delete check (set updates)
+	// TODO: re-entrant checks (same operation twice should to the right thing)
 });

@@ -1,6 +1,9 @@
 module.exports = function() {
 	var resources = {
-		test1: require('./resources/test1')
+		test1: require('./resources/test1'),
+		set: require('./resources/set'),
+		setSong: require('./resources/set-song'),
+		sample: require('./resources/sample')
 	};
 
 	// TODO gideong: where do we consume this? might have to move
@@ -10,8 +13,6 @@ module.exports = function() {
 		path: __dirname + '/db',
 		bucket: 'rhythm-ninja'
 	});
-
-	//var Test1Model = require('./models/test1');
 
 	var apiServerPack = {
 		plugin: require('mudskipper'),
