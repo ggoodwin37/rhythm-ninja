@@ -153,12 +153,12 @@ describe('test-api', function () {
 
 describe('set-api', function () {
 	var setName = 'reserved-test-asdjfjjadsfh';
-	var baseUrl = '/api/set/' + setName;
+	var baseSetUrl = '/api/set/' + setName;
 
 	it('should delete any existing test documents', function(done) {
 		server.inject({
 			method: 'delete',
-			url: baseUrl
+			url: baseSetUrl
 		}, function(res) {
 			expect(res.statusCode == 200 || res.statusCode == 404).to.equal(true);
 			done();
@@ -168,7 +168,7 @@ describe('set-api', function () {
 	it('should fail to delete a non-existent document', function(done) {
 		server.inject({
 			method: 'delete',
-			url: baseUrl
+			url: baseSetUrl
 		}, function(res) {
 			expect(res.statusCode).to.equal(404);
 			done();
@@ -180,7 +180,7 @@ describe('set-api', function () {
 	it('should lazy create and return a new document', function(done) {
 		server.inject({
 			method: 'get',
-			url: baseUrl
+			url: baseSetUrl
 		}, function(res) {
 			expect(res.statusCode).to.equal(200);
 
@@ -207,7 +207,7 @@ describe('set-api', function () {
 
 		server.inject({
 			method: 'put',
-			url: baseUrl,
+			url: baseSetUrl,
 			payload: JSON.stringify(setDoc)
 		}, function(res) {
 			expect(res.statusCode).to.equal(200);
@@ -220,7 +220,7 @@ describe('set-api', function () {
 
 	it('should start with an empty pool on set endpoint', function(done) {
 		expect(setDoc.pool.length).to.equal(0);
-		server.inject({method: 'get', url: baseUrl}, function(res) {
+		server.inject({method: 'get', url: baseSetUrl}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.pool.length).to.equal(0);
 			setDoc = res.result;
@@ -229,8 +229,8 @@ describe('set-api', function () {
 	});
 
 	var baseSetPoolUrl = '/api/set/' + setName + '/poolEntry';
-	var poolEntryId;
-	it('should allow me to create a new poolEntry and add it to the set for me', function(done) {
+	var poolEntryId1;
+	it('should allow me to create a new poolEntry', function(done) {
 		var poolEntry = {
 			name: 'test-pool-entry-post',
 			volume: 0.75,
@@ -240,11 +240,64 @@ describe('set-api', function () {
 		server.inject({method: 'post', url: baseSetPoolUrl, payload: JSON.stringify(poolEntry)}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.volume).to.equal(0.75);
+			poolEntryId1 = res.result.key;
 			done();
 		});
 	});
 
-	// TODO: read back set and verify that pool has 1 in it with 0.75
-	// TODO: delete check (set updates)
-	// TODO: re-entrant checks (same operation twice should to the right thing)
+	it('should have added the new pool entry to the set for me', function(done) {
+		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.pool.length).to.equal(1);
+			expect(res.result.pool[0].key).to.equal(poolEntryId1);
+			expect(res.result.pool[0].volume).to.equal(0.75);
+			done();
+		});
+	});
+
+	var poolEntryId2;
+	it('should allow me to create a second poolEntry', function(done) {
+		var poolEntry = {
+			name: 'test-pool-entry-post',
+			volume: 0.5,
+			sampleType: 'local',
+			sampleId: 'abcd-efgh'
+		};
+		server.inject({method: 'post', url: baseSetPoolUrl, payload: JSON.stringify(poolEntry)}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.volume).to.equal(0.5);
+			poolEntryId2 = res.result.key;
+			server.inject({method: 'get', url: baseSetUrl}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.pool.length).to.equal(2);
+				expect(res.result.pool[1].key).to.equal(poolEntryId2);
+				expect(res.result.pool[1].volume).to.equal(0.5);
+				done();
+			});
+		});
+	});
+
+	it('should allow me to delete the first poolEntry now', function(done) {
+		server.inject({method: 'delete', url: baseSetPoolUrl + '/' + poolEntryId1}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			done();
+		});
+	});
+
+	it('should fail to delete the thing we just deleted', function(done) {
+		server.inject({method: 'delete', url: baseSetPoolUrl + '/' + poolEntryId1}, function(res) {
+			expect(res.statusCode).to.equal(404);
+			done();
+		});
+	});
+
+	it('should have removed the deleted pool entry from the set', function(done) {
+		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.pool.length).to.equal(1);
+			expect(res.result.pool[0].key).to.equal(poolEntryId2);
+			expect(res.result.pool[0].volume).to.equal(0.5);
+			done();
+		});
+	});
 });
