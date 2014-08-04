@@ -151,9 +151,10 @@ describe('test-api', function () {
 	});
 });
 
-describe('set-api', function () {
-	var setName = 'reserved-test-asdjfjjadsfh';
-	var baseSetUrl = '/api/set/' + setName;
+var setName = 'reserved-test-asdjfjjadsfh';
+var baseSetUrl = '/api/set/' + setName;
+var setDoc;
+describe('set-api-set', function () {
 
 	it('should delete any existing test documents', function(done) {
 		server.inject({
@@ -175,19 +176,12 @@ describe('set-api', function () {
 		});
 	});
 
-	var setDoc;
-
 	it('should lazy create and return a new document', function(done) {
 		server.inject({
 			method: 'get',
 			url: baseSetUrl
 		}, function(res) {
 			expect(res.statusCode).to.equal(200);
-
-			// console.log('========== new doc:');
-			// inspect(res.result);
-			// console.log('===================');
-
 			expect(res.result).to.be.an('object');
 			expect(res.result.name).to.equal(setName);
 
@@ -200,11 +194,6 @@ describe('set-api', function () {
 
 	it('should handle updates to set data', function(done) {
 		setDoc.setInfo.bpm = 160;
-
-		// console.log('========== updating local doc:');
-		// inspect(setDoc);
-		// console.log('==============================');
-
 		server.inject({
 			method: 'put',
 			url: baseSetUrl,
@@ -217,6 +206,9 @@ describe('set-api', function () {
 			done();
 		});
 	});
+});
+
+describe('set-api-pool-entry', function() {
 
 	it('should start with an empty pool on set endpoint', function(done) {
 		expect(setDoc.pool.length).to.equal(0);
@@ -297,7 +289,103 @@ describe('set-api', function () {
 			expect(res.result.pool.length).to.equal(1);
 			expect(res.result.pool[0].key).to.equal(poolEntryId2);
 			expect(res.result.pool[0].volume).to.equal(0.5);
+			setDoc = res.result;
 			done();
 		});
 	});
+});
+
+
+describe('set-api-pattern', function() {
+	it('should start with an empty pattern list on set endpoint', function(done) {
+		expect(setDoc.patterns.length).to.equal(0);
+		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.patterns.length).to.equal(0);
+			setDoc = res.result;
+			done();
+		});
+	});
+
+	var baseSetPatternUrl = '/api/set/' + setName + '/pattern';
+	var patternId1;
+	it('should allow me to create a new pattern', function(done) {
+		var pattern = {
+			name: 'test-pattern-post',
+			length: 12,
+			locked: false
+		};
+		server.inject({method: 'post', url: baseSetPatternUrl, payload: JSON.stringify(pattern)}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.length).to.equal(12);
+			patternId1 = res.result.key;
+			done();
+		});
+	});
+
+	it('should create patterns without any rows initially', function(done) {
+		server.inject({method: 'get', url: baseSetPatternUrl + '/' + patternId1}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.length).to.equal(12);
+			expect(res.result.rows.length).to.equal(0);
+			done();
+		});
+	});
+
+	it('should have added the new pattern to the set for me', function(done) {
+		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.patterns.length).to.equal(1);
+			expect(res.result.patterns[0].key).to.equal(patternId1);
+			expect(res.result.patterns[0].length).to.equal(12);
+			done();
+		});
+	});
+
+	var patternId2;
+	it('should allow me to create a second pattern', function(done) {
+		var pattern = {
+			name: 'test-pattern-post-2',
+			length: 14,
+			locked: false
+		};
+		server.inject({method: 'post', url: baseSetPatternUrl, payload: JSON.stringify(pattern)}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.length).to.equal(14);
+			patternId2 = res.result.key;
+			server.inject({method: 'get', url: baseSetUrl}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.patterns.length).to.equal(2);
+				expect(res.result.patterns[1].key).to.equal(patternId2);
+				expect(res.result.patterns[1].length).to.equal(14);
+				done();
+			});
+		});
+	});
+
+	it('should allow me to delete the first pattern now', function(done) {
+		server.inject({method: 'delete', url: baseSetPatternUrl + '/' + patternId1}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			done();
+		});
+	});
+
+	it('should fail to delete the thing we just deleted', function(done) {
+		server.inject({method: 'delete', url: baseSetPatternUrl + '/' + patternId1}, function(res) {
+			expect(res.statusCode).to.equal(404);
+			done();
+		});
+	});
+
+	it('should have removed the deleted pattern from the set', function(done) {
+		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.patterns.length).to.equal(1);
+			expect(res.result.patterns[0].key).to.equal(patternId2);
+			expect(res.result.patterns[0].length).to.equal(14);
+			done();
+		});
+	});
+
+	// TODO: also test PUT
 });

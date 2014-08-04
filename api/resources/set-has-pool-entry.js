@@ -21,10 +21,9 @@ module.exports = {
 			SetFactory.findByIndex('name', setName, function(err, setModel) {
 				if (handlingError(err, reply)) return;
 				var newPool = setModel.pool.slice(0);
-				newPool.push(poolEntry); // .key?
+				newPool.push(poolEntry);
 
 				SetFactory.update(setModel.key, {pool: newPool}, function(err, newModel) {
-					// TODO: need to .save too?
 					if (handlingError(err, reply)) return;
 					reply(poolEntry);
 				});
@@ -46,7 +45,6 @@ module.exports = {
 					});
 
 					SetFactory.update(setModel.key, {pool: newPool}, function(err, newModel) {
-						// TODO: need to .save too? I don't think so, since this appears to be working.
 						if (handlingError(err, reply)) return callback();
 						callback();
 					});
