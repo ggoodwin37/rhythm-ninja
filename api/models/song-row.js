@@ -13,12 +13,12 @@ var SongRowFactory = new dulcimer.Model({
 		default: 0
 	},
 	len: {
-		type: 'integer'
+		type: 'integer',
 		required: true,
 		default: -1  // -> natural pattern length
 	},
 	count: {
-		type: 'integer'
+		type: 'integer',
 		required: true,
 		default: 1
 	}
