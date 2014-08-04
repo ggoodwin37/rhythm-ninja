@@ -29,15 +29,16 @@ module.exports = {
 					}
 					return reply(new Error(err));
 				}
-				var poolEntry = PoolEntryFactory.create(request.payload);
-				var setInstance = result;
-				setInstance.pool.push(poolEntry);
-				async.series([
-					function(callback) { poolEntry.save(callback); },
-					function(callback) { setInstance.save(callback); }
-				], function() {
-					return reply(setInstance.pool);
-				});
+				reply(result.pool);  // TODO: fix bug in below
+				// var poolEntry = PoolEntryFactory.create(request.payload);
+				// var setInstance = result;
+				// setInstance.pool.push(poolEntry);
+				// async.series([
+				// 	function(callback) { poolEntry.save(callback); },
+				// 	function(callback) { setInstance.save(callback); }
+				// ], function() {
+				// 	return reply(setInstance.pool);
+				// });
 			});
 		}
 	}
