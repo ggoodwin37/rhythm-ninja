@@ -1,6 +1,7 @@
 var SetFactory = require('../models/set');
 var PoolEntryFactory = require('../models/pool-entry');
 var handlingError = require('../handling-error');
+var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 
 module.exports = {
 	show: function(request, reply) {
@@ -18,8 +19,11 @@ module.exports = {
 			if (handlingError(err, reply)) return;
 			SetFactory.findByIndex('name', setName, function(err, setModel) {
 				if (handlingError(err, reply)) return;
-				setModel.pool.push(poolEntry);
-				setModel.save(function(err) {
+				var newPool = setModel.pool.slice(0);
+				newPool.push(poolEntry); // .key?
+
+				SetFactory.update(setModel.key, {pool: newPool}, function(err, newModel) {
+					// TODO: need to .save too?
 					if (handlingError(err, reply)) return;
 					reply(poolEntry);
 				});

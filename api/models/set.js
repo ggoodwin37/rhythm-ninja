@@ -1,4 +1,8 @@
 var dulcimer = require('dulcimer');
+var SetInfoFactory = require('./set-info');
+var PoolEntryFactory = require('./pool-entry');
+var PatternFactory = require('./pattern');
+var SongFactory = require('./song');
 
 var SetFactory = new dulcimer.Model({
 	name: {
@@ -8,16 +12,16 @@ var SetFactory = new dulcimer.Model({
 		default: 'default'
 	},
 	setInfo: {
-		foreignKey: 'set-info'
+		foreignKey: SetInfoFactory
 	},
 	pool: {
-		foreignCollection: 'pool-entry'
+		foreignCollection: PoolEntryFactory
 	},
 	patterns: {
-		foreignCollection: 'pattern'
+		foreignCollection: PatternFactory
 	},
 	song: {
-		foreignKey: 'song'
+		foreignKey: SongFactory
 	}
 }, {
 	name: 'set',

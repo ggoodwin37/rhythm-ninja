@@ -228,55 +228,23 @@ describe('set-api', function () {
 		});
 	});
 
-	var basePoolUrl = '/api/set/' + setName + '/poolEntry';
+	var baseSetPoolUrl = '/api/set/' + setName + '/poolEntry';
 	var poolEntryId;
-	it('should allow me to create a new poolEntry for the set', function(done) {
+	it('should allow me to create a new poolEntry and add it to the set for me', function(done) {
 		var poolEntry = {
 			name: 'test-pool-entry-post',
-			volume: 1.0,
+			volume: 0.75,
 			sampleType: 'local',
 			sampleId: 'abcd-efgh'
 		};
-		server.inject({method: 'post', url: basePoolUrl, payload: JSON.stringify(poolEntry)}, function(res) {
+		server.inject({method: 'post', url: baseSetPoolUrl, payload: JSON.stringify(poolEntry)}, function(res) {
 			expect(res.statusCode).to.equal(200);
-
-			inspect(res.result);
-			// expect(res.result.pool.length).to.equal(0);
-			// setDoc = res.result;
-			// TODO
+			expect(res.result.volume).to.equal(0.75);
 			done();
 		});
 	});
 
-
-
-	// TODO: this is weird, running this test as-is apparently causes some database corruption or something.
-	//  after this fails the first time, earlier tests start failing on subsequent runs, until I nuke the db.
-	// it('should handle adding an entry to pool', function(done) {
-	// 	expect(setDoc.pool.length).to.equal(0);
-	// 	var newPoolEntry = {
-	// 		name: 'test-pool-entry',
-	// 		volume: 0.75,
-	// 		sampleType: 'local',
-	// 		sampleId: 'test-sample-id'
-	// 	};
-	// 	setDoc.pool.push(newPoolEntry);
-	// 	server.inject({
-	// 		method: 'put',
-	// 		url: basePoolUrl,
-	// 		payload: JSON.stringify(setDoc.pool)
-	// 	}, function(res) {
-	// 		server.inject({
-	// 			method: 'get',
-	// 			url: baseUrl
-	// 		}, function(res) {
-	// 			//inspect(res);
-	// 			expect(res.statusCode).to.equal(200);
-	// 			setDoc = res.result;
-	// 			expect(setDoc.pool.length).to.equal(1);
-	// 			expect(setDoc.pool[0].volume).to.equal(0.75);
-	// 			done();
-	// 		});
-	// 	});
-	// });
+	// TODO: read back set and verify that pool has 1 in it with 0.75
+	// TODO: delete check (set updates)
+	// TODO: re-entrant checks (same operation twice should to the right thing)
 });
