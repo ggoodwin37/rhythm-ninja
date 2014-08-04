@@ -383,9 +383,40 @@ describe('set-api-pattern', function() {
 			expect(res.result.patterns.length).to.equal(1);
 			expect(res.result.patterns[0].key).to.equal(patternId2);
 			expect(res.result.patterns[0].length).to.equal(14);
+			setDoc = res.result;
 			done();
 		});
 	});
 
-	// TODO: also test PUT
+	it('should allow us to modify an existing pattern metadata (not row)', function(done) {
+		var patternData = {
+			name: 'pattern-updated',
+			length: 16
+		};
+		server.inject({method: 'put', url: baseSetPatternUrl + '/' + patternId2, payload: JSON.stringify(patternData)}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.length).to.equal(16);
+			expect(res.result.name).to.equal('pattern-updated');
+			done();
+		});
+	});
+
+	// TODO: move this out to dedicated row endpoint
+	// it('should accept a new pattern row', function(done) {
+	// 	var patternData = {
+	// 		name: 'pattern-updated',
+	// 		rows: [
+	// 			{
+	// 				poolEntry: 'test-pool-entry',
+	// 				steps: [0, 101, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+	// 			}
+	// 		]
+	// 	};
+	// 	var updatedPattern = setDoc.patterns[0];
+	// 	updatedPattern.rows.push(patternData);
+	// 	server.inject({method: 'put', url: baseSetPatternUrl + '/' + patternId2, payload: JSON.stringify(patternData)}, function(res) {
+	// 		expect(res.statusCode).to.equal(200);
+	// 		done();
+	// 	});
+	// });
 });

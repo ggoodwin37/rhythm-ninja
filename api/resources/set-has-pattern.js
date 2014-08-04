@@ -32,7 +32,27 @@ module.exports = {
 		});
 	},
 	update: function(request, reply) {
-		return reply('nyi');
+		var setName = request.params.set_id;
+		var patternId = request.params.pattern_id;
+		var updatedPatternData = request.payload;
+		PatternFactory.get(patternId, function(err, patternModel) {
+			if (handlingError(err, reply)) return;
+			// TODO: consider using extend pattern here instead
+			var mergeObject = {};
+			if (updatedPatternData.name) {
+				mergeObject['name'] = updatedPatternData.name;
+			}
+			if (updatedPatternData.length) {
+				mergeObject['length'] = updatedPatternData.length;
+			}
+			if (updatedPatternData.locked) {
+				mergeObject['locked'] = updatedPatternData.locked;
+			}
+			PatternFactory.update(patternModel.key, mergeObject, function(err, updatedModel) {
+				if (handlingError(err, reply)) return;
+				reply(updatedModel);
+			});
+		});
 	},
 	destroy: function(request, reply) {
 		var setName = request.params.set_id;
