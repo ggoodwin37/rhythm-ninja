@@ -2,6 +2,7 @@ var SetFactory = require('../models/set');
 var PoolEntryFactory = require('../models/pool-entry');
 var handlingError = require('../handling-error');
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
+var async = require('async');
 
 module.exports = {
 	show: function(request, reply) {
@@ -20,10 +21,9 @@ module.exports = {
 			SetFactory.findByIndex('name', setName, function(err, setModel) {
 				if (handlingError(err, reply)) return;
 				var newPool = setModel.pool.slice(0);
-				newPool.push(poolEntry); // .key?
+				newPool.push(poolEntry);
 
 				SetFactory.update(setModel.key, {pool: newPool}, function(err, newModel) {
-					// TODO: need to .save too?
 					if (handlingError(err, reply)) return;
 					reply(poolEntry);
 				});
@@ -38,30 +38,26 @@ module.exports = {
 			function(callback) {
 				// first check the set for any instances of this poolEntryId
 				SetFactory.findByIndex('name', setName, function(err, setModel) {
-					if (handlingError(err, reply)) return;
+					if (handlingError(err, reply)) return callback();
 
-					setModel.pool.filter(function(thisPoolEl) {
-						if (typeof thisPoolEl == 'string') {
-							console.log('checking string version');
-							return thisPoolEl != poolEntryId;
-						} else if (typeof thisPoolEl == 'object' && thisPoolEl.key) {
-							console.log('checking object version');
-							return thisPoolEl.key != poolEntryId;
-						}
+					var newPool = setModel.pool.slice(0).filter(function(thisPoolEl) {
+						return thisPoolEl.key !== poolEntryId;
 					});
-					setModel.save(function(err) {
-						if (handlingError(err, reply)) return;
+
+					SetFactory.update(setModel.key, {pool: newPool}, function(err, newModel) {
+						if (handlingError(err, reply)) return callback();
 						callback();
 					});
 				});
 			},
 			function(callback) {
 				// TODO: validate set/authenticate
-				PoolEntryFactory.delete(poolEntryId, function(err) {
-					if (handlingError(err, reply)) return;
-
-					console.log('successfully deleted pool entry itself');
-					callback();
+				PoolEntryFactory.get(poolEntryId, function(err, poolEntryModel) {
+					if (handlingError(err, reply)) return callback();
+					poolEntryModel.delete(function(err) {
+						if (handlingError(err, reply)) return;
+						callback();
+					});
 				});
 			}
 		], function() {

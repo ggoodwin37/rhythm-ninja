@@ -7,13 +7,13 @@
 /api/set/<set-name>/poolEntry
   post
 
-/api/set-song/<set-name>
-  get, put
-
 /api/set/<set-name>/pattern/<pattern-name>
   get, put, delete
 /api/set/<set-name>/pattern
   post
+
+/api/set-song/<set-name>
+  get, put
 
 /api/set/<set-name>/sample/<sample-name>
   get, delete
