@@ -1,41 +1,67 @@
+var SetFactory = require('../models/set');
+var PoolEntryFactory = require('../models/pool-entry');
+var handlingError = require('../handling-error');
+
 module.exports = {
 	show: function(request, reply) {
-		var setName = request.params.setPool_id;
-		SetFactory.findByIndex('name', setName, function(err, result) {
-			var setInstance = result;
-			if (err) {
-				if (err.type == 'NotFoundError') {
-					return reply().code(404);
-				}
-				return reply(new Error(err));
-			}
-			return reply(setInstance.pool);
+		var poolEntryId = request.params.poolEntry_id;
+		// TODO: validate set/authenticate
+		PoolEntryFactory.get(poolEntryId, function(err, poolEntryModel) {
+			if (handlingError(err, reply)) return;
+			return reply(poolEntryModel);
 		});
 	},
 	create: function(request, reply) {
-		// pasted from update code in other file
-		// var setName = request.params.setPool_id;
-		// SetFactory.findByIndex('name', setName, function(err, result) {
-		// 	if (err) {
-		// 		if (err.type == 'NotFoundError') {
-		// 			return reply().code(404);
-		// 		}
-		// 		return reply(new Error(err));
-		// 	}
-		// 	reply(result.pool);  // TODO: fix bug in below
-		// 	// var poolEntry = PoolEntryFactory.create(request.payload);
-		// 	// var setInstance = result;
-		// 	// setInstance.pool.push(poolEntry);
-		// 	// async.series([
-		// 	// 	function(callback) { poolEntry.save(callback); },
-		// 	// 	function(callback) { setInstance.save(callback); }
-		// 	// ], function() {
-		// 	// 	return reply(setInstance.pool);
-		// 	// });
-		// });
-		return reply('nyi');
+		var setName = request.params.set_id;
+		var poolEntry = PoolEntryFactory.create(request.payload);
+		poolEntry.save(function(err) {
+			if (handlingError(err, reply)) return;
+			SetFactory.findByIndex('name', setName, function(err, setModel) {
+				if (handlingError(err, reply)) return;
+				setModel.pool.push(poolEntry);
+				setModel.save(function(err) {
+					if (handlingError(err, reply)) return;
+					reply(poolEntry);
+				});
+			});
+		});
 	},
 	destroy: function(request, reply) {
-		return reply('nyi');
+		var setName = request.params.set_id;
+		var poolEntryId = request.params.poolEntry_id;
+
+		async.series([
+			function(callback) {
+				// first check the set for any instances of this poolEntryId
+				SetFactory.findByIndex('name', setName, function(err, setModel) {
+					if (handlingError(err, reply)) return;
+
+					setModel.pool.filter(function(thisPoolEl) {
+						if (typeof thisPoolEl == 'string') {
+							console.log('checking string version');
+							return thisPoolEl != poolEntryId;
+						} else if (typeof thisPoolEl == 'object' && thisPoolEl.key) {
+							console.log('checking object version');
+							return thisPoolEl.key != poolEntryId;
+						}
+					});
+					setModel.save(function(err) {
+						if (handlingError(err, reply)) return;
+						callback();
+					});
+				});
+			},
+			function(callback) {
+				// TODO: validate set/authenticate
+				PoolEntryFactory.delete(poolEntryId, function(err) {
+					if (handlingError(err, reply)) return;
+
+					console.log('successfully deleted pool entry itself');
+					callback();
+				});
+			}
+		], function() {
+			reply();
+		});
 	}
 };
