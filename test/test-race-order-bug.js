@@ -78,10 +78,9 @@ module.exports = function(ctx) {
 				});
 			};
 
-			// this actually sucks. is there a way to call an async function N times without eating up stack?
 			function tryNextLoop() {
 				if (--counter > 0) {
-					setTimeout(runLoop, 0);
+					setTimeout(runLoop, 0);  // so we don't eat up callstack
 				} else {
 					done();
 				}
