@@ -570,8 +570,6 @@ describe('set-api-song', function() {
 		});
 	});
 
-	// TODO: put songRow
-
 	it('doesn\'t mind deleting the first song row', function(done) {
 		server.inject({method: 'delete', url: baseSetSongUrl + '/songRows/' + songRowId1}, function(res) {
 			expect(res.statusCode).to.equal(200);
@@ -592,6 +590,25 @@ describe('set-api-song', function() {
 		server.inject({method: 'delete', url: baseSetSongUrl + '/songRows/' + songRowId1}, function(res) {
 			expect(res.statusCode).to.equal(404);
 			done();
+		});
+	});
+
+	it('should handle updates to a songRow', function(done) {
+		var updatedData = {
+			len: 55
+		};
+		server.inject({method: 'put', url: baseSetSongUrl + '/songRows/' + songRowId2, payload: JSON.stringify(updatedData)}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			server.inject({method: 'get', url: baseSetSongUrl + '/songRows/' + songRowId2}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.patternId).to.equal('some-other-pattern');
+				expect(res.result.len).to.equal(55);
+				server.inject({method: 'get', url: baseSetUrl}, function(res) {
+					expect(res.statusCode).to.equal(200);
+					expect(res.result.song.rows[0].len).to.equal(55);
+					done();
+				});
+			});
 		});
 	});
 
