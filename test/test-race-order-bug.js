@@ -11,7 +11,7 @@ module.exports = function(ctx) {
 
 	describe('race-order-bug', function() {
 
-		it('should be cool to delete all pool entries', function(done) {
+		function deleteAllPoolEntries(done) {
 			ctx.getSet(function(res) {
 				console.log('set has num entries: ' + res.result.pool.length);
 				var taskList = [];
@@ -27,6 +27,10 @@ module.exports = function(ctx) {
 					done();
 				});
 			});
+		}
+
+		it('should be cool to delete all pool entries', function(done) {
+			deleteAllPoolEntries(done);
 		});
 
 		it('is now a smoldering hole in the ground', function(done) {
@@ -38,10 +42,11 @@ module.exports = function(ctx) {
 		});
 
 		var numTries = 100;
-		it('will now try to reproduce the race condition with n=' + numTries, function(done) {
-			function runloop() {
+		it('will now try to reproduce the race condition with n=' + numTries, {timeout: 10 * 1000}, function(done) {
+			function runLoop() {
 				var entryId1, entryId2;
 				async.series([
+					deleteAllPoolEntries,
 					function(callback) {
 						ctx.server.inject({method: 'post', url: ctx.baseSetUrl + '/poolEntry'}, function(res) {
 							expect(res.statusCode).to.equal(200);
@@ -84,10 +89,10 @@ module.exports = function(ctx) {
 				} else {
 					done();
 				}
-			}
+			};
 
 			var counter = numTries;
-			runloop();
+			runLoop();
 		});
 	});
 };
