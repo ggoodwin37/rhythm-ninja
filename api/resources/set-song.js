@@ -6,7 +6,7 @@ var SongFactory = require('../models/song.js');
 module.exports = {
 	hasMany: [
 		{
-			rows: require('./song-has-rows.js')
+			songRows: require('./song-has-song-rows.js')
 		}
 	],
 	show: {
