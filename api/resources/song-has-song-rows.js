@@ -7,7 +7,7 @@ var async = require('async');
 
 module.exports = {
 	show: function(request, reply) {
-		var rowId = request.params.row_id;
+		var rowId = request.params.songRow_id;
 		// TODO: validate set/authenticate
 		SongRowFactory.get(rowId, function(err, songRowModel) {
 			if (handlingError(err, reply)) return;
@@ -22,7 +22,7 @@ module.exports = {
 			if (handlingError(err, reply)) return;
 			SetFactory.findByIndex('name', setName, function(err, setModel) {
 				if (handlingError(err, reply)) return;
-				var newRows = setModel.songs.rows.slice(0);
+				var newRows = setModel.song.rows.slice(0);
 				newRows.push(rowModel);
 				SongFactory.update(setModel.song.key, {rows: newRows}, function(err, result) {
 					if (handlingError(err, reply)) return;
@@ -32,7 +32,7 @@ module.exports = {
 		})
 	},
 	update: function(request, reply) {
-		var rowId = request.params.row_id;
+		var rowId = request.params.songRow_id;
 		var updatedRowData = request.payload;
 		SongRowFactory.get(rowId, function(err, rowModel) {
 			if (handlingError(err, reply)) return;
@@ -57,7 +57,7 @@ module.exports = {
 	},
 	destroy: function(request, reply) {
 		var setName = request.params.setSong_id;
-		var rowId = request.params.row_id;
+		var rowId = request.params.songRow_id;
 		async.series([
 			function(callback) {
 				// first check the song for any instances of this rowId
