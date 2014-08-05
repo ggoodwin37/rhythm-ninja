@@ -13,7 +13,6 @@ module.exports = function(ctx) {
 
 		function deleteAllPoolEntries(done) {
 			ctx.getSet(function(res) {
-				console.log('set has num entries: ' + res.result.pool.length);
 				var taskList = [];
 				res.result.pool.forEach(function(poolEntry) {
 					taskList.push(function(callback) {
@@ -42,7 +41,7 @@ module.exports = function(ctx) {
 		});
 
 		var numTries = 100;
-		it('will now try to reproduce the race condition with n=' + numTries, {timeout: 10 * 1000}, function(done) {
+		it('attempts to reproduce the race condition with n=' + numTries, {timeout: numTries * 100}, function(done) {
 			function runLoop() {
 				var entryId1, entryId2;
 				async.series([
