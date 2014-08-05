@@ -52,4 +52,4 @@ require('./test-set-api-set.js')(ctx);
 require('./test-set-api-pool-entry.js')(ctx);
 require('./test-set-api-pattern.js')(ctx);
 require('./test-set-api-song.js')(ctx);
-require('./test-race-order-bug.js')(ctx); // trying to track down a bug where sometimes removing an el leaves unexpected key
+//require('./test-race-order-bug.js')(ctx); // trying to track down a bug where sometimes removing an el leaves unexpected key
