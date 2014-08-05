@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "//": "passing -l here to avoid (buggy?) global leak detection",
-    "test": "node_modules/lab/bin/lab -v -l"
+    "test": "node_modules/lab/bin/lab -v -l test/index.js"
   },
   "repository": {
     "type": "git",
