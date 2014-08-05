@@ -28,6 +28,7 @@ module.exports = {
 
 				PatternFactory.update(patternModel.key, {rows: newRows}, function(err, newModel) {
 					if (handlingError(err, reply)) return;
+					console.log('created a new patternRow: ' + rowModel.key);
 					reply(rowModel);
 				});
 			});

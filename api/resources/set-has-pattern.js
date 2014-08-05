@@ -31,6 +31,7 @@ module.exports = {
 
 				SetFactory.update(setModel.key, {patterns: newPatterns}, function(err, newModel) {
 					if (handlingError(err, reply)) return;
+					console.log('created a new pattern: ' + patternModel.key);
 					reply(patternModel);
 				});
 			});

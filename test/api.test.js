@@ -271,6 +271,7 @@ describe('set-api-pool-entry', function() {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.volume).to.equal(0.5);
 			poolEntryId2 = res.result.key;
+			console.log('poolEntryId1: ' + poolEntryId1 + ' poolEntryId2: ' + poolEntryId2);
 			server.inject({method: 'get', url: baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.pool.length).to.equal(2);
@@ -457,6 +458,7 @@ describe('set-api-pattern', function() {
 
 	var patternRowId2;
 	it('should accept a second pattern row', function(done) {
+		console.log('patternId1: ' + patternId1 + ' patternId2: ' + patternId2);
 		baseSetPatternRowUrl = baseSetPatternUrl + '/' + patternId2 + '/rows';
 		var rowData = {
 			poolEntry: 'test-pool-entry-2',
@@ -469,6 +471,7 @@ describe('set-api-pattern', function() {
 			expect(res.result.steps.length).to.equal(2);
 			expect(res.result.steps[1]).to.equal(8);
 			patternRowId2 = res.result.key;
+			console.log('patternRowId1: ' + patternRowId1 + ' patternRowId2: ' + patternRowId2);
 			server.inject({method: 'get', url: baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.patterns.length).to.equal(1);
