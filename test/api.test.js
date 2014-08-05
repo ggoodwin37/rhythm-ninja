@@ -41,6 +41,7 @@ before(function(done) {
 });
 
 describe('server', function () {
+
 	it('starts a serverInstance', function(done) {
 		expect(server).to.exist;
 		done();
@@ -184,6 +185,7 @@ describe('set-api-set', function () {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
 			expect(res.result.name).to.equal(setName);
+			expect(res.result.song === undefined).to.equal(false);
 
 			setDoc = res.result;
 			console.log('client sees key: ' + setDoc.key);
@@ -197,15 +199,25 @@ describe('set-api-set', function () {
 		server.inject({
 			method: 'put',
 			url: baseSetUrl,
-			payload: JSON.stringify(setDoc)
+			payload: {setInfo: setDoc.setInfo}
 		}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
 			expect(res.result.setInfo.bpm).to.equal(160);
+			expect(res.result.song === undefined).to.equal(false);
 			setDoc = res.result;
 			done();
 		});
 	});
+
+	it('should not have touched data that we didn\'t update', function(done) {
+		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.song === undefined).to.equal(false);
+			done();
+		});
+	});
+
 });
 
 describe('set-api-pool-entry', function() {
@@ -297,6 +309,7 @@ describe('set-api-pool-entry', function() {
 
 
 describe('set-api-pattern', function() {
+
 	it('should start with an empty pattern list on set endpoint', function(done) {
 		expect(setDoc.patterns.length).to.equal(0);
 		server.inject({method: 'get', url: baseSetUrl}, function(res) {
@@ -436,6 +449,7 @@ describe('set-api-pattern', function() {
 				expect(res.result.patterns[0].rows[0].steps.length).to.equal(16);
 				expect(res.result.patterns[0].rows[0].steps[1]).to.equal(1);
 				expect(res.result.patterns[0].rows[0].steps[2]).to.equal(22);
+				setDoc = res.result;
 				done();
 			});
 		});
@@ -477,6 +491,18 @@ describe('set-api-pattern', function() {
 				expect(res.result.rows[0].steps[0]).to.equal(9);
 				done();
 			});
+		});
+	});
+
+});
+
+describe('set-api-song', function() {
+
+	it('should start with an empty song on set endpoint', function(done) {
+		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+			expect(res.statusCode).to.equal(200);
+			expect(res.result.song.rows.length).to.equal(0);
+			done();
 		});
 	});
 
