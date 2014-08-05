@@ -25,6 +25,7 @@ module.exports = {
 
 				SetFactory.update(setModel.key, {pool: newPool}, function(err, newModel) {
 					if (handlingError(err, reply)) return;
+					console.log('created a new poolEntry: ' + poolEntry.key);
 					reply(poolEntry);
 				});
 			});

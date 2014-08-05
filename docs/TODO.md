@@ -4,4 +4,4 @@
 
 - api needs set/<name>/song-entry/<id> crud
 
-
+- intermittent test failure on second pool entry something or other. add some extra logging/tests around this.

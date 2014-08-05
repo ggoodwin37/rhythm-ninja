@@ -6,6 +6,11 @@ var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var async = require('async');
 
 module.exports = {
+	hasMany: [
+		{
+			rows: require('./pattern-has-rows')
+		}
+	],
 	show: function(request, reply) {
 		var patternId = request.params.pattern_id;
 		// TODO: validate set/authenticate
@@ -26,13 +31,34 @@ module.exports = {
 
 				SetFactory.update(setModel.key, {patterns: newPatterns}, function(err, newModel) {
 					if (handlingError(err, reply)) return;
+					console.log('created a new pattern: ' + patternModel.key);
 					reply(patternModel);
 				});
 			});
 		});
 	},
 	update: function(request, reply) {
-		return reply('nyi');
+		var setName = request.params.set_id;
+		var patternId = request.params.pattern_id;
+		var updatedPatternData = request.payload;
+		PatternFactory.get(patternId, function(err, patternModel) {
+			if (handlingError(err, reply)) return;
+			// TODO: consider using extend pattern here instead
+			var mergeObject = {};
+			if (typeof updatedPatternData.name != 'undefined') {
+				mergeObject['name'] = updatedPatternData.name;
+			}
+			if (typeof updatedPatternData.length != 'undefined') {
+				mergeObject['length'] = updatedPatternData.length;
+			}
+			if (typeof updatedPatternData.locked != 'undefined') {
+				mergeObject['locked'] = updatedPatternData.locked;
+			}
+			PatternFactory.update(patternModel.key, mergeObject, function(err, updatedModel) {
+				if (handlingError(err, reply)) return;
+				reply(updatedModel);
+			});
+		});
 	},
 	destroy: function(request, reply) {
 		var setName = request.params.set_id;

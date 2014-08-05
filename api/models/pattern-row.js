@@ -1,15 +1,26 @@
 var dulcimer = require('dulcimer');
+var _ = require('underscore');
 
 var PatternRowFactory = new dulcimer.Model({
 	poolEntry: {
-		type: 'name',
+		type: 'string',
 		required: true,
 		default: 'default'
 	},
 	steps: {
 		type: 'array',
 		required: true,
-		default: [1, 2, 3]  // TODO: just playin
+		default: function() {
+			return [];
+		},
+		// note: dulcimer is doing something strange with array values, wrapping them in another array.
+		//  counteract this with a flatten call when setting this property.
+		processIn: function(inValue) {
+			return _.flatten(inValue);
+		},
+		onSet: function(inValue) {
+			return _.flatten(inValue);
+		}
 	}
 }, {
 	name: 'pattern-row',

@@ -1,4 +1,5 @@
 var dulcimer = require('dulcimer');
+var PatternRowFactory = require('./pattern-row');
 
 var PatternFactory = new dulcimer.Model({
 	name: {
@@ -17,7 +18,7 @@ var PatternFactory = new dulcimer.Model({
 		default: false
 	},
 	rows: {
-		foreignCollection: 'pattern-row'
+		foreignCollection: PatternRowFactory
 	}
 }, {
 	name: 'pattern',
