@@ -14,19 +14,28 @@ var describe = Lab.experiment;
 var it = Lab.test;
 
 
-function getRouteKey(route) {
-	var routeKey = route.method.toLowerCase() + ' ' + route.path;
-	return routeKey;
-}
+// shared test context
+var ctx = {
+	server: null,
+	table: null,
 
-var server, table;
+	setName: null,
+	baseSetUrl: null,
+	setDoc: null,
+
+	getRouteKey: function(route) {
+		var routeKey = route.method.toLowerCase() + ' ' + route.path;
+		return routeKey;
+	}
+
+};
 
 before(function(done) {
-	server = new Hapi.Server(8080, 'localhost');
-	server.pack.register(getApiPlugin(), function (err) {
+	ctx.server = new Hapi.Server(8080, 'localhost');
+	ctx.server.pack.register(getApiPlugin(), function (err) {
 		if (err) throw err;
-		server.start(function () {
-			console.log('test is running at', server.info.uri);
+		ctx.server.start(function () {
+			console.log('test is running at', ctx.server.info.uri);
 
 			// clear all test1Models
 			// TODO: figure out how to clean up non-wipeable stuff (once we start testing real data types)
@@ -43,19 +52,19 @@ before(function(done) {
 describe('server', function () {
 
 	it('starts a serverInstance', function(done) {
-		expect(server).to.exist;
+		expect(ctx.server).to.exist;
 		done();
 	});
 
 	it('has a route table', function(done) {
-		table = server.table();
-		expect(table).to.exist;
+		ctx.table = ctx.server.table();
+		expect(ctx.table).to.exist;
 		done();
 	});
 
 	it('can dump all routes', function(done) {
-		table.forEach(function(route) {
-			console.log('server has route: ' + getRouteKey(route));
+		ctx.table.forEach(function(route) {
+			console.log('server has route: ' + ctx.getRouteKey(route));
 		});
 		done();
 	});
@@ -74,8 +83,8 @@ describe('test-api', function () {
 			'post /api/test1'
 		];
 		expectedRoutes.forEach(function(expectedRoute) {
-			expect(table.some(function(route) {
-				return getRouteKey(route) == expectedRoute;
+			expect(ctx.table.some(function(route) {
+				return ctx.getRouteKey(route) == expectedRoute;
 			})).to.equal(true);
 		});
 		done();
@@ -83,7 +92,7 @@ describe('test-api', function () {
 
 	// this test is causing a count leak, huh? using -l when running tests to avoid this.
 	it('can create a test1 object', function (done) {
-		server.inject({
+		ctx.server.inject({
 			method: 'post',
 			url: '/api/test1',
 			payload: JSON.stringify({testField: test1Name})
@@ -97,7 +106,7 @@ describe('test-api', function () {
 	});
 
 	it('can retrieve test1 object', function (done) {
-		server.inject({
+		ctx.server.inject({
 			method: 'get',
 			url: '/api/test1/' + test1Id
 		}, function (res) {
@@ -109,7 +118,7 @@ describe('test-api', function () {
 	});
 
 	it('can update test1 object', function (done) {
-		server.inject({
+		ctx.server.inject({
 			method: 'put',
 			url: '/api/test1/' + test1Id,
 			payload: JSON.stringify({testField: test1Name + 'mod'})
@@ -122,7 +131,7 @@ describe('test-api', function () {
 	});
 
 	it('should not delete non-existent object', function (done) {
-		server.inject({
+		ctx.server.inject({
 			method: 'delete',
 			url: '/api/test1/' + 'bogus'
 		}, function (res) {
@@ -132,7 +141,7 @@ describe('test-api', function () {
 	});
 
 	it('can delete test1 object', function (done) {
-		server.inject({
+		ctx.server.inject({
 			method: 'delete',
 			url: '/api/test1/' + test1Id
 		}, function (res) {
@@ -142,7 +151,7 @@ describe('test-api', function () {
 	});
 
 	it('should not find the object we just deleted', function (done) {
-		server.inject({
+		ctx.server.inject({
 			method: 'get',
 			url: '/api/test1/' + test1Id
 		}, function (res) {
@@ -152,15 +161,15 @@ describe('test-api', function () {
 	});
 });
 
-var setName = 'reserved-test-asdjfjjadsfh';
-var baseSetUrl = '/api/set/' + setName;
-var setDoc;
+ctx.setName = 'reserved-test-asdjfjjadsfh';
+ctx.baseSetUrl = '/api/set/' + ctx.setName;
+ctx.setDoc;
 describe('set-api-set', function () {
 
 	it('should delete any existing test documents', function(done) {
-		server.inject({
+		ctx.server.inject({
 			method: 'delete',
-			url: baseSetUrl
+			url: ctx.baseSetUrl
 		}, function(res) {
 			expect(res.statusCode == 200 || res.statusCode == 404).to.equal(true);
 			done();
@@ -168,9 +177,9 @@ describe('set-api-set', function () {
 	});
 
 	it('should fail to delete a non-existent document', function(done) {
-		server.inject({
+		ctx.server.inject({
 			method: 'delete',
-			url: baseSetUrl
+			url: ctx.baseSetUrl
 		}, function(res) {
 			expect(res.statusCode).to.equal(404);
 			done();
@@ -178,40 +187,40 @@ describe('set-api-set', function () {
 	});
 
 	it('should lazy create and return a new document', function(done) {
-		server.inject({
+		ctx.server.inject({
 			method: 'get',
-			url: baseSetUrl
+			url: ctx.baseSetUrl
 		}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
-			expect(res.result.name).to.equal(setName);
+			expect(res.result.name).to.equal(ctx.setName);
 			expect(res.result.song === undefined).to.equal(false);
 
-			setDoc = res.result;
-			console.log('client sees key: ' + setDoc.key);
+			ctx.setDoc = res.result;
+			console.log('client sees key: ' + ctx.setDoc.key);
 
 			done();
 		});
 	});
 
 	it('should handle updates to set data', function(done) {
-		setDoc.setInfo.bpm = 160;
-		server.inject({
+		ctx.setDoc.setInfo.bpm = 160;
+		ctx.server.inject({
 			method: 'put',
-			url: baseSetUrl,
-			payload: {setInfo: setDoc.setInfo}
+			url: ctx.baseSetUrl,
+			payload: {setInfo: ctx.setDoc.setInfo}
 		}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result).to.be.an('object');
 			expect(res.result.setInfo.bpm).to.equal(160);
 			expect(res.result.song === undefined).to.equal(false);
-			setDoc = res.result;
+			ctx.setDoc = res.result;
 			done();
 		});
 	});
 
 	it('should not have touched data that we didn\'t update', function(done) {
-		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+		ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.song === undefined).to.equal(false);
 			done();
@@ -223,16 +232,16 @@ describe('set-api-set', function () {
 describe('set-api-pool-entry', function() {
 
 	it('should start with an empty pool on set endpoint', function(done) {
-		expect(setDoc.pool.length).to.equal(0);
-		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+		expect(ctx.setDoc.pool.length).to.equal(0);
+		ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.pool.length).to.equal(0);
-			setDoc = res.result;
+			ctx.setDoc = res.result;
 			done();
 		});
 	});
 
-	var baseSetPoolUrl = '/api/set/' + setName + '/poolEntry';
+	var baseSetPoolUrl = '/api/set/' + ctx.setName + '/poolEntry';
 	var poolEntryId1;
 	it('should allow me to create a new poolEntry', function(done) {
 		var poolEntry = {
@@ -241,7 +250,7 @@ describe('set-api-pool-entry', function() {
 			sampleType: 'local',
 			sampleId: 'abcd-efgh'
 		};
-		server.inject({method: 'post', url: baseSetPoolUrl, payload: JSON.stringify(poolEntry)}, function(res) {
+		ctx.server.inject({method: 'post', url: baseSetPoolUrl, payload: JSON.stringify(poolEntry)}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.volume).to.equal(0.75);
 			poolEntryId1 = res.result.key;
@@ -250,7 +259,7 @@ describe('set-api-pool-entry', function() {
 	});
 
 	it('should have added the new pool entry to the set for me', function(done) {
-		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+		ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.pool.length).to.equal(1);
 			expect(res.result.pool[0].key).to.equal(poolEntryId1);
@@ -267,12 +276,12 @@ describe('set-api-pool-entry', function() {
 			sampleType: 'local',
 			sampleId: 'abcd-efgh'
 		};
-		server.inject({method: 'post', url: baseSetPoolUrl, payload: JSON.stringify(poolEntry)}, function(res) {
+		ctx.server.inject({method: 'post', url: baseSetPoolUrl, payload: JSON.stringify(poolEntry)}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.volume).to.equal(0.5);
 			poolEntryId2 = res.result.key;
 			console.log('poolEntryId1: ' + poolEntryId1 + ' poolEntryId2: ' + poolEntryId2);
-			server.inject({method: 'get', url: baseSetUrl}, function(res) {
+			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.pool.length).to.equal(2);
 				expect(res.result.pool[1].key).to.equal(poolEntryId2);
@@ -283,45 +292,44 @@ describe('set-api-pool-entry', function() {
 	});
 
 	it('should allow me to delete the first poolEntry now', function(done) {
-		server.inject({method: 'delete', url: baseSetPoolUrl + '/' + poolEntryId1}, function(res) {
+		ctx.server.inject({method: 'delete', url: baseSetPoolUrl + '/' + poolEntryId1}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			done();
 		});
 	});
 
 	it('should fail to delete the thing we just deleted', function(done) {
-		server.inject({method: 'delete', url: baseSetPoolUrl + '/' + poolEntryId1}, function(res) {
+		ctx.server.inject({method: 'delete', url: baseSetPoolUrl + '/' + poolEntryId1}, function(res) {
 			expect(res.statusCode).to.equal(404);
 			done();
 		});
 	});
 
 	it('should have removed the deleted pool entry from the set', function(done) {
-		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+		ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.pool.length).to.equal(1);
 			expect(res.result.pool[0].key).to.equal(poolEntryId2);
 			expect(res.result.pool[0].volume).to.equal(0.5);
-			setDoc = res.result;
+			ctx.setDoc = res.result;
 			done();
 		});
 	});
 });
 
-
 describe('set-api-pattern', function() {
 
 	it('should start with an empty pattern list on set endpoint', function(done) {
-		expect(setDoc.patterns.length).to.equal(0);
-		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+		expect(ctx.setDoc.patterns.length).to.equal(0);
+		ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.patterns.length).to.equal(0);
-			setDoc = res.result;
+			ctx.setDoc = res.result;
 			done();
 		});
 	});
 
-	var baseSetPatternUrl = '/api/set/' + setName + '/pattern';
+	var baseSetPatternUrl = '/api/set/' + ctx.setName + '/pattern';
 	var patternId1;
 	it('should allow me to create a new pattern', function(done) {
 		var pattern = {
@@ -329,7 +337,7 @@ describe('set-api-pattern', function() {
 			length: 12,
 			locked: false
 		};
-		server.inject({method: 'post', url: baseSetPatternUrl, payload: JSON.stringify(pattern)}, function(res) {
+		ctx.server.inject({method: 'post', url: baseSetPatternUrl, payload: JSON.stringify(pattern)}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.length).to.equal(12);
 			patternId1 = res.result.key;
@@ -338,7 +346,7 @@ describe('set-api-pattern', function() {
 	});
 
 	it('should create patterns without any rows initially', function(done) {
-		server.inject({method: 'get', url: baseSetPatternUrl + '/' + patternId1}, function(res) {
+		ctx.server.inject({method: 'get', url: baseSetPatternUrl + '/' + patternId1}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.length).to.equal(12);
 			expect(res.result.rows.length).to.equal(0);
@@ -347,7 +355,7 @@ describe('set-api-pattern', function() {
 	});
 
 	it('should have added the new pattern to the set for me', function(done) {
-		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+		ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.patterns.length).to.equal(1);
 			expect(res.result.patterns[0].key).to.equal(patternId1);
@@ -363,11 +371,11 @@ describe('set-api-pattern', function() {
 			length: 14,
 			locked: false
 		};
-		server.inject({method: 'post', url: baseSetPatternUrl, payload: JSON.stringify(pattern)}, function(res) {
+		ctx.server.inject({method: 'post', url: baseSetPatternUrl, payload: JSON.stringify(pattern)}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.length).to.equal(14);
 			patternId2 = res.result.key;
-			server.inject({method: 'get', url: baseSetUrl}, function(res) {
+			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.patterns.length).to.equal(2);
 				expect(res.result.patterns[1].key).to.equal(patternId2);
@@ -378,26 +386,26 @@ describe('set-api-pattern', function() {
 	});
 
 	it('should allow me to delete the first pattern now', function(done) {
-		server.inject({method: 'delete', url: baseSetPatternUrl + '/' + patternId1}, function(res) {
+		ctx.server.inject({method: 'delete', url: baseSetPatternUrl + '/' + patternId1}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			done();
 		});
 	});
 
 	it('should fail to delete the thing we just deleted', function(done) {
-		server.inject({method: 'delete', url: baseSetPatternUrl + '/' + patternId1}, function(res) {
+		ctx.server.inject({method: 'delete', url: baseSetPatternUrl + '/' + patternId1}, function(res) {
 			expect(res.statusCode).to.equal(404);
 			done();
 		});
 	});
 
 	it('should have removed the deleted pattern from the set', function(done) {
-		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+		ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.patterns.length).to.equal(1);
 			expect(res.result.patterns[0].key).to.equal(patternId2);
 			expect(res.result.patterns[0].length).to.equal(14);
-			setDoc = res.result;
+			ctx.setDoc = res.result;
 			done();
 		});
 	});
@@ -407,7 +415,7 @@ describe('set-api-pattern', function() {
 			name: 'pattern-updated',
 			length: 16
 		};
-		server.inject({method: 'put', url: baseSetPatternUrl + '/' + patternId2, payload: JSON.stringify(patternData)}, function(res) {
+		ctx.server.inject({method: 'put', url: baseSetPatternUrl + '/' + patternId2, payload: JSON.stringify(patternData)}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.length).to.equal(16);
 			expect(res.result.name).to.equal('pattern-updated');
@@ -423,7 +431,7 @@ describe('set-api-pattern', function() {
 			poolEntry: 'test-pool-entry',
 			steps: [0, 101, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 		};
-		server.inject({method: 'post', url: baseSetPatternRowUrl, payload: JSON.stringify(rowData)}, function(res) {
+		ctx.server.inject({method: 'post', url: baseSetPatternRowUrl, payload: JSON.stringify(rowData)}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.poolEntry).to.equal('test-pool-entry');
 			expect(res.result.steps.length).to.equal(16);
@@ -437,12 +445,12 @@ describe('set-api-pattern', function() {
 		var rowData = {
 			steps: [0, 1, 22, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 		};
-		server.inject({method: 'put', url: baseSetPatternRowUrl + '/' + patternRowId1, payload: JSON.stringify(rowData)}, function(res) {
+		ctx.server.inject({method: 'put', url: baseSetPatternRowUrl + '/' + patternRowId1, payload: JSON.stringify(rowData)}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.poolEntry).to.equal('test-pool-entry');
 			expect(res.result.steps.length).to.equal(16);
 			expect(res.result.steps[1]).to.equal(1);
-			server.inject({method: 'get', url: baseSetUrl}, function(res) {
+			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.patterns.length).to.equal(1);
 				expect(res.result.patterns[0].rows.length).to.equal(1);
@@ -450,7 +458,7 @@ describe('set-api-pattern', function() {
 				expect(res.result.patterns[0].rows[0].steps.length).to.equal(16);
 				expect(res.result.patterns[0].rows[0].steps[1]).to.equal(1);
 				expect(res.result.patterns[0].rows[0].steps[2]).to.equal(22);
-				setDoc = res.result;
+				ctx.setDoc = res.result;
 				done();
 			});
 		});
@@ -465,14 +473,14 @@ describe('set-api-pattern', function() {
 			length: 2,
 			steps: [9, 8]  // not consistent since pattern now has length 16, but not expecting any code to catch this yet.
 		};
-		server.inject({method: 'post', url: baseSetPatternRowUrl, payload: JSON.stringify(rowData)}, function(res) {
+		ctx.server.inject({method: 'post', url: baseSetPatternRowUrl, payload: JSON.stringify(rowData)}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.poolEntry).to.equal('test-pool-entry-2');
 			expect(res.result.steps.length).to.equal(2);
 			expect(res.result.steps[1]).to.equal(8);
 			patternRowId2 = res.result.key;
 			console.log('patternRowId1: ' + patternRowId1 + ' patternRowId2: ' + patternRowId2);
-			server.inject({method: 'get', url: baseSetUrl}, function(res) {
+			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.patterns.length).to.equal(1);
 				expect(res.result.patterns[0].rows.length).to.equal(2);
@@ -485,9 +493,9 @@ describe('set-api-pattern', function() {
 	});
 
 	it('should let me delete the first pattern row', function(done) {
-		server.inject({method: 'delete', url: baseSetPatternRowUrl + '/' + patternRowId1}, function(res) {
+		ctx.server.inject({method: 'delete', url: baseSetPatternRowUrl + '/' + patternRowId1}, function(res) {
 			expect(res.statusCode).to.equal(200);
-			server.inject({method: 'get', url: baseSetPatternUrl + '/' + patternId2}, function(res) {
+			ctx.server.inject({method: 'get', url: baseSetPatternUrl + '/' + patternId2}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.rows.length).to.equal(1);
 				expect(res.result.rows[0].key).to.equal(patternRowId2);
@@ -502,22 +510,22 @@ describe('set-api-pattern', function() {
 describe('set-api-song', function() {
 
 	it('should start with an empty song on set endpoint', function(done) {
-		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+		ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.song.rows.length).to.equal(0);
-			setDoc = res.result;
+			ctx.setDoc = res.result;
 			done();
 		});
 	});
 
-	var baseSetSongUrl = '/api/setSong/' + setName;
+	var baseSetSongUrl = '/api/setSong/' + ctx.setName;
 
 	it('can modify song-level data', function(done) {
-		expect(setDoc.song.locked).to.equal(false);
-		server.inject({method: 'put', url: baseSetSongUrl, payload: {locked: true}}, function(res) {
+		expect(ctx.setDoc.song.locked).to.equal(false);
+		ctx.server.inject({method: 'put', url: baseSetSongUrl, payload: {locked: true}}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.locked).to.equal(true);
-			server.inject({method: 'get', url: baseSetUrl}, function(res) {
+			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.song.locked).to.equal(true);
 				done();
@@ -533,7 +541,7 @@ describe('set-api-song', function() {
 			len: 2,
 			count: 3
 		};
-		server.inject({method: 'post', url: baseSetSongUrl + '/songRows', payload: songRowData}, function(res) {
+		ctx.server.inject({method: 'post', url: baseSetSongUrl + '/songRows', payload: songRowData}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.offset).to.equal(1);
 			expect(res.result.count).to.equal(3);
@@ -543,11 +551,11 @@ describe('set-api-song', function() {
 	});
 
 	it('should update set and song when I do that', function(done) {
-		server.inject({method: 'get', url: baseSetSongUrl}, function(res) {
+		ctx.server.inject({method: 'get', url: baseSetSongUrl}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.rows.length).to.equal(1);
 			expect(res.result.rows[0].len).to.equal(2);
-			server.inject({method: 'get', url: baseSetUrl}, function(res) {
+			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.song.rows.length).to.equal(1);
 				expect(res.result.song.rows[0].patternId).to.equal('some-pattern');
@@ -564,7 +572,7 @@ describe('set-api-song', function() {
 			len: 22,
 			count: 33
 		};
-		server.inject({method: 'post', url: baseSetSongUrl + '/songRows', payload: songRowData}, function(res) {
+		ctx.server.inject({method: 'post', url: baseSetSongUrl + '/songRows', payload: songRowData}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.offset).to.equal(11);
 			expect(res.result.count).to.equal(33);
@@ -574,14 +582,14 @@ describe('set-api-song', function() {
 	});
 
 	it('doesn\'t mind deleting the first song row', function(done) {
-		server.inject({method: 'delete', url: baseSetSongUrl + '/songRows/' + songRowId1}, function(res) {
+		ctx.server.inject({method: 'delete', url: baseSetSongUrl + '/songRows/' + songRowId1}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			done();
 		});
 	});
 
 	it('should update set view of song after deleting that row', function(done) {
-		server.inject({method: 'get', url: baseSetUrl}, function(res) {
+		ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 			expect(res.statusCode).to.equal(200);
 			expect(res.result.song.rows.length).to.equal(1);
 			expect(res.result.song.rows[0].key).to.equal(songRowId2);
@@ -590,7 +598,7 @@ describe('set-api-song', function() {
 	});
 
 	it('should 404 when trying to delete the thing we just deleted', function(done) {
-		server.inject({method: 'delete', url: baseSetSongUrl + '/songRows/' + songRowId1}, function(res) {
+		ctx.server.inject({method: 'delete', url: baseSetSongUrl + '/songRows/' + songRowId1}, function(res) {
 			expect(res.statusCode).to.equal(404);
 			done();
 		});
@@ -600,13 +608,13 @@ describe('set-api-song', function() {
 		var updatedData = {
 			len: 55
 		};
-		server.inject({method: 'put', url: baseSetSongUrl + '/songRows/' + songRowId2, payload: JSON.stringify(updatedData)}, function(res) {
+		ctx.server.inject({method: 'put', url: baseSetSongUrl + '/songRows/' + songRowId2, payload: JSON.stringify(updatedData)}, function(res) {
 			expect(res.statusCode).to.equal(200);
-			server.inject({method: 'get', url: baseSetSongUrl + '/songRows/' + songRowId2}, function(res) {
+			ctx.server.inject({method: 'get', url: baseSetSongUrl + '/songRows/' + songRowId2}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.patternId).to.equal('some-other-pattern');
 				expect(res.result.len).to.equal(55);
-				server.inject({method: 'get', url: baseSetUrl}, function(res) {
+				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.song.rows[0].len).to.equal(55);
 					done();
