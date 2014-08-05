@@ -20,6 +20,10 @@ var ctx = {
 		var routeKey = route.method.toLowerCase() + ' ' + route.path;
 		return routeKey;
 	},
+	getSet: function(done) {
+		if (!this.server || !this.baseSetUrl) return done({bad:'fail'}, null);
+		this.server.inject({method: 'get', url: this.baseSetUrl}, done);
+	},
 	inspect: require('eyes').inspector({hideFunctions: true, maxLength: null})
 };
 
@@ -48,3 +52,4 @@ require('./test-set-api-set.js')(ctx);
 require('./test-set-api-pool-entry.js')(ctx);
 require('./test-set-api-pattern.js')(ctx);
 require('./test-set-api-song.js')(ctx);
+require('./test-race-order-bug.js')(ctx); // trying to track down a bug where sometimes removing an el leaves unexpected key
