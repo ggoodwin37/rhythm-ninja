@@ -14,13 +14,18 @@ module.exports = function(ctx) {
 		it('should be cool to delete all pool entries', function(done) {
 			ctx.getSet(function(res) {
 				console.log('set has num entries: ' + res.result.pool.length);
+				var taskList = [];
 				res.result.pool.forEach(function(poolEntry) {
-					console.log('delete ' + poolEntry.key);
-					ctx.server.inject({method: 'delete', url: ctx.baseSetUrl + '/poolEntry/' + poolEntry.key}, function(res) {
-						expect(res.statusCode).to.equal(200);
+					taskList.push(function(callback) {
+						ctx.server.inject({method: 'delete', url: ctx.baseSetUrl + '/poolEntry/' + poolEntry.key}, function(res) {
+							expect(res.statusCode).to.equal(200);
+							callback();
+						});
 					});
 				});
-				done();
+				async.series(taskList, function() {
+					done();
+				});
 			});
 		});
 
@@ -32,7 +37,6 @@ module.exports = function(ctx) {
 			});
 		});
 
-		return;
 		var numTries = 100;
 		it('will now try to reproduce the race condition with n=' + numTries, function(done) {
 			function runloop() {
