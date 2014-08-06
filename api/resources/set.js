@@ -39,6 +39,14 @@ module.exports = function(app) {
 				pattern: require('./set-has-pattern')(app)
 			}
 		],
+		index: {
+			handler: function(request, reply) {
+				SetFactory.all(function(err, models, pagination) {
+					if (handlingError(err, reply)) return;
+					reply(models.map(function(model) { return model.toJSON(); }));
+				});
+			}
+		},
 		show: {
 			handler: function(request, reply) {
 				var setName = request.params.set_id;

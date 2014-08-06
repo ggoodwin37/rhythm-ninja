@@ -6,7 +6,6 @@ module.exports = function(app) {
 		sample: require('./resources/sample')(app)
 	};
 
-	// TODO gideong: where do we consume this? might have to move
 	var dulcimer = require('dulcimer');
 	dulcimer.connect({
 		type: 'level',

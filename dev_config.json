@@ -7,6 +7,7 @@
 		'test--show-config': false,
 		'test--all-api-routes': false,
 		'test--list-collections': false,
+		'test--show-all-sets': true,
 		'api--create-stuff': false
 	}
 }
