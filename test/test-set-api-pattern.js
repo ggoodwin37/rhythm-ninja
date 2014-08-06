@@ -157,7 +157,7 @@ module.exports = function(ctx) {
 
 		var patternRowId2;
 		it('should accept a second pattern row', function(done) {
-			if(ctx.app.config.logThings['test--all-api-routes']) {
+			if(ctx.app.config.logThings['test--list-collections']) {
 				console.log('patternId1: ' + patternId1 + ' patternId2: ' + patternId2);
 			}
 			baseSetPatternRowUrl = baseSetPatternUrl + '/' + patternId2 + '/rows';
@@ -172,7 +172,7 @@ module.exports = function(ctx) {
 				expect(res.result.steps.length).to.equal(2);
 				expect(res.result.steps[1]).to.equal(8);
 				patternRowId2 = res.result.key;
-				if(ctx.app.config.logThings['test--all-api-routes']) {
+				if(ctx.app.config.logThings['test--list-collections']) {
 					console.log('patternRowId1: ' + patternRowId1 + ' patternRowId2: ' + patternRowId2);
 				}
 				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {

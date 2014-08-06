@@ -33,7 +33,7 @@ module.exports = function(ctx) {
 
 		it('can dump all routes', function(done) {
 			ctx.table.forEach(function(route) {
-				if(ctx.app.config.logThings['test--all-api-routes']) {
+				if(ctx.app.config.logThings['test--show-all-api-routes']) {
 					console.log('server has route: ' + ctx.getRouteKey(route));
 				}
 			});
