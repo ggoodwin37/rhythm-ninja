@@ -1,5 +1,6 @@
 var Lab = require('lab');
 var Hapi = require('hapi');
+var config = require('getconfig');
 
 var getApiPlugin = require('../api/api');
 var Test1Model = require('../api/models/test1');
@@ -16,6 +17,8 @@ var ctx = {
 	baseSetUrl: null,
 	setDoc: null,
 
+	app: {config: config},
+
 	getRouteKey: function(route) {
 		var routeKey = route.method.toLowerCase() + ' ' + route.path;
 		return routeKey;
@@ -29,7 +32,7 @@ var ctx = {
 
 before(function(done) {
 	ctx.server = new Hapi.Server(8080, 'localhost');
-	ctx.server.pack.register(getApiPlugin(), function (err) {
+	ctx.server.pack.register(getApiPlugin(ctx.app), function (err) {
 		if (err) throw err;
 		ctx.server.start(function () {
 			console.log('test is running at', ctx.server.info.uri);

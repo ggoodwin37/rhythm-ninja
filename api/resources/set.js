@@ -45,7 +45,11 @@ module.exports = function(app) {
 				SetFactory.findByIndex('name', setName, function(err, result) {
 					if (err) {
 						if (err.type == 'NotFoundError') {
-							console.log('lazy creating set with name: ' + setName);
+
+							if (app.config.logThings['api--create-stuff']) {
+								console.log('lazy creating set with name: ' + setName);
+							}
+
 							return createSet(setName, reply);
 						}
 						return reply(new Error(err));

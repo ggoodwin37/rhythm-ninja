@@ -29,7 +29,11 @@ module.exports = function(app) {
 
 					PatternFactory.update(patternModel.key, {rows: newRows}, function(err, newModel) {
 						if (handlingError(err, reply)) return;
-						console.log('created a new patternRow: ' + rowModel.key);
+
+						if (app.config.logThings['api--create-stuff']) {
+							console.log('created a new patternRow: ' + rowModel.key);
+						}
+
 						reply(rowModel);
 					});
 				});

@@ -1,4 +1,7 @@
 module.exports = function(app) {
+	var inspect = require('eyes').inspector();
+	inspect(app);
+
 	var resources = {
 		test1: require('./resources/test1'),
 		set: require('./resources/set')(app),

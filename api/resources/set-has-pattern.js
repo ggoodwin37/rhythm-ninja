@@ -32,7 +32,11 @@ module.exports = function(app) {
 
 					SetFactory.update(setModel.key, {patterns: newPatterns}, function(err, newModel) {
 						if (handlingError(err, reply)) return;
-						console.log('created a new pattern: ' + patternModel.key);
+
+						if (app.config.logThings['api--create-stuff']) {
+							console.log('created a new pattern: ' + patternModel.key);
+						}
+
 						reply(patternModel);
 					});
 				});
