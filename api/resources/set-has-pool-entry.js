@@ -11,7 +11,7 @@ module.exports = function(app) {
 			// TODO: validate set/authenticate
 			PoolEntryFactory.get(poolEntryId, function(err, poolEntryModel) {
 				if (handlingError(err, reply)) return;
-				return reply(poolEntryModel);
+				return reply(poolEntryModel.toJSON());
 			});
 		},
 		create: function(request, reply) {
@@ -31,7 +31,7 @@ module.exports = function(app) {
 							console.log('created a new poolEntry: ' + poolEntry.key);
 						}
 
-						reply(poolEntry);
+						reply(poolEntry.toJSON());
 					});
 				});
 			});

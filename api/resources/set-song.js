@@ -15,7 +15,7 @@ module.exports = function(app) {
 				var setName = request.params.setSong_id;
 				SetFactory.findByIndex('name', setName, function(err, setModel) {
 					if (handlingError(err, reply)) return;
-					reply(setModel.song);
+					reply(setModel.song.toJSON());
 				});
 			}
 		},
@@ -31,7 +31,7 @@ module.exports = function(app) {
 					}
 					SongFactory.update(songModel.key, mergeObject, function(err, result) {
 						if (handlingError(err, reply)) return;
-						reply(result);
+						reply(result.toJSON());
 					});
 				});
 			}

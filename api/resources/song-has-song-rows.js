@@ -12,7 +12,7 @@ module.exports = function(app) {
 			// TODO: validate set/authenticate
 			SongRowFactory.get(rowId, function(err, songRowModel) {
 				if (handlingError(err, reply)) return;
-				return reply(songRowModel);
+				return reply(songRowModel.toJSON());
 			});
 		},
 		create: function(request, reply) {
@@ -27,7 +27,7 @@ module.exports = function(app) {
 					newRows.push(rowModel);
 					SongFactory.update(setModel.song.key, {rows: newRows}, function(err, result) {
 						if (handlingError(err, reply)) return;
-						reply(rowModel);
+						reply(rowModel.toJSON());
 					});
 				});
 			})
@@ -52,7 +52,7 @@ module.exports = function(app) {
 				}
 				SongRowFactory.update(rowModel.key, mergeObject, function(err, updatedModel) {
 					if (handlingError(err, reply)) return;
-					reply(updatedModel);
+					reply(updatedModel.toJSON());
 				});
 			});
 		},

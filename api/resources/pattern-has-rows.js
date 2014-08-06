@@ -13,7 +13,7 @@ module.exports = function(app) {
 			// TODO: validate set/authenticate
 			PatternRowFactory.get(rowId, function(err, rowModel) {
 				if (handlingError(err, reply)) return;
-				return reply(rowModel);
+				return reply(rowModel.toJSON());
 			});
 		},
 		create: function(request, reply) {
@@ -34,7 +34,7 @@ module.exports = function(app) {
 							console.log('created a new patternRow: ' + rowModel.key);
 						}
 
-						reply(rowModel);
+						reply(rowModel.toJSON());
 					});
 				});
 			});
@@ -55,7 +55,7 @@ module.exports = function(app) {
 				}
 				PatternRowFactory.update(rowModel.key, mergeObject, function(err, updatedModel) {
 					if (handlingError(err, reply)) return;
-					reply(updatedModel);
+					reply(updatedModel.toJSON());
 				});
 			});
 		},

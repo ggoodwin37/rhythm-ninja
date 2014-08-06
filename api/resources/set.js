@@ -25,7 +25,7 @@ function createSet(setName, reply) {
 		function(callback) { song.save(callback); },
 		function(callback) { setInstance.save(callback); }
 	], function(err, results) {
-		reply(setInstance);
+		reply(setInstance.toJSON());
 	});
 }
 
@@ -50,7 +50,7 @@ module.exports = function(app) {
 		show: {
 			handler: function(request, reply) {
 				var setName = request.params.set_id;
-				SetFactory.findByIndex('name', setName, function(err, result) {
+				SetFactory.findByIndex('name', setName, function(err, setModel) {
 					if (err) {
 						if (err.type == 'NotFoundError') {
 
@@ -62,7 +62,7 @@ module.exports = function(app) {
 						}
 						return reply(new Error(err));
 					}
-					reply(result);
+					reply(setModel.toJSON());
 				});
 			}
 		},
@@ -74,7 +74,7 @@ module.exports = function(app) {
 					if (handlingError(err, reply)) return;
 					SetFactory.update(result.key, request.payload, function(updateErr, updateResult) {
 						if (updateErr) return reply(new Error(updateErr));
-						return reply(updateResult);
+						return reply(updateResult.toJSON());
 					});
 				});
 			}
