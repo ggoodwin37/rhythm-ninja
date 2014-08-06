@@ -14,7 +14,7 @@ module.exports = function(ctx) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result).to.be.an('array');
 
-				if (ctx.app.config.logThings['test--show-all-sets']) {
+				if (ctx.app.config.logThings['test--show-all-models']) {
 					ctx.inspect(res.result);
 				}
 
