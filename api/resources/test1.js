@@ -1,5 +1,6 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var Test1Model = require('../models/test1');
+var handlingError = require('../handling-error');
 
 module.exports = {
 	index: function(request, reply) {
