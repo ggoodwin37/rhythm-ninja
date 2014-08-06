@@ -1,6 +1,11 @@
 var dulcimer = require('dulcimer');
 
 var PoolEntryFactory = new dulcimer.Model({
+	id: {
+		derive: function() {
+			return this.key;
+		}
+	},
 	name: {
 		type: 'string',
 		required: true,

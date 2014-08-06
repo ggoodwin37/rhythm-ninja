@@ -2,6 +2,11 @@ var dulcimer = require('dulcimer');
 var SongRowFactory = require('./song-row');
 
 var SongFactory = new dulcimer.Model({
+	id: {
+		derive: function() {
+			return this.key;
+		}
+	},
 	locked: {
 		type: 'boolean',
 		required: true,

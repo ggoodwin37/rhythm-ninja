@@ -45,7 +45,7 @@ module.exports = function(ctx) {
 
 				ctx.setDoc = res.result;
 				if(ctx.app.config.logThings['test--list-collections']) {
-					console.log('client sees key: ' + ctx.setDoc.key);
+					console.log('client sees set id: ' + ctx.setDoc.id);
 				}
 
 				done();

@@ -31,7 +31,7 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'post', url: baseSetPatternUrl, payload: JSON.stringify(pattern)}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.length).to.equal(12);
-				patternId1 = res.result.key;
+				patternId1 = res.result.id;
 				done();
 			});
 		});
@@ -49,7 +49,7 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.patterns.length).to.equal(1);
-				expect(res.result.patterns[0].key).to.equal(patternId1);
+				expect(res.result.patterns[0].id).to.equal(patternId1);
 				expect(res.result.patterns[0].length).to.equal(12);
 				done();
 			});
@@ -65,11 +65,11 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'post', url: baseSetPatternUrl, payload: JSON.stringify(pattern)}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.length).to.equal(14);
-				patternId2 = res.result.key;
+				patternId2 = res.result.id;
 				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.patterns.length).to.equal(2);
-					expect(res.result.patterns[1].key).to.equal(patternId2);
+					expect(res.result.patterns[1].id).to.equal(patternId2);
 					expect(res.result.patterns[1].length).to.equal(14);
 					done();
 				});
@@ -94,7 +94,7 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.patterns.length).to.equal(1);
-				expect(res.result.patterns[0].key).to.equal(patternId2);
+				expect(res.result.patterns[0].id).to.equal(patternId2);
 				expect(res.result.patterns[0].length).to.equal(14);
 				ctx.setDoc = res.result;
 				done();
@@ -127,7 +127,7 @@ module.exports = function(ctx) {
 				expect(res.result.poolEntry).to.equal('test-pool-entry');
 				expect(res.result.steps.length).to.equal(16);
 				expect(res.result.steps[1]).to.equal(101);
-				patternRowId1 = res.result.key;
+				patternRowId1 = res.result.id;
 				done();
 			});
 		});
@@ -171,7 +171,7 @@ module.exports = function(ctx) {
 				expect(res.result.poolEntry).to.equal('test-pool-entry-2');
 				expect(res.result.steps.length).to.equal(2);
 				expect(res.result.steps[1]).to.equal(8);
-				patternRowId2 = res.result.key;
+				patternRowId2 = res.result.id;
 				if(ctx.app.config.logThings['test--list-collections']) {
 					console.log('patternRowId1: ' + patternRowId1 + ' patternRowId2: ' + patternRowId2);
 				}
@@ -179,7 +179,7 @@ module.exports = function(ctx) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.patterns.length).to.equal(1);
 					expect(res.result.patterns[0].rows.length).to.equal(2);
-					expect(res.result.patterns[0].rows[1].key).to.equal(patternRowId2);
+					expect(res.result.patterns[0].rows[1].id).to.equal(patternRowId2);
 					expect(res.result.patterns[0].rows[1].steps.length).to.equal(2);
 					expect(res.result.patterns[0].rows[1].steps[0]).to.equal(9);
 					done();
@@ -193,7 +193,7 @@ module.exports = function(ctx) {
 				ctx.server.inject({method: 'get', url: baseSetPatternUrl + '/' + patternId2}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.rows.length).to.equal(1);
-					expect(res.result.rows[0].key).to.equal(patternRowId2);
+					expect(res.result.rows[0].id).to.equal(patternRowId2);
 					expect(res.result.rows[0].steps[0]).to.equal(9);
 					done();
 				});

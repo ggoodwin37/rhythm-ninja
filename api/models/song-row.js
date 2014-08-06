@@ -1,6 +1,11 @@
 var dulcimer = require('dulcimer');
 
 var SongRowFactory = new dulcimer.Model({
+	id: {
+		derive: function() {
+			return this.key;
+		}
+	},
 	patternId: {
 		type: 'string',
 		required: true,
