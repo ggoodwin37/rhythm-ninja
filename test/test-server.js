@@ -1,5 +1,6 @@
 module.exports = function(ctx) {
 	var Lab = require('lab');
+	var config = require('getconfig');
 
 	// Test shortcuts
 	var expect = Lab.expect;
@@ -22,8 +23,12 @@ module.exports = function(ctx) {
 		});
 
 		it('can dump all routes', function(done) {
+			var inspect = require('eyes').inspector({maxLength: null});
+			inspect(config);
 			ctx.table.forEach(function(route) {
-				console.log('server has route: ' + ctx.getRouteKey(route));
+				if(config.logThings['test--all-api-routes']) {
+					console.log('server has route: ' + ctx.getRouteKey(route));
+				}
 			});
 			done();
 		});

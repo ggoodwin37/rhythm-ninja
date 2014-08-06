@@ -4,6 +4,10 @@ var getApiPlugin = require('./api/api');
 
 function startServerInstance(done) {
 
+	var app = {
+		config: config
+	};
+
 	var server = new hapi.Server(config.serverPort, config.serverHost, {
 		// not using any server views right now.
 		// views: {
@@ -51,7 +55,7 @@ function startServerInstance(done) {
 		}
 	];
 
-	serverPackList.push(getApiPlugin());
+	serverPackList.push(getApiPlugin(app));
 
 	server.pack.register(serverPackList, function (err) {
 		if (err) throw err;

@@ -29,53 +29,55 @@ function createSet(setName, reply) {
 	});
 }
 
-module.exports = {
-	hasMany: [
-		{
-			poolEntry: require('./set-has-pool-entry')
-		},
-		{
-			pattern: require('./set-has-pattern')
-		}
-	],
-	show: {
-		handler: function(request, reply) {
-			var setName = request.params.set_id;
-			SetFactory.findByIndex('name', setName, function(err, result) {
-				if (err) {
-					if (err.type == 'NotFoundError') {
-						console.log('lazy creating set with name: ' + setName);
-						return createSet(setName, reply);
+module.exports = function(app) {
+	return {
+		hasMany: [
+			{
+				poolEntry: require('./set-has-pool-entry')(app)
+			},
+			{
+				pattern: require('./set-has-pattern')(app)
+			}
+		],
+		show: {
+			handler: function(request, reply) {
+				var setName = request.params.set_id;
+				SetFactory.findByIndex('name', setName, function(err, result) {
+					if (err) {
+						if (err.type == 'NotFoundError') {
+							console.log('lazy creating set with name: ' + setName);
+							return createSet(setName, reply);
+						}
+						return reply(new Error(err));
 					}
-					return reply(new Error(err));
-				}
-				reply(result);
-			});
-		}
-	},
-	update: {
-		handler: function(request, reply) {
-			// TODO: does this handle updating children as well?
-			var setName = request.params.set_id;
-			SetFactory.findByIndex('name', setName, function(err, result) {
-				if (handlingError(err, reply)) return;
-				SetFactory.update(result.key, request.payload, function(updateErr, updateResult) {
-					if (updateErr) return reply(new Error(updateErr));
-					return reply(updateResult);
+					reply(result);
 				});
-			});
-		}
-	},
-	destroy: {
-		handler: function(request, reply) {
-			var setName = request.params.set_id;
-			SetFactory.findByIndex('name', setName, function(err, result) {
-				if (handlingError(err, reply)) return;
-				result['delete'](function(deleteErr) {
-					if (deleteErr) return reply(new Error(deleteErr));
-					return reply('ok');
+			}
+		},
+		update: {
+			handler: function(request, reply) {
+				// TODO: does this handle updating children as well?
+				var setName = request.params.set_id;
+				SetFactory.findByIndex('name', setName, function(err, result) {
+					if (handlingError(err, reply)) return;
+					SetFactory.update(result.key, request.payload, function(updateErr, updateResult) {
+						if (updateErr) return reply(new Error(updateErr));
+						return reply(updateResult);
+					});
 				});
-			});
+			}
+		},
+		destroy: {
+			handler: function(request, reply) {
+				var setName = request.params.set_id;
+				SetFactory.findByIndex('name', setName, function(err, result) {
+					if (handlingError(err, reply)) return;
+					result['delete'](function(deleteErr) {
+						if (deleteErr) return reply(new Error(deleteErr));
+						return reply('ok');
+					});
+				});
+			}
 		}
-	}
+	};
 };

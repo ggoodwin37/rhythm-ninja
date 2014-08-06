@@ -1,5 +1,11 @@
 {
 	"isDev": true,
 	"serverHost": "localhost",
-	"serverPort": 8080
+	"serverPort": 8080,
+
+	logThings: {
+		'test--all-api-routes': false,
+		'test--list-collections': false,
+		'api--create-stuff': false
+	}
 }
