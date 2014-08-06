@@ -1,29 +1,30 @@
 ```
-   get /api/set/{set_id}
-   get /api/test1/{test1_id}
-   get /api/sample/{sample_id}
-   get /api/setSong/{setSong_id}
-   get /api/set/{set_id}/pattern/{pattern_id}
-   get /api/set/{set_id}/poolEntry/{poolEntry_id}
-   get /api/setSong/{setSong_id}/songRows/{songRow_id}
-   get /api/set/{set_id}/pattern/{pattern_id}/rows/{row_id}
-  post /api/test1
-  post /api/sample
-  post /api/set/{set_id}/pattern
-  post /api/set/{set_id}/poolEntry
-  post /api/setSong/{setSong_id}/songRows
-  post /api/set/{set_id}/pattern/{pattern_id}/rows
-   put /api/set/{set_id}
-   put /api/test1/{test1_id}
-   put /api/setSong/{setSong_id}
-   put /api/set/{set_id}/pattern/{pattern_id}
-   put /api/setSong/{setSong_id}/songRows/{songRow_id}
-   put /api/set/{set_id}/pattern/{pattern_id}/rows/{row_id}
-delete /api/set/{set_id}
-delete /api/test1/{test1_id}
-delete /api/sample/{sample_id}
-delete /api/set/{set_id}/pattern/{pattern_id}
-delete /api/set/{set_id}/poolEntry/{poolEntry_id}
-delete /api/setSong/{setSong_id}/songRows/{songRow_id}
-delete /api/set/{set_id}/pattern/{pattern_id}/rows/{row_id}
+get		/api/set
+get		/api/set/{set_id}
+get		/api/test1/{test1_id}
+get		/api/sample/{sample_id}
+get		/api/setSong/{setSong_id}
+get		/api/set/{set_id}/pattern/{pattern_id}
+get		/api/set/{set_id}/poolEntry/{poolEntry_id}
+get		/api/setSong/{setSong_id}/songRows/{songRow_id}
+get		/api/set/{set_id}/pattern/{pattern_id}/rows/{row_id}
+put		/api/set/{set_id}
+put		/api/test1/{test1_id}
+put		/api/setSong/{setSong_id}
+put		/api/set/{set_id}/pattern/{pattern_id}
+put		/api/setSong/{setSong_id}/songRows/{songRow_id}
+put		/api/set/{set_id}/pattern/{pattern_id}/rows/{row_id}
+post	/api/test1
+post	/api/sample
+post	/api/set/{set_id}/pattern
+post	/api/set/{set_id}/poolEntry
+post	/api/setSong/{setSong_id}/songRows
+post	/api/set/{set_id}/pattern/{pattern_id}/rows
+delete	/api/set/{set_id}
+delete	/api/test1/{test1_id}
+delete	/api/sample/{sample_id}
+delete	/api/set/{set_id}/pattern/{pattern_id}
+delete	/api/set/{set_id}/poolEntry/{poolEntry_id}
+delete	/api/setSong/{setSong_id}/songRows/{songRow_id}
+delete	/api/set/{set_id}/pattern/{pattern_id}/rows/{row_id}
 ```
