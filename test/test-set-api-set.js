@@ -44,7 +44,9 @@ module.exports = function(ctx) {
 				expect(res.result.song === undefined).to.equal(false);
 
 				ctx.setDoc = res.result;
-				console.log('client sees key: ' + ctx.setDoc.key);
+				if(ctx.app.config.logThings['test--all-api-routes']) {
+					console.log('client sees key: ' + ctx.setDoc.key);
+				}
 
 				done();
 			});

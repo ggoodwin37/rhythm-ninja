@@ -4,8 +4,7 @@
   "description": "Collaborative web drum machine",
   "main": "index.js",
   "scripts": {
-    "//": "passing -l here to avoid (buggy?) global leak detection",
-    "test": "node_modules/lab/bin/lab -v -l test/index.js"
+    "test": "./run-test.sh"
   },
   "repository": {
     "type": "git",

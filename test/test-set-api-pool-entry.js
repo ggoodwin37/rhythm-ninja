@@ -59,7 +59,9 @@ module.exports = function(ctx) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.volume).to.equal(0.5);
 				poolEntryId2 = res.result.key;
-				console.log('poolEntryId1: ' + poolEntryId1 + ' poolEntryId2: ' + poolEntryId2);
+				if(ctx.app.config.logThings['test--all-api-routes']) {
+					console.log('poolEntryId1: ' + poolEntryId1 + ' poolEntryId2: ' + poolEntryId2);
+				}
 				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.pool.length).to.equal(2);

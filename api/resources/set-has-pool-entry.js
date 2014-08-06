@@ -4,65 +4,71 @@ var handlingError = require('../handling-error');
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var async = require('async');
 
-module.exports = {
-	show: function(request, reply) {
-		var poolEntryId = request.params.poolEntry_id;
-		// TODO: validate set/authenticate
-		PoolEntryFactory.get(poolEntryId, function(err, poolEntryModel) {
-			if (handlingError(err, reply)) return;
-			return reply(poolEntryModel);
-		});
-	},
-	create: function(request, reply) {
-		var setName = request.params.set_id;
-		var poolEntry = PoolEntryFactory.create(request.payload);
-		poolEntry.save(function(err) {
-			if (handlingError(err, reply)) return;
-			SetFactory.findByIndex('name', setName, function(err, setModel) {
+module.exports = function(app) {
+	return {
+		show: function(request, reply) {
+			var poolEntryId = request.params.poolEntry_id;
+			// TODO: validate set/authenticate
+			PoolEntryFactory.get(poolEntryId, function(err, poolEntryModel) {
 				if (handlingError(err, reply)) return;
-				var newPool = setModel.pool.slice(0);
-				newPool.push(poolEntry);
-
-				SetFactory.update(setModel.key, {pool: newPool}, function(err, newModel) {
-					if (handlingError(err, reply)) return;
-					console.log('created a new poolEntry: ' + poolEntry.key);
-					reply(poolEntry);
-				});
+				return reply(poolEntryModel);
 			});
-		});
-	},
-	destroy: function(request, reply) {
-		var setName = request.params.set_id;
-		var poolEntryId = request.params.poolEntry_id;
-
-		async.series([
-			function(callback) {
-				// first check the set for any instances of this poolEntryId
+		},
+		create: function(request, reply) {
+			var setName = request.params.set_id;
+			var poolEntry = PoolEntryFactory.create(request.payload);
+			poolEntry.save(function(err) {
+				if (handlingError(err, reply)) return;
 				SetFactory.findByIndex('name', setName, function(err, setModel) {
-					if (handlingError(err, reply)) return callback();
-
-					var newPool = setModel.pool.slice(0).filter(function(thisPoolEl) {
-						return thisPoolEl.key !== poolEntryId;
-					});
+					if (handlingError(err, reply)) return;
+					var newPool = setModel.pool.slice(0);
+					newPool.push(poolEntry);
 
 					SetFactory.update(setModel.key, {pool: newPool}, function(err, newModel) {
-						if (handlingError(err, reply)) return callback();
-						callback();
-					});
-				});
-			},
-			function(callback) {
-				// TODO: validate set/authenticate
-				PoolEntryFactory.get(poolEntryId, function(err, poolEntryModel) {
-					if (handlingError(err, reply)) return callback();
-					poolEntryModel.delete(function(err) {
 						if (handlingError(err, reply)) return;
-						callback();
+
+						if (app.config.logThings['api--create-stuff']) {
+							console.log('created a new poolEntry: ' + poolEntry.key);
+						}
+
+						reply(poolEntry);
 					});
 				});
-			}
-		], function() {
-			reply();
-		});
-	}
+			});
+		},
+		destroy: function(request, reply) {
+			var setName = request.params.set_id;
+			var poolEntryId = request.params.poolEntry_id;
+
+			async.series([
+				function(callback) {
+					// first check the set for any instances of this poolEntryId
+					SetFactory.findByIndex('name', setName, function(err, setModel) {
+						if (handlingError(err, reply)) return callback();
+
+						var newPool = setModel.pool.slice(0).filter(function(thisPoolEl) {
+							return thisPoolEl.key !== poolEntryId;
+						});
+
+						SetFactory.update(setModel.key, {pool: newPool}, function(err, newModel) {
+							if (handlingError(err, reply)) return callback();
+							callback();
+						});
+					});
+				},
+				function(callback) {
+					// TODO: validate set/authenticate
+					PoolEntryFactory.get(poolEntryId, function(err, poolEntryModel) {
+						if (handlingError(err, reply)) return callback();
+						poolEntryModel.delete(function(err) {
+							if (handlingError(err, reply)) return;
+							callback();
+						});
+					});
+				}
+			], function() {
+				reply();
+			});
+		}
+	};
 };

@@ -1,9 +1,9 @@
-module.exports = function() {
+module.exports = function(app) {
 	var resources = {
 		test1: require('./resources/test1'),
-		set: require('./resources/set'),
-		setSong: require('./resources/set-song'),
-		sample: require('./resources/sample')
+		set: require('./resources/set')(app),
+		setSong: require('./resources/set-song')(app),
+		sample: require('./resources/sample')(app)
 	};
 
 	// TODO gideong: where do we consume this? might have to move
