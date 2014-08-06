@@ -7,6 +7,12 @@ var async = require('async');
 
 module.exports = function(app) {
 	return {
+		index: function(request, reply) {
+			SongRowFactory.all(function(err, models, pagination) {
+				if (handlingError(err, reply)) return;
+				reply(models.map(function(model) { return model.toJSON(); }));
+			});
+		},
 		show: function(request, reply) {
 			var rowId = request.params.songRow_id;
 			// TODO: validate set/authenticate

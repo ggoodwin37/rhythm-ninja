@@ -2,6 +2,12 @@ var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var Test1Model = require('../models/test1');
 
 module.exports = {
+	index: function(request, reply) {
+		Test1Model.all(function(err, models, pagination) {
+			if (handlingError(err, reply)) return;
+			reply(models.map(function(model) { return model.toJSON(); }));
+		});
+	},
 	show: {
 		handler: function(request, reply) {
 			var id = request.params.test1_id;

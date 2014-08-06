@@ -6,6 +6,12 @@ var async = require('async');
 
 module.exports = function(app) {
 	return {
+		index: function(request, reply) {
+			PoolEntryFactory.all(function(err, models, pagination) {
+				if (handlingError(err, reply)) return;
+				reply(models.map(function(model) { return model.toJSON(); }));
+			});
+		},
 		show: function(request, reply) {
 			var poolEntryId = request.params.poolEntry_id;
 			// TODO: validate set/authenticate

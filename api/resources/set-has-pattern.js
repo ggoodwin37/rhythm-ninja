@@ -12,6 +12,12 @@ module.exports = function(app) {
 				rows: require('./pattern-has-rows')(app)
 			}
 		],
+		index: function(request, reply) {
+			PatternFactory.all(function(err, models, pagination) {
+				if (handlingError(err, reply)) return;
+				reply(models.map(function(model) { return model.toJSON(); }));
+			});
+		},
 		show: function(request, reply) {
 			var patternId = request.params.pattern_id;
 			// TODO: validate set/authenticate

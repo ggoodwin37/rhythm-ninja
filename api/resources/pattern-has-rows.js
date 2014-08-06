@@ -7,6 +7,12 @@ var async = require('async');
 
 module.exports = function(app) {
 	return {
+		index: function(request, reply) {
+			PatternRowFactory.all(function(err, models, pagination) {
+				if (handlingError(err, reply)) return;
+				reply(models.map(function(model) { return model.toJSON(); }));
+			});
+		},
 		show: function(request, reply) {
 			var patternId = request.params.pattern_id;
 			var rowId = request.params.row_id;
