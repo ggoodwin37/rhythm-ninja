@@ -1,11 +1,13 @@
 var hapi = require('hapi');
 var config = require('getconfig');
+var inspect = require('eyes').inspector({maxLength: null});
 var getApiPlugin = require('./api/api');
 
 function startServerInstance(done) {
 
 	var app = {
-		config: config
+		config: config,
+		inspect: inspect
 	};
 
 	var server = new hapi.Server(config.serverPort, config.serverHost, {
