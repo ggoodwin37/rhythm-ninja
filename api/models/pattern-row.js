@@ -2,7 +2,6 @@ var dulcimer = require('dulcimer');
 var _ = require('underscore');
 
 var PatternRowFactory = new dulcimer.Model({
-	testFlag: require('./testFlag-prop'),
 	id: {
 		derive: function() {
 			return this.key;
