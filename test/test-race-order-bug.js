@@ -16,7 +16,7 @@ module.exports = function(ctx) {
 				var taskList = [];
 				res.result.pool.forEach(function(poolEntry) {
 					taskList.push(function(callback) {
-						ctx.server.inject({method: 'delete', url: ctx.baseSetUrl + '/poolEntry/' + poolEntry.key}, function(res) {
+						ctx.server.inject({method: 'delete', url: ctx.baseSetUrl + '/poolEntry/' + poolEntry.id}, function(res) {
 							expect(res.statusCode).to.equal(200);
 							callback();
 						});
@@ -34,7 +34,7 @@ module.exports = function(ctx) {
 
 		it('is now a smoldering hole in the ground', function(done) {
 			ctx.getSet(function(res) {
-				if (res.result.pool.length >= 1) console.log(res.result.pool[0].key);
+				if (res.result.pool.length >= 1) console.log(res.result.pool[0].id);
 				expect(res.result.pool.length).to.equal(0);
 				done();
 			});
@@ -49,14 +49,14 @@ module.exports = function(ctx) {
 					function(callback) {
 						ctx.server.inject({method: 'post', url: ctx.baseSetUrl + '/poolEntry'}, function(res) {
 							expect(res.statusCode).to.equal(200);
-							entryId1 = res.result.key;
+							entryId1 = res.result.id;
 							callback();
 						});
 					},
 					function(callback) {
 						ctx.server.inject({method: 'post', url: ctx.baseSetUrl + '/poolEntry'}, function(res) {
 							expect(res.statusCode).to.equal(200);
-							entryId2 = res.result.key;
+							entryId2 = res.result.id;
 							callback();
 						});
 					},
@@ -75,7 +75,7 @@ module.exports = function(ctx) {
 				], function() {
 					ctx.getSet(function(res) {
 						expect(res.result.pool.length).to.equal(1);
-						expect(res.result.pool[0].key).to.equal(entryId2);
+						expect(res.result.pool[0].id).to.equal(entryId2);
 						
 						tryNextLoop();
 					});

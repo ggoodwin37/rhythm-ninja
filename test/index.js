@@ -49,10 +49,11 @@ before(function(done) {
 	});
 });
 
-require('./test-server.js')(ctx);
-require('./test-api.js')(ctx);
-require('./test-set-api-set.js')(ctx);
-require('./test-set-api-pool-entry.js')(ctx);
-require('./test-set-api-pattern.js')(ctx);
-require('./test-set-api-song.js')(ctx);
-//require('./test-race-order-bug.js')(ctx); // trying to track down a bug where sometimes removing an el leaves unexpected key
+require('./test-server')(ctx);
+require('./test-api')(ctx);
+require('./test-set-api-set')(ctx);
+require('./test-set-api-pool-entry')(ctx);
+require('./test-set-api-pattern')(ctx);
+require('./test-set-api-song')(ctx);
+//require('./test-race-order-bug')(ctx); // trying to track down a bug where sometimes removing an el leaves unexpected key
+require('./test-set-api-index')(ctx);

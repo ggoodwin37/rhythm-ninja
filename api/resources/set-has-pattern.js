@@ -12,12 +12,18 @@ module.exports = function(app) {
 				rows: require('./pattern-has-rows')(app)
 			}
 		],
+		index: function(request, reply) {
+			PatternFactory.all(function(err, models, pagination) {
+				if (handlingError(err, reply)) return;
+				reply(models.map(function(model) { return model.toJSON(); }));
+			});
+		},
 		show: function(request, reply) {
 			var patternId = request.params.pattern_id;
 			// TODO: validate set/authenticate
 			PatternFactory.get(patternId, function(err, patternModel) {
 				if (handlingError(err, reply)) return;
-				return reply(patternModel);
+				return reply(patternModel.toJSON());
 			});
 		},
 		create: function(request, reply) {
@@ -37,7 +43,7 @@ module.exports = function(app) {
 							console.log('created a new pattern: ' + patternModel.key);
 						}
 
-						reply(patternModel);
+						reply(patternModel.toJSON());
 					});
 				});
 			});
@@ -61,7 +67,7 @@ module.exports = function(app) {
 				}
 				PatternFactory.update(patternModel.key, mergeObject, function(err, updatedModel) {
 					if (handlingError(err, reply)) return;
-					reply(updatedModel);
+					reply(updatedModel.toJSON());
 				});
 			});
 		},

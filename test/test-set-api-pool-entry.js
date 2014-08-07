@@ -32,7 +32,7 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'post', url: baseSetPoolUrl, payload: JSON.stringify(poolEntry)}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.volume).to.equal(0.75);
-				poolEntryId1 = res.result.key;
+				poolEntryId1 = res.result.id;
 				done();
 			});
 		});
@@ -41,7 +41,7 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.pool.length).to.equal(1);
-				expect(res.result.pool[0].key).to.equal(poolEntryId1);
+				expect(res.result.pool[0].id).to.equal(poolEntryId1);
 				expect(res.result.pool[0].volume).to.equal(0.75);
 				done();
 			});
@@ -58,14 +58,14 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'post', url: baseSetPoolUrl, payload: JSON.stringify(poolEntry)}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.volume).to.equal(0.5);
-				poolEntryId2 = res.result.key;
-				if(ctx.app.config.logThings['test--all-api-routes']) {
+				poolEntryId2 = res.result.id;
+				if(ctx.app.config.logThings['test--list-collections']) {
 					console.log('poolEntryId1: ' + poolEntryId1 + ' poolEntryId2: ' + poolEntryId2);
 				}
 				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.pool.length).to.equal(2);
-					expect(res.result.pool[1].key).to.equal(poolEntryId2);
+					expect(res.result.pool[1].id).to.equal(poolEntryId2);
 					expect(res.result.pool[1].volume).to.equal(0.5);
 					done();
 				});
@@ -90,7 +90,7 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.pool.length).to.equal(1);
-				expect(res.result.pool[0].key).to.equal(poolEntryId2);
+				expect(res.result.pool[0].id).to.equal(poolEntryId2);
 				expect(res.result.pool[0].volume).to.equal(0.5);
 				ctx.setDoc = res.result;
 				done();

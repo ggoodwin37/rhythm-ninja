@@ -2,6 +2,11 @@ var dulcimer = require('dulcimer');
 var _ = require('underscore');
 
 var PatternRowFactory = new dulcimer.Model({
+	id: {
+		derive: function() {
+			return this.key;
+		}
+	},
 	poolEntry: {
 		type: 'string',
 		required: true,

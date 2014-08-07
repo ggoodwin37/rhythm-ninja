@@ -46,7 +46,7 @@ module.exports = function(ctx) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.offset).to.equal(1);
 				expect(res.result.count).to.equal(3);
-				songRowId1 = res.result.key;
+				songRowId1 = res.result.id;
 				done();
 			});
 		});
@@ -77,7 +77,7 @@ module.exports = function(ctx) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.offset).to.equal(11);
 				expect(res.result.count).to.equal(33);
-				songRowId2 = res.result.key;
+				songRowId2 = res.result.id;
 				done();
 			});
 		});
@@ -93,7 +93,7 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.song.rows.length).to.equal(1);
-				expect(res.result.song.rows[0].key).to.equal(songRowId2);
+				expect(res.result.song.rows[0].id).to.equal(songRowId2);
 				done();
 			});
 		});

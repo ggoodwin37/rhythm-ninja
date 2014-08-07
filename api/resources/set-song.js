@@ -10,12 +10,18 @@ module.exports = function(app) {
 				songRows: require('./song-has-song-rows.js')(app)
 			}
 		],
+		index: function(request, reply) {
+			SongFactory.all(function(err, models, pagination) {
+				if (handlingError(err, reply)) return;
+				reply(models.map(function(model) { return model.toJSON(); }));
+			});
+		},
 		show: {
 			handler: function(request, reply) {
 				var setName = request.params.setSong_id;
 				SetFactory.findByIndex('name', setName, function(err, setModel) {
 					if (handlingError(err, reply)) return;
-					reply(setModel.song);
+					reply(setModel.song.toJSON());
 				});
 			}
 		},
@@ -31,7 +37,7 @@ module.exports = function(app) {
 					}
 					SongFactory.update(songModel.key, mergeObject, function(err, result) {
 						if (handlingError(err, reply)) return;
-						reply(result);
+						reply(result.toJSON());
 					});
 				});
 			}

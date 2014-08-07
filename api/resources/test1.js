@@ -1,7 +1,14 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var Test1Model = require('../models/test1');
+var handlingError = require('../handling-error');
 
 module.exports = {
+	index: function(request, reply) {
+		Test1Model.all(function(err, models, pagination) {
+			if (handlingError(err, reply)) return;
+			reply(models.map(function(model) { return model.toJSON(); }));
+		});
+	},
 	show: {
 		handler: function(request, reply) {
 			var id = request.params.test1_id;
@@ -12,7 +19,7 @@ module.exports = {
 					}
 					return reply(new Error(err));
 				}
-				reply(result);
+				reply(result.toJSON());
 			});
 		}
 	},
@@ -23,7 +30,7 @@ module.exports = {
 				if (err) {
 					return reply(new Error(err));
 				}
-				reply(test1Instance);
+				reply(test1Instance.toJSON());
 			});
 		}
 	},
@@ -37,7 +44,7 @@ module.exports = {
 					}
 					return reply(new Error(err));
 				}
-				reply(result);
+				reply(result.toJSON());
 			});
 		}
 	},

@@ -1,6 +1,11 @@
 var dulcimer = require('dulcimer');
 
 var SetInfoFactory = new dulcimer.Model({
+	id: {
+		derive: function() {
+			return this.key;
+		}
+	},
 	swing: {
 		type: 'numeric',
 		required: true,
