@@ -1,7 +1,6 @@
-- intermittent test failure on second pool entry something or other. add some extra logging/tests around this.
-  - haven't seen this for a while....added a test for it. timing?
-
 - naming of owned collections in the API isn't perfectly consistent, fix this for maximum analness
+
+- implement check-tree and clean-tree commands. add more commands if needed.
 
 - consider adding some metadata like createdTime, createdBy (user id), testFlag
 

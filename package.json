@@ -4,7 +4,8 @@
   "description": "Collaborative web drum machine",
   "main": "index.js",
   "scripts": {
-    "test": "./run-test.sh"
+    "test": "./run-test.sh",
+    "check-tree": "./run-a-cmd.sh check-tree"
   },
   "repository": {
     "type": "git",
