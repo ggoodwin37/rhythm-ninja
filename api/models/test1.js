@@ -1,6 +1,11 @@
 var dulcimer = require('dulcimer');
 
 var Test1Factory = new dulcimer.Model({
+	test: {
+		type: 'boolean',
+		required: true,
+		default: true
+	},
 	id: {
 		derive: function() {
 			return this.key;

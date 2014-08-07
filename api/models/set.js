@@ -5,6 +5,7 @@ var PatternFactory = require('./pattern');
 var SongFactory = require('./song');
 
 var SetFactory = new dulcimer.Model({
+	test: require('./test-prop'),
 	id: {
 		derive: function() {
 			return this.key;

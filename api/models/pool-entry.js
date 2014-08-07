@@ -1,6 +1,7 @@
 var dulcimer = require('dulcimer');
 
 var PoolEntryFactory = new dulcimer.Model({
+	test: require('./test-prop'),
 	id: {
 		derive: function() {
 			return this.key;

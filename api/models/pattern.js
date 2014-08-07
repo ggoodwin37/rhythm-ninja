@@ -2,6 +2,7 @@ var dulcimer = require('dulcimer');
 var PatternRowFactory = require('./pattern-row');
 
 var PatternFactory = new dulcimer.Model({
+	test: require('./test-prop'),
 	id: {
 		derive: function() {
 			return this.key;

@@ -1,6 +1,7 @@
 var dulcimer = require('dulcimer');
 
 var SongRowFactory = new dulcimer.Model({
+	test: require('./test-prop'),
 	id: {
 		derive: function() {
 			return this.key;
