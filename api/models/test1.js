@@ -1,7 +1,7 @@
 var dulcimer = require('dulcimer');
 
 var Test1Factory = new dulcimer.Model({
-	test: {
+	testFlag: {
 		type: 'boolean',
 		required: true,
 		default: true

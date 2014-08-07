@@ -1,7 +1,7 @@
 var dulcimer = require('dulcimer');
 
 var SetInfoFactory = new dulcimer.Model({
-	test: require('./test-prop'),
+	testFlag: require('./testFlag-prop'),
 	id: {
 		derive: function() {
 			return this.key;
