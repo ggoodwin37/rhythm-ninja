@@ -76,5 +76,32 @@ module.exports = function(ctx) {
 			});
 		});
 
+		it('should allow me to crud a set-info directly', function(done) {
+			var setInfoData = {
+				swing: 0.6,
+				bpm: 95
+			};
+			ctx.server.inject({method: 'post', url: '/api/setInfo', payload: setInfoData}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.bpm).to.equal(95);
+				var setInfoId = res.result.id;
+				ctx.server.inject({method: 'put', url: '/api/setInfo/' + setInfoId, payload: {bpm: 88}}, function(res) {
+					expect(res.statusCode).to.equal(200);
+					ctx.server.inject({method: 'get', url: '/api/setInfo/' + setInfoId}, function(res) {
+						expect(res.statusCode).to.equal(200);
+						expect(res.result.id).to.equal(setInfoId);
+						expect(res.result.bpm).to.equal(88);
+						ctx.server.inject({method: 'delete', url: '/api/setInfo/' + setInfoId}, function(res) {
+							expect(res.statusCode).to.equal(200);
+							ctx.server.inject({method: 'get', url: '/api/setInfo/' + setInfoId}, function(res) {
+								expect(res.statusCode).to.equal(404);
+								done();
+							});
+						});
+					});
+				});
+			});
+		});
+
 	});
 };
