@@ -1,29 +1,18 @@
+var TypeIter = require('../type-iter');
 var startServerInstance = require('../../server-instance');
+
 var server = startServerInstance(beginCommand);
-var StepList = require('../step-list');
+var typeIter = new TypeIter(server);
 
 function beginCommand() {
-	var steps = new StepList();
 
-	steps.addStep(function(done) {
-		var url = '/api/set';
-		server.inject({method: 'get', url: url}, function(res) {
-			console.log('I saw num sets: ' + res.result.length);
-			done();
-		});
-	});
-
-	steps.addStep(function(done) {
-		var url = '/api/set/all/pattern';
-		server.inject({method: 'get', url: url}, function(res) {
-			console.log('I saw num patterns: ' + res.result.length);
-			done();
-		});
-	});
-
-	steps.execute(function() {
+	function beGone() {
 		server.stop(function() {
 			console.log('done.');
 		});
-	});
+	}
+	function countAll(params, done) {
+		typeIter.countAllOfType(params.typeName, params.url, done);
+	}
+	typeIter.doForAllTypes(countAll, beGone);
 }
