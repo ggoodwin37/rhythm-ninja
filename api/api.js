@@ -2,6 +2,7 @@ module.exports = function(app) {
 	var resources = {
 		test1: require('./resources/test1'),
 		set: require('./resources/set')(app),
+		setInfo: require('./resources/set-info')(app),
 		setSong: require('./resources/set-song')(app),
 		sample: require('./resources/sample')(app)
 	};

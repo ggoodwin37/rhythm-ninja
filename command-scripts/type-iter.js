@@ -5,26 +5,31 @@ function TypeIter(server) {
 }
 
 TypeIter.prototype = {
+
 	// callback({
 	// 	typeName: string,
 	//  url: string,
 	// }, done);
 	doForAllTypes: function(callback, done) {
 		var steps = new StepList();
-		// TODO: make sure we have exactly one endpoint per model
+
 		steps.addStep(function(stepDone) { callback({typeName: 'set', url: '/api/set'}, stepDone); });
+
+		// TODO: change url to /api/set/<id|all>/info
+		steps.addStep(function(stepDone) { callback({typeName: 'set-info', url: '/api/setInfo'}, stepDone); });
 		steps.addStep(function(stepDone) { callback({typeName: 'pattern', url: '/api/set/all/pattern'}, stepDone); });
 		steps.addStep(function(stepDone) { callback({typeName: 'pattern-row', url: '/api/set/all/pattern/all/rows'}, stepDone); });
 		steps.addStep(function(stepDone) { callback({typeName: 'pool-entry', url: '/api/set/all/poolEntry'}, stepDone); });
 
+		// TODO: change url to /api/set/<id|all>/song
 		steps.addStep(function(stepDone) { callback({typeName: 'song', url: '/api/setSong'}, stepDone); });
-		// TODO: make url like this instead
-		//steps.addStep(function(stepDone) { callback({typeName: 'song', url: '/api/set/all/song'}, stepDone });
-
 		steps.addStep(function(stepDone) { callback({typeName: 'song-row', url: '/api/setSong/all/songRows'}, stepDone); });
 
 		// doesn't exist yet
 		steps.addStep(function(stepDone) { callback({typeName: 'sample', url: '/api/sample'}, stepDone); });
+
+		// test only
+		steps.addStep(function(stepDone) { callback({typeName: 'test1', url: '/api/test1'}, stepDone); });
 
 		steps.execute(done);
 	},
