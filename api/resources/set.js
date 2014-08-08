@@ -6,7 +6,7 @@ var SetInfoFactory = require('../models/set-info');
 var SongFactory = require('../models/song');
 
 function createSet(setName, reply) {
-	var setInfo = SetInfoFactory.create();
+	var setInfo = SetInfoFactory.create({swing:0.5, bpm: 122});
 	var pool = [];
 	var patterns = [];
 	var song = SongFactory.create();
