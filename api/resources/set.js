@@ -34,6 +34,9 @@ module.exports = function(app) {
 		hasOne: [
 			{
 				'set-info': require('./set-has-set-info')(app)
+			},
+			{
+				'song': require('./set-has-song')(app)
 			}
 		],
 		hasMany: [
