@@ -14,6 +14,19 @@ module.exports = function(ctx) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result).to.be.an('array');
 
+				if (ctx.app.config.logThings['test--show-set-models']) {
+					ctx.inspect(res.result);
+				}
+
+				done();
+			});
+		});
+
+		it('ought to give me a list of all song-infos in the db', function(done) {
+			ctx.server.inject({method: 'get', url: '/api/setInfo'}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result).to.be.an('array');
+
 				if (ctx.app.config.logThings['test--show-all-models']) {
 					ctx.inspect(res.result);
 				}
