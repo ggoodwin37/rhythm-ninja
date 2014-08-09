@@ -1,6 +1,5 @@
 module.exports = function(app) {
 	var resources = {
-		test1: require('./resources/test1'),
 		set: require('./resources/set')(app),
 		sample: require('./resources/sample')(app)
 	};
