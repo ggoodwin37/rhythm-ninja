@@ -1,11 +1,9 @@
 ```javascript
 
 var exampleSet = {
-	setInfo: {
-		name: 'my-example-set',
-		swing: 0.5,
-		bpm: 165
-	},
+	name: 'my-example-set',
+	swing: 0.5,
+	bpm: 165,
 
 	pool: [
 		{
@@ -65,23 +63,26 @@ var exampleSet = {
 		}
 	],
 
-	song: {
-		locked: false,
-		rows: [
-			{
-				pattern: 'intro',
-				offset: 0,
-				len: 8,
-				count: 4
-			},
-			{
-				pattern: 'verse',
-				offset: 0,
-				len: 8,
-				count: 2
-			}
-		]
-	}
+	songs: [
+		{
+			name: 'some-song',
+			locked: false,
+			rows: [
+				{
+					pattern: 'intro',
+					offset: 0,
+					len: 8,
+					count: 4
+				},
+				{
+					pattern: 'verse',
+					offset: 0,
+					len: 8,
+					count: 2
+				}
+			]
+		}
+	]
 
 };
 
