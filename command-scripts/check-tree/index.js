@@ -1,5 +1,5 @@
 var async = require('async');
-var StepList = require('../step-list');
+var StepList = require('../../step-list');
 var TypeIter = require('../type-iter');
 
 var startServerInstance = require('../../server-instance');
