@@ -2,6 +2,7 @@ var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var async = require('async');
 var _ = require('underscore');
 var handlingError = require('../handling-error');
+var StepList = require('../../step-list');
 var SetFactory = require('../models/set');
 var SongFactory = require('../models/song');
 
@@ -77,8 +78,64 @@ module.exports = function(app) {
 		destroy: function(request, reply) {
 			var setName = request.params.set_id;
 			SetFactory.findByIndex('name', setName, function(err, setModel) {
-				// TODO: this can probably be done recursively in terms of the other resource handlers
+				var stepList = new StepList();
 
+				// delete all poolEntries
+				setModel.pool.forEach(function(thisModel) {
+					stepList.addStep(function(callback) {
+						thisModel.delete(function(err) {
+							if (handlingError(err, reply)) return;
+							callback();
+						});
+					});
+				});
+
+				// delete all patterns and their child rows
+				setModel.patterns.forEach(function(thisModel) {
+					thisModel.rows.forEach(function(thisChild) {
+						stepList.addStep(function(callback) {
+							thisChild.delete(function(err) {
+								if (handlingError(err, reply)) return;
+								callback();
+							});
+						});
+					});
+					stepList.addStep(function(callback) {
+						thisModel.delete(function(err) {
+							if (handlingError(err, reply)) return;
+							callback();
+						});
+					});
+				});
+
+				// delete all songs and their child rows
+				setModel.songs.forEach(function(thisModel) {
+					thisModel.rows.forEach(function(thisChild) {
+						stepList.addStep(function(callback) {
+							thisChild.delete(function(err) {
+								if (handlingError(err, reply)) return;
+								callback();
+							});
+						});
+					});
+					stepList.addStep(function(callback) {
+						thisModel.delete(function(err) {
+							if (handlingError(err, reply)) return;
+							callback();
+						});
+					});
+				});
+
+				// finally, delete the set itself
+				stepList.addStep(function(callback) {
+					setModel.delete(function(err) {
+						if (handlingError(err, reply)) return;
+						callback();
+					});
+				});
+				stepList.execute(function() {
+					reply();
+				});
 			});
 		}
 	};
