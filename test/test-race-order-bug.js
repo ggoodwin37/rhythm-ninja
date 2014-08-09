@@ -16,7 +16,7 @@ module.exports = function(ctx) {
 				var taskList = [];
 				res.result.pool.forEach(function(poolEntry) {
 					taskList.push(function(callback) {
-						ctx.server.inject({method: 'delete', url: ctx.baseSetUrl + '/poolEntry/' + poolEntry.id}, function(res) {
+						ctx.server.inject({method: 'delete', url: ctx.baseSetUrl + '/poolentry/' + poolEntry.id}, function(res) {
 							expect(res.statusCode).to.equal(200);
 							callback();
 						});
@@ -47,14 +47,14 @@ module.exports = function(ctx) {
 				async.series([
 					deleteAllPoolEntries,
 					function(callback) {
-						ctx.server.inject({method: 'post', url: ctx.baseSetUrl + '/poolEntry'}, function(res) {
+						ctx.server.inject({method: 'post', url: ctx.baseSetUrl + '/poolentry'}, function(res) {
 							expect(res.statusCode).to.equal(200);
 							entryId1 = res.result.id;
 							callback();
 						});
 					},
 					function(callback) {
-						ctx.server.inject({method: 'post', url: ctx.baseSetUrl + '/poolEntry'}, function(res) {
+						ctx.server.inject({method: 'post', url: ctx.baseSetUrl + '/poolentry'}, function(res) {
 							expect(res.statusCode).to.equal(200);
 							entryId2 = res.result.id;
 							callback();
@@ -67,7 +67,7 @@ module.exports = function(ctx) {
 						});
 					},
 					function(callback) {
-						ctx.server.inject({method: 'delete', url: ctx.baseSetUrl + '/poolEntry/' + entryId1}, function(res) {
+						ctx.server.inject({method: 'delete', url: ctx.baseSetUrl + '/poolentry/' + entryId1}, function(res) {
 							expect(res.statusCode).to.equal(200);
 							callback();
 						});

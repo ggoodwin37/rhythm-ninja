@@ -10,25 +10,44 @@ module.exports = function(ctx) {
 
 	describe('set-api-song', function() {
 
-		it('should start with an empty song on set endpoint', function(done) {
+		it('should start with an empty song list on set endpoint', function(done) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
-				expect(res.result.song.rows.length).to.equal(0);
+				expect(res.result.songs.length).to.equal(0);
 				ctx.setDoc = res.result;
 				done();
 			});
 		});
 
-		var baseSetSongUrl = '/api/setSong/' + ctx.setName;
+		var baseSetSongUrl = ctx.baseSetUrl + '/song';
+		var song1Id;
+		it('lets me create a song', function(done) {
+			var songData = {
+				name: 'test-song',
+				locked: false
+			};
+			ctx.server.inject({method: 'post', url: baseSetSongUrl, payload: songData}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.name).to.equal('test-song');
+				song1Id = res.result.id;
+				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
+					expect(res.statusCode).to.equal(200);
+					expect(res.result.songs.length).to.equal(1);
+					expect(res.result.songs[0].name).to.equal('test-song');
+					ctx.setDoc = res.result;
+					done();
+				});
+			});
+		});
 
 		it('can modify song-level data', function(done) {
-			expect(ctx.setDoc.song.locked).to.equal(false);
-			ctx.server.inject({method: 'put', url: baseSetSongUrl, payload: {locked: true}}, function(res) {
+			expect(ctx.setDoc.songs[0].locked).to.equal(false);
+			ctx.server.inject({method: 'put', url: baseSetSongUrl + '/' + song1Id, payload: {locked: true}}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.locked).to.equal(true);
 				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 					expect(res.statusCode).to.equal(200);
-					expect(res.result.song.locked).to.equal(true);
+					expect(res.result.songs[0].locked).to.equal(true);
 					done();
 				});
 			});
@@ -42,7 +61,7 @@ module.exports = function(ctx) {
 				len: 2,
 				count: 3
 			};
-			ctx.server.inject({method: 'post', url: baseSetSongUrl + '/songRows', payload: songRowData}, function(res) {
+			ctx.server.inject({method: 'post', url: baseSetSongUrl + '/' + song1Id + '/songrow', payload: songRowData}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.offset).to.equal(1);
 				expect(res.result.count).to.equal(3);
@@ -52,14 +71,14 @@ module.exports = function(ctx) {
 		});
 
 		it('should update set and song when I do that', function(done) {
-			ctx.server.inject({method: 'get', url: baseSetSongUrl}, function(res) {
+			ctx.server.inject({method: 'get', url: baseSetSongUrl + '/' + song1Id}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.rows.length).to.equal(1);
 				expect(res.result.rows[0].len).to.equal(2);
 				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 					expect(res.statusCode).to.equal(200);
-					expect(res.result.song.rows.length).to.equal(1);
-					expect(res.result.song.rows[0].patternId).to.equal('some-pattern');
+					expect(res.result.songs[0].rows.length).to.equal(1);
+					expect(res.result.songs[0].rows[0].patternId).to.equal('some-pattern');
 					done();
 				});
 			});
@@ -73,7 +92,7 @@ module.exports = function(ctx) {
 				len: 22,
 				count: 33
 			};
-			ctx.server.inject({method: 'post', url: baseSetSongUrl + '/songRows', payload: songRowData}, function(res) {
+			ctx.server.inject({method: 'post', url: baseSetSongUrl +  + '/' + song1Id + '/songrow', payload: songRowData}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.offset).to.equal(11);
 				expect(res.result.count).to.equal(33);
@@ -83,7 +102,7 @@ module.exports = function(ctx) {
 		});
 
 		it('doesn\'t mind deleting the first song row', function(done) {
-			ctx.server.inject({method: 'delete', url: baseSetSongUrl + '/songRows/' + songRowId1}, function(res) {
+			ctx.server.inject({method: 'delete', url: baseSetSongUrl + '/' + song1Id + '/songrow/' + songRowId1}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				done();
 			});
@@ -92,8 +111,8 @@ module.exports = function(ctx) {
 		it('should update set view of song after deleting that row', function(done) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
-				expect(res.result.song.rows.length).to.equal(1);
-				expect(res.result.song.rows[0].id).to.equal(songRowId2);
+				expect(res.result.songs[0].rows.length).to.equal(1);
+				expect(res.result.songs[0].rows[0].id).to.equal(songRowId2);
 				done();
 			});
 		});
@@ -109,15 +128,15 @@ module.exports = function(ctx) {
 			var updatedData = {
 				len: 55
 			};
-			ctx.server.inject({method: 'put', url: baseSetSongUrl + '/songRows/' + songRowId2, payload: JSON.stringify(updatedData)}, function(res) {
+			ctx.server.inject({method: 'put', url: baseSetSongUrl + '/' + song1Id + '/songrow/' + songRowId2, payload: JSON.stringify(updatedData)}, function(res) {
 				expect(res.statusCode).to.equal(200);
-				ctx.server.inject({method: 'get', url: baseSetSongUrl + '/songRows/' + songRowId2}, function(res) {
+				ctx.server.inject({method: 'get', url: baseSetSongUrl + '/' + song1Id + '/songrow/' + songRowId2}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.patternId).to.equal('some-other-pattern');
 					expect(res.result.len).to.equal(55);
 					ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 						expect(res.statusCode).to.equal(200);
-						expect(res.result.song.rows[0].len).to.equal(55);
+						expect(res.result.songs.rows[0].len).to.equal(55);
 						done();
 					});
 				});

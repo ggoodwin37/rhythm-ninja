@@ -45,5 +45,5 @@ require('./test-set-api-set')(ctx);
 require('./test-set-api-pool-entry')(ctx);
 require('./test-set-api-pattern')(ctx);
 require('./test-set-api-song')(ctx);
-//require('./test-race-order-bug')(ctx); // trying to track down a bug where sometimes removing an el leaves unexpected key
+require('./test-race-order-bug')(ctx); // trying to track down a bug where sometimes removing an el leaves unexpected key
 require('./test-set-api-index')(ctx);

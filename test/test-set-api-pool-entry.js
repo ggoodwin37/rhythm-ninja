@@ -20,7 +20,7 @@ module.exports = function(ctx) {
 			});
 		});
 
-		var baseSetPoolUrl = '/api/set/' + ctx.setName + '/poolEntry';
+		var baseSetPoolUrl = ctx.baseSetUrl + '/poolentry';
 		var poolEntryId1;
 		it('should allow me to create a new poolEntry', function(done) {
 			var poolEntry = {
@@ -29,6 +29,7 @@ module.exports = function(ctx) {
 				sampleType: 'local',
 				sampleId: 'abcd-efgh'
 			};
+			console.log('baseSetPoolUrl: ' + baseSetPoolUrl);
 			ctx.server.inject({method: 'post', url: baseSetPoolUrl, payload: JSON.stringify(poolEntry)}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.volume).to.equal(0.75);
