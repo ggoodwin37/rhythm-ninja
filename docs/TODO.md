@@ -1,5 +1,3 @@
-- naming of owned collections in the API isn't perfectly consistent, fix this for maximum analness
-
 - implement check-tree and clean-tree commands. add more commands if needed.
   - get a server-instance up and running, inject, etc.
 
