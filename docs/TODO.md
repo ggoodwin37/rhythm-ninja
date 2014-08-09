@@ -1,3 +1,12 @@
+- finish URL overhaul:
+  - fix resources/* to match new URL structure (grabbing updated id names, etc)
+  - update method should ever only modify that element, never children  
+  - resource index handlers should just list that resource in the current set
+    - we'll probably want a different set of endpoints to list all across sets.
+  - fix tests
+  - fix commands
+  - verify that we have 1:1 between models and endpoints
+
 - implement check-tree and clean-tree commands. add more commands if needed.
   - get a server-instance up and running, inject, etc.
 
@@ -5,7 +14,6 @@
   - judging by how many orphaned child objects I'm now seeing, yes we do need to do a tree delete.
 
 - consider adding some metadata like createdTime, createdBy (user id)
-- decided against adding a testFlag to everybody, but it might be a good idea to have it on the set. then we can use tree-delete to make sure test assets are cleaned up.
 
 - then take a stab at: {users | samples | basic UI | sequencer engine}
   - user stuff: name, location in doc. me.
