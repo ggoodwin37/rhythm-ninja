@@ -2,49 +2,38 @@ var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var async = require('async');
 var handlingError = require('../handling-error');
 var SetFactory = require('../models/set');
-var SetInfoFactory = require('../models/set-info');
 var SongFactory = require('../models/song');
 
 function createSet(setName, reply) {
-	var setInfo = SetInfoFactory.create({swing:0.5, bpm: 122});
 	var pool = [];
 	var patterns = [];
-	var song = SongFactory.create();
+	var songs = [];
 
 	var setInstance = SetFactory.create({
 		name: setName,
-		setInfo: setInfo,
+		swing: 0.5,
+		bpm: 155,
 		pool: pool,
 		patterns: patterns,
-		song: song
+		songs: songs
 	});
 
-	// need to save each foreign object separately.
-	async.series([
-		function(callback) { setInfo.save(callback); },
-		function(callback) { song.save(callback); },
-		function(callback) { setInstance.save(callback); }
-	], function(err, results) {
+	setInstance.save(function(err) {
 		reply(setInstance.toJSON());
 	});
 }
 
 module.exports = function(app) {
 	return {
-		hasOne: [
-			{
-				'set-info': require('./set-has-set-info')(app)
-			},
-			{
-				'song': require('./set-has-song')(app)
-			}
-		],
 		hasMany: [
 			{
-				'pool-entry': require('./set-has-pool-entry')(app)
+				poolentry: require('./set-has-pool-entry')(app)
 			},
 			{
-				'pattern': require('./set-has-pattern')(app)
+				pattern: require('./set-has-pattern')(app)
+			},
+			{
+				song: require('./set-has-song')(app)
 			}
 		],
 		index: function(request, reply) {
@@ -79,6 +68,12 @@ module.exports = function(app) {
 				var mergeObject = {};
 				if (typeof updatedData.name != 'undefined') {
 					mergeObject.name = updatedData.name;
+				}
+				if (typeof updatedData.swing != 'undefined') {
+					mergeObject.swing = updatedData.swing;
+				}
+				if (typeof updatedData.bpm != 'undefined') {
+					mergeObject.bpm = updatedData.bpm;
 				}
 				SetFactory.update(setModel.key, mergeObject, function(updateErr, updateResult) {
 					if (updateErr) return reply(new Error(updateErr));

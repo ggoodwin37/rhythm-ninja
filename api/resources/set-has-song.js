@@ -7,7 +7,7 @@ module.exports = function(app) {
 	return {
 		hasMany: [
 			{
-				'song-row': require('./song-has-song-rows.js')(app)
+				songrow: require('./song-has-song-rows.js')(app)
 			}
 		],
 		index: function(request, reply) {
@@ -32,6 +32,9 @@ module.exports = function(app) {
 				SetFactory.findByIndex('name', setName, function(err, setModel) {
 					var songModel = setModel.song;
 					var mergeObject = {};
+					if (typeof updatedSongData.name != 'undefined') {
+						mergeObject.name = updatedSongData.name;
+					}
 					if (typeof updatedSongData.locked != 'undefined') {
 						mergeObject.locked = updatedSongData.locked;
 					}

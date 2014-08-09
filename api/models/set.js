@@ -31,7 +31,7 @@ var SetFactory = new dulcimer.Model({
 	patterns: {
 		foreignCollection: PatternFactory
 	},
-	song: {
+	songs: {
 		foreignCollection: SongFactory
 	}
 }, {
