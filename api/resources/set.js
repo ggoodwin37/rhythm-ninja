@@ -31,12 +31,17 @@ function createSet(setName, reply) {
 
 module.exports = function(app) {
 	return {
+		hasOne: [
+			{
+				'set-info': require('./set-has-set-info')(app)
+			}
+		],
 		hasMany: [
 			{
-				poolEntry: require('./set-has-pool-entry')(app)
+				'pool-entry': require('./set-has-pool-entry')(app)
 			},
 			{
-				pattern: require('./set-has-pattern')(app)
+				'pattern': require('./set-has-pattern')(app)
 			}
 		],
 		index: function(request, reply) {

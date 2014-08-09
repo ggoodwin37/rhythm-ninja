@@ -9,7 +9,7 @@ module.exports = function(app) {
 	return {
 		hasMany: [
 			{
-				rows: require('./pattern-has-rows')(app)
+				'pattern-row': require('./pattern-has-rows')(app)
 			}
 		],
 		index: function(request, reply) {

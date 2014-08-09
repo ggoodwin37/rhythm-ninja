@@ -7,7 +7,7 @@ module.exports = function(app) {
 	return {
 		hasMany: [
 			{
-				songRows: require('./song-has-song-rows.js')(app)
+				'song-row': require('./song-has-song-rows.js')(app)
 			}
 		],
 		index: function(request, reply) {
