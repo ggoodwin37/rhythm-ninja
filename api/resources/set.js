@@ -1,5 +1,6 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var async = require('async');
+var _ = require('underscore');
 var handlingError = require('../handling-error');
 var SetFactory = require('../models/set');
 var SongFactory = require('../models/song');
@@ -37,6 +38,7 @@ module.exports = function(app) {
 			}
 		],
 		index: function(request, reply) {
+			// TODO: pleeease auth me
 			SetFactory.all(function(err, models, pagination) {
 				if (handlingError(err, reply)) return;
 				reply(models.map(function(model) { return model.toJSON(); }));
@@ -65,16 +67,7 @@ module.exports = function(app) {
 			var updatedData = request.payload;
 			SetFactory.findByIndex('name', setName, function(err, setModel) {
 				if (handlingError(err, reply)) return;
-				var mergeObject = {};
-				if (typeof updatedData.name != 'undefined') {
-					mergeObject.name = updatedData.name;
-				}
-				if (typeof updatedData.swing != 'undefined') {
-					mergeObject.swing = updatedData.swing;
-				}
-				if (typeof updatedData.bpm != 'undefined') {
-					mergeObject.bpm = updatedData.bpm;
-				}
+				var mergeObject = _.pick(request.payload, 'name', 'swing', 'bpm');
 				SetFactory.update(setModel.key, mergeObject, function(updateErr, updateResult) {
 					if (updateErr) return reply(new Error(updateErr));
 					return reply(updateResult.toJSON());
@@ -83,12 +76,9 @@ module.exports = function(app) {
 		},
 		destroy: function(request, reply) {
 			var setName = request.params.set_id;
-			SetFactory.findByIndex('name', setName, function(err, result) {
-				if (handlingError(err, reply)) return;
-				result['delete'](function(deleteErr) {
-					if (deleteErr) return reply(new Error(deleteErr));
-					return reply('ok');
-				});
+			SetFactory.findByIndex('name', setName, function(err, setModel) {
+				// TODO: this can probably be done recursively in terms of the other resource handlers
+
 			});
 		}
 	};

@@ -1,9 +1,17 @@
+var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
+var async = require('async');
+var _ = require('underscore');
+
+var handlingError = require('../handling-error');
+
 var SetFactory = require('../models/set');
 var PatternFactory = require('../models/pattern');
 var PatternRowFactory = require('../models/pattern-row');
-var handlingError = require('../handling-error');
-var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
-var async = require('async');
+
+// alias
+var parentFactory = SetFactory;
+var itemFactory = PatternFactory;
+var childFactory = PatternRowFactory;
 
 module.exports = function(app) {
 	return {
@@ -13,90 +21,91 @@ module.exports = function(app) {
 			}
 		],
 		index: function(request, reply) {
-			PatternFactory.all(function(err, models, pagination) {
+			var parentId = request.params.set_id;
+			parentFactory.get(parentId, function(err, parentModel) {
 				if (handlingError(err, reply)) return;
-				reply(models.map(function(model) { return model.toJSON(); }));
+				return reply(parentModel.patterns.map(function(thisPattern) { return thisPattern.toJSON(); });
 			});
 		},
 		show: function(request, reply) {
-			var patternId = request.params.pattern_id;
-			// TODO: validate set/authenticate
-			PatternFactory.get(patternId, function(err, patternModel) {
+			var itemId = request.params.pattern_id;
+			itemFactory.get(itemId, function(err, itemModel) {
 				if (handlingError(err, reply)) return;
-				return reply(patternModel.toJSON());
+				return reply(itemModel.toJSON());
 			});
 		},
 		create: function(request, reply) {
-			var setName = request.params.set_id;
-			var patternModel = PatternFactory.create(request.payload);
-			patternModel.save(function(err) {
+			var parentId = request.params.set_id;
+			var newModel = itemFactory.create(request.payload);
+			newModel.save(function(err) {
 				if (handlingError(err, reply)) return;
-				SetFactory.findByIndex('name', setName, function(err, setModel) {
+				parentFactory.get(parentId, function(err, parentModel) {
 					if (handlingError(err, reply)) return;
-					var newPatterns = setModel.patterns.slice(0);
-					newPatterns.push(patternModel);
+					var newList = parentModel.patterns.slice(0);
+					newList.push(newModel);
 
-					SetFactory.update(setModel.key, {patterns: newPatterns}, function(err, newModel) {
+					parentFactory.update(parentModel.key, {patterns: newList}, function(err, updatedParentModel) {
 						if (handlingError(err, reply)) return;
 
 						if (app.config.logThings['api--create-stuff']) {
-							console.log('created a new pattern: ' + patternModel.key);
+							console.log('created a new pattern: ' + newModel.key);
 						}
 
-						reply(patternModel.toJSON());
+						reply(newModel.toJSON());
 					});
 				});
 			});
 		},
 		update: function(request, reply) {
-			var setName = request.params.set_id;
-			var patternId = request.params.pattern_id;
-			var updatedPatternData = request.payload;
-			PatternFactory.get(patternId, function(err, patternModel) {
+			var parentId = request.params.set_id;
+			var itemId = request.params.pattern_id;
+			itemFactory.get(itemId, function(err, itemModel) {
 				if (handlingError(err, reply)) return;
-				// TODO: consider using extend pattern here instead
-				var mergeObject = {};
-				if (typeof updatedPatternData.name != 'undefined') {
-					mergeObject['name'] = updatedPatternData.name;
-				}
-				if (typeof updatedPatternData.length != 'undefined') {
-					mergeObject['length'] = updatedPatternData.length;
-				}
-				if (typeof updatedPatternData.locked != 'undefined') {
-					mergeObject['locked'] = updatedPatternData.locked;
-				}
-				PatternFactory.update(patternModel.key, mergeObject, function(err, updatedModel) {
+				var mergeObject = _.pick(request.payload, 'name', 'length', 'locked', 'rows');
+				itemFactory.update(itemModel.key, mergeObject, function(err, updatedModel) {
 					if (handlingError(err, reply)) return;
 					reply(updatedModel.toJSON());
 				});
 			});
 		},
 		destroy: function(request, reply) {
-			var setName = request.params.set_id;
-			var patternId = request.params.pattern_id;
+			var parentId = request.params.set_id;
+			var itemId = request.params.pattern_id;
 
 			async.series([
 				function(callback) {
-					// first check the set for any instances of this patternId
-					SetFactory.findByIndex('name', setName, function(err, setModel) {
+					// first check the parent for any instances of this item and remove
+					parentFactory.get(parentId, function(err, parentModel) {
 						if (handlingError(err, reply)) return callback();
 
-						var newPatterns = setModel.patterns.slice(0).filter(function(thisPatternEl) {
-							return thisPatternEl.key !== patternId;
+						var newList = parentModel.patterns.slice(0).filter(function(thisEl) {
+							return thisEl.key !== itemId;
 						});
 
-						SetFactory.update(setModel.key, {patterns: newPatterns}, function(err, newModel) {
+						parentFactory.update(parentModel.key, {patterns: newList}, function(err, newParentModel) {
 							if (handlingError(err, reply)) return callback();
 							callback();
 						});
 					});
 				},
 				function(callback) {
-					// TODO: validate set/authenticate
-					// TODO: need to explicitly delete patternRow children here?
-					PatternFactory.get(patternId, function(err, patternModel) {
+					// then perform a delete on all children
+					itemFactory.get(itemId, function(err, itemModel) {
 						if (handlingError(err, reply)) return callback();
-						patternModel.delete(function(err) {
+						itemModel.rows.forEach(function(thisChild) {
+							childFactory.get(thisChild.key, function(err, childModel) {
+								childModel.delete(function(err) {
+									if (handlingError(err, reply)) return;
+									callback();
+								});
+							});
+						});
+					});
+				},
+				function(callback) {
+					itemFactory.get(itemId, function(err, itemModel) {
+						if (handlingError(err, reply)) return callback();
+						itemModel.delete(function(err) {
 							if (handlingError(err, reply)) return;
 							callback();
 						});
