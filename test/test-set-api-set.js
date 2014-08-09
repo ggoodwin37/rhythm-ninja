@@ -53,7 +53,7 @@ module.exports = function(ctx) {
 		});
 
 		it('should handle updates to set data', function(done) {
-			ctx.setDoc.setInfo.bpm = 160;
+			ctx.setDoc.setInfo.bpm = 161;
 			ctx.server.inject({
 				method: 'put',
 				url: ctx.baseSetUrl,
@@ -61,9 +61,18 @@ module.exports = function(ctx) {
 			}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result).to.be.an('object');
-				expect(res.result.setInfo.bpm).to.equal(160);
+				expect(res.result.setInfo.bpm).to.equal(161);
 				expect(res.result.song === undefined).to.equal(false);
 				ctx.setDoc = res.result;
+				done();
+			});
+		});
+
+		it('should still have set-info for the set I edited', function(done) {
+			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.setInfo === undefined).to.equal(false);
+				expect(res.result.setInfo.bpm).to.equal(161);
 				done();
 			});
 		});
