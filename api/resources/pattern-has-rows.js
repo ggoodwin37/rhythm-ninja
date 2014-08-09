@@ -17,7 +17,7 @@ module.exports = function(app) {
 			var parentId = request.params.pattern_id;
 			parentFactory.get(parentId, function(err, parentModel) {
 				if (handlingError(err, reply)) return;
-				return reply(parentModel.rows.map(function(thisRow) { return thisRow.toJSON(); });
+				return reply(parentModel.rows.map(function(thisRow) { return thisRow.toJSON(); }));
 			});
 		},
 		show: function(request, reply) {

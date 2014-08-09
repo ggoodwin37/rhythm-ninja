@@ -15,9 +15,9 @@ module.exports = function(app) {
 	return {
 		index: function(request, reply) {
 			var parentId = request.params.set_id;
-			parentFactory.get(parentId, function(err, parentModel) {
+			parentFactory.findByIndex('name', parentId, function(err, parentModel) {
 				if (handlingError(err, reply)) return;
-				return reply(parentModel.pool.map(function(thisPattern) { return thisPattern.toJSON(); });
+				return reply(parentModel.pool.map(function(thisPattern) { return thisPattern.toJSON(); }));
 			});
 		},
 		show: function(request, reply) {
@@ -32,7 +32,7 @@ module.exports = function(app) {
 			var newModel = itemFactory.create(request.payload);
 			newModel.save(function(err) {
 				if (handlingError(err, reply)) return;
-				parentFactory.get(parentId, function(err, parentModel) {
+				parentFactory.findByIndex('name', parentId, function(err, parentModel) {
 					if (handlingError(err, reply)) return;
 					var newList = parentModel.pool.slice(0);
 					newList.push(newModel);
@@ -68,7 +68,7 @@ module.exports = function(app) {
 			async.series([
 				function(callback) {
 					// first check the parent for any instances of this item and remove
-					parentFactory.get(parentId, function(err, parentModel) {
+					parentFactory.findByIndex('name', parentId, function(err, parentModel) {
 						if (handlingError(err, reply)) return callback();
 
 						var newList = parentModel.pool.slice(0).filter(function(thisEl) {
