@@ -7,6 +7,12 @@ var SongFactory = new dulcimer.Model({
 			return this.key;
 		}
 	},
+	name: {
+		type: 'string',
+		index: true,
+		required: true,
+		default: 'default'
+	},
 	locked: {
 		type: 'boolean',
 		required: true,
