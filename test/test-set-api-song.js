@@ -92,7 +92,7 @@ module.exports = function(ctx) {
 				len: 22,
 				count: 33
 			};
-			ctx.server.inject({method: 'post', url: baseSetSongUrl +  + '/' + song1Id + '/songrow', payload: songRowData}, function(res) {
+			ctx.server.inject({method: 'post', url: baseSetSongUrl + '/' + song1Id + '/songrow', payload: songRowData}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.offset).to.equal(11);
 				expect(res.result.count).to.equal(33);
@@ -136,7 +136,7 @@ module.exports = function(ctx) {
 					expect(res.result.len).to.equal(55);
 					ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 						expect(res.statusCode).to.equal(200);
-						expect(res.result.songs.rows[0].len).to.equal(55);
+						expect(res.result.songs[0].rows[0].len).to.equal(55);
 						done();
 					});
 				});
