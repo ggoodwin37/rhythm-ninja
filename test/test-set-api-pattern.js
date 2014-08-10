@@ -76,7 +76,7 @@ module.exports = function(ctx) {
 			});
 		});
 
-		it('should allow me to delete the first pattern now', function(done) {
+		it('should allow me to delete the first pattern', function(done) {
 			ctx.server.inject({method: 'delete', url: baseSetPatternUrl + '/' + patternId1}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				done();
@@ -117,7 +117,7 @@ module.exports = function(ctx) {
 		var baseSetPatternRowUrl;
 		var patternRowId1;
 		it('should accept a new pattern row', function(done) {
-			baseSetPatternRowUrl = baseSetPatternUrl + '/' + patternId2 + '/rows';
+			baseSetPatternRowUrl = baseSetPatternUrl + '/' + patternId2 + '/patternrow';
 			var rowData = {
 				poolEntry: 'test-pool-entry',
 				steps: [0, 101, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
@@ -160,7 +160,7 @@ module.exports = function(ctx) {
 			if(ctx.app.config.logThings['test--list-collections']) {
 				console.log('patternId1: ' + patternId1 + ' patternId2: ' + patternId2);
 			}
-			baseSetPatternRowUrl = baseSetPatternUrl + '/' + patternId2 + '/rows';
+			baseSetPatternRowUrl = baseSetPatternUrl + '/' + patternId2 + '/patternrow';
 			var rowData = {
 				poolEntry: 'test-pool-entry-2',
 				length: 2,

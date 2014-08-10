@@ -3,7 +3,6 @@ var Hapi = require('hapi');
 var config = require('getconfig');
 
 var getApiPlugin = require('../api/api');
-var Test1Model = require('../api/models/test1');
 
 // Test shortcuts
 var before = Lab.before;
@@ -36,24 +35,15 @@ before(function(done) {
 		if (err) throw err;
 		ctx.server.start(function () {
 			console.log('test is running at', ctx.server.info.uri);
-
-			// clear all test1Models
-			// TODO: figure out how to clean up non-wipeable stuff (once we start testing real data types)
-			Test1Model.wipe(function(err) {
-				if (err) {
-					console.log('Error wiping test1');
-				}
-				done();
-			});
+			done();
 		});
 	});
 });
 
 require('./test-server')(ctx);
-require('./test-api')(ctx);
 require('./test-set-api-set')(ctx);
 require('./test-set-api-pool-entry')(ctx);
 require('./test-set-api-pattern')(ctx);
 require('./test-set-api-song')(ctx);
 //require('./test-race-order-bug')(ctx); // trying to track down a bug where sometimes removing an el leaves unexpected key
-require('./test-set-api-index')(ctx);
+//require('./test-set-api-index')(ctx);

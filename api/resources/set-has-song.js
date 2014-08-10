@@ -6,30 +6,30 @@ var handlingError = require('../handling-error');
 var StepList = require('../../step-list');
 
 var SetFactory = require('../models/set');
-var PatternFactory = require('../models/pattern');
-var PatternRowFactory = require('../models/pattern-row');
+var SongFactory = require('../models/song');
+var SongRowFactory = require('../models/song-row');
 
 // alias
 var parentFactory = SetFactory;
-var itemFactory = PatternFactory;
-var childFactory = PatternRowFactory;
+var itemFactory = SongFactory;
+var childFactory = SongRowFactory;
 
 module.exports = function(app) {
 	return {
 		hasMany: [
 			{
-				patternrow: require('./pattern-has-rows')(app)
+				songrow: require('./song-has-song-rows.js')(app)
 			}
 		],
 		index: function(request, reply) {
 			var parentId = request.params.set_id;
 			parentFactory.findByIndex('name', parentId, function(err, parentModel) {
 				if (handlingError(err, reply)) return;
-				return reply(parentModel.patterns.map(function(thisPattern) { return thisPattern.toJSON(); }));
+				return reply(parentModel.songs.map(function(thisPattern) { return thisPattern.toJSON(); }));
 			});
 		},
 		show: function(request, reply) {
-			var itemId = request.params.pattern_id;
+			var itemId = request.params.song_id;
 			itemFactory.get(itemId, function(err, itemModel) {
 				if (handlingError(err, reply)) return;
 				return reply(itemModel.toJSON());
@@ -42,14 +42,14 @@ module.exports = function(app) {
 				if (handlingError(err, reply)) return;
 				parentFactory.findByIndex('name', parentId, function(err, parentModel) {
 					if (handlingError(err, reply)) return;
-					var newList = parentModel.patterns.slice(0);
+					var newList = parentModel.songs.slice(0);
 					newList.push(newModel);
 
-					parentFactory.update(parentModel.key, {patterns: newList}, function(err, updatedParentModel) {
+					parentFactory.update(parentModel.key, {songs: newList}, function(err, updatedParentModel) {
 						if (handlingError(err, reply)) return;
 
 						if (app.config.logThings['api--create-stuff']) {
-							console.log('created a new pattern: ' + newModel.key);
+							console.log('created a new song: ' + newModel.key);
 						}
 
 						reply(newModel.toJSON());
@@ -59,10 +59,10 @@ module.exports = function(app) {
 		},
 		update: function(request, reply) {
 			var parentId = request.params.set_id;
-			var itemId = request.params.pattern_id;
+			var itemId = request.params.song_id;
 			itemFactory.get(itemId, function(err, itemModel) {
 				if (handlingError(err, reply)) return;
-				var mergeObject = _.pick(request.payload, 'name', 'length', 'locked', 'rows');
+				var mergeObject = _.pick(request.payload, 'name', 'locked', 'rows');
 				itemFactory.update(itemModel.key, mergeObject, function(err, updatedModel) {
 					if (handlingError(err, reply)) return;
 					reply(updatedModel.toJSON());
@@ -71,7 +71,7 @@ module.exports = function(app) {
 		},
 		destroy: function(request, reply) {
 			var parentId = request.params.set_id;
-			var itemId = request.params.pattern_id;
+			var itemId = request.params.song_id;
 
 			async.series([
 				function(callback) {
@@ -79,11 +79,11 @@ module.exports = function(app) {
 					parentFactory.findByIndex('name', parentId, function(err, parentModel) {
 						if (handlingError(err, reply)) return callback();
 
-						var newList = parentModel.patterns.slice(0).filter(function(thisEl) {
+						var newList = parentModel.songs.slice(0).filter(function(thisEl) {
 							return thisEl.key !== itemId;
 						});
 
-						parentFactory.update(parentModel.key, {patterns: newList}, function(err, newParentModel) {
+						parentFactory.update(parentModel.key, {songs: newList}, function(err, newParentModel) {
 							if (handlingError(err, reply)) return callback();
 							callback();
 						});

@@ -1,72 +1,90 @@
-var SetFactory = require('../models/set');
-var PoolEntryFactory = require('../models/pool-entry');
-var handlingError = require('../handling-error');
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var async = require('async');
+var _ = require('underscore');
+
+var handlingError = require('../handling-error');
+
+var SetFactory = require('../models/set');
+var PoolEntryFactory = require('../models/pool-entry');
+
+// alias
+var parentFactory = SetFactory;
+var itemFactory = PoolEntryFactory;
 
 module.exports = function(app) {
 	return {
 		index: function(request, reply) {
-			PoolEntryFactory.all(function(err, models, pagination) {
+			var parentId = request.params.set_id;
+			parentFactory.findByIndex('name', parentId, function(err, parentModel) {
 				if (handlingError(err, reply)) return;
-				reply(models.map(function(model) { return model.toJSON(); }));
+				return reply(parentModel.pool.map(function(thisPattern) { return thisPattern.toJSON(); }));
 			});
 		},
 		show: function(request, reply) {
-			var poolEntryId = request.params.poolEntry_id;
-			// TODO: validate set/authenticate
-			PoolEntryFactory.get(poolEntryId, function(err, poolEntryModel) {
+			var itemId = request.params.poolentry_id;
+			itemFactory.get(itemId, function(err, itemModel) {
 				if (handlingError(err, reply)) return;
-				return reply(poolEntryModel.toJSON());
+				return reply(itemModel.toJSON());
 			});
 		},
 		create: function(request, reply) {
-			var setName = request.params.set_id;
-			var poolEntry = PoolEntryFactory.create(request.payload);
-			poolEntry.save(function(err) {
+			var parentId = request.params.set_id;
+			var newModel = itemFactory.create(request.payload);
+			newModel.save(function(err) {
 				if (handlingError(err, reply)) return;
-				SetFactory.findByIndex('name', setName, function(err, setModel) {
+				parentFactory.findByIndex('name', parentId, function(err, parentModel) {
 					if (handlingError(err, reply)) return;
-					var newPool = setModel.pool.slice(0);
-					newPool.push(poolEntry);
+					var newList = parentModel.pool.slice(0);
+					newList.push(newModel);
 
-					SetFactory.update(setModel.key, {pool: newPool}, function(err, newModel) {
+					parentFactory.update(parentModel.key, {pool: newList}, function(err, updatedParentModel) {
 						if (handlingError(err, reply)) return;
 
 						if (app.config.logThings['api--create-stuff']) {
-							console.log('created a new poolEntry: ' + poolEntry.key);
+							console.log('created a new poolentry: ' + newModel.key);
 						}
 
-						reply(poolEntry.toJSON());
+						reply(newModel.toJSON());
 					});
 				});
 			});
 		},
+		update: function(request, reply) {
+			var parentId = request.params.set_id;
+			var itemId = request.params.poolentry_id;
+			itemFactory.get(itemId, function(err, itemModel) {
+				if (handlingError(err, reply)) return;
+				var mergeObject = _.pick(request.payload, 'name', 'volume', 'sampleType', 'sampleId');
+				itemFactory.update(itemModel.key, mergeObject, function(err, updatedModel) {
+					if (handlingError(err, reply)) return;
+					reply(updatedModel.toJSON());
+				});
+			});
+		},
 		destroy: function(request, reply) {
-			var setName = request.params.set_id;
-			var poolEntryId = request.params.poolEntry_id;
+			var parentId = request.params.set_id;
+			var itemId = request.params.poolentry_id;
 
 			async.series([
 				function(callback) {
-					// first check the set for any instances of this poolEntryId
-					SetFactory.findByIndex('name', setName, function(err, setModel) {
+					// first check the parent for any instances of this item and remove
+					parentFactory.findByIndex('name', parentId, function(err, parentModel) {
 						if (handlingError(err, reply)) return callback();
 
-						var newPool = setModel.pool.slice(0).filter(function(thisPoolEl) {
-							return thisPoolEl.key !== poolEntryId;
+						var newList = parentModel.pool.slice(0).filter(function(thisEl) {
+							return thisEl.key !== itemId;
 						});
 
-						SetFactory.update(setModel.key, {pool: newPool}, function(err, newModel) {
+						parentFactory.update(parentModel.key, {pool: newList}, function(err, newParentModel) {
 							if (handlingError(err, reply)) return callback();
 							callback();
 						});
 					});
 				},
 				function(callback) {
-					// TODO: validate set/authenticate
-					PoolEntryFactory.get(poolEntryId, function(err, poolEntryModel) {
+					itemFactory.get(itemId, function(err, itemModel) {
 						if (handlingError(err, reply)) return callback();
-						poolEntryModel.delete(function(err) {
+						itemModel.delete(function(err) {
 							if (handlingError(err, reply)) return;
 							callback();
 						});

@@ -13,7 +13,7 @@ module.exports = function(ctx) {
 	ctx.setDoc;
 	describe('set-api-set', function () {
 
-		it('should delete any existing test documents', function(done) {
+		it('should delete any existing documents with the test name', function(done) {
 			ctx.server.inject({
 				method: 'delete',
 				url: ctx.baseSetUrl
@@ -41,7 +41,7 @@ module.exports = function(ctx) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result).to.be.an('object');
 				expect(res.result.name).to.equal(ctx.setName);
-				expect(res.result.song === undefined).to.equal(false);
+				expect(res.result.songs === undefined).to.equal(false);
 
 				ctx.setDoc = res.result;
 				if(ctx.app.config.logThings['test--list-collections']) {
@@ -53,26 +53,17 @@ module.exports = function(ctx) {
 		});
 
 		it('should handle updates to set data', function(done) {
-			ctx.setDoc.setInfo.bpm = 161;
+			ctx.setDoc.bpm = 161;
 			ctx.server.inject({
 				method: 'put',
 				url: ctx.baseSetUrl,
-				payload: {setInfo: ctx.setDoc.setInfo}
+				payload: {bpm: ctx.setDoc.bpm}
 			}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result).to.be.an('object');
-				expect(res.result.setInfo.bpm).to.equal(161);
-				expect(res.result.song === undefined).to.equal(false);
+				expect(res.result.bpm).to.equal(161);
+				expect(res.result.songs === undefined).to.equal(false);
 				ctx.setDoc = res.result;
-				done();
-			});
-		});
-
-		it('should still have set-info for the set I edited', function(done) {
-			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
-				expect(res.statusCode).to.equal(200);
-				expect(res.result.setInfo === undefined).to.equal(false);
-				expect(res.result.setInfo.bpm).to.equal(161);
 				done();
 			});
 		});
@@ -80,35 +71,9 @@ module.exports = function(ctx) {
 		it('should not have touched data that we didn\'t update', function(done) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
-				expect(res.result.song === undefined).to.equal(false);
+				expect(res.result.swing).to.equal(0.5);
+				expect(res.result.songs === undefined).to.equal(false);
 				done();
-			});
-		});
-
-		it('should allow me to crud a set-info directly', function(done) {
-			var setInfoData = {
-				swing: 0.6,
-				bpm: 95
-			};
-			ctx.server.inject({method: 'post', url: '/api/setInfo', payload: setInfoData}, function(res) {
-				expect(res.statusCode).to.equal(200);
-				expect(res.result.bpm).to.equal(95);
-				var setInfoId = res.result.id;
-				ctx.server.inject({method: 'put', url: '/api/setInfo/' + setInfoId, payload: {bpm: 88}}, function(res) {
-					expect(res.statusCode).to.equal(200);
-					ctx.server.inject({method: 'get', url: '/api/setInfo/' + setInfoId}, function(res) {
-						expect(res.statusCode).to.equal(200);
-						expect(res.result.id).to.equal(setInfoId);
-						expect(res.result.bpm).to.equal(88);
-						ctx.server.inject({method: 'delete', url: '/api/setInfo/' + setInfoId}, function(res) {
-							expect(res.statusCode).to.equal(200);
-							ctx.server.inject({method: 'get', url: '/api/setInfo/' + setInfoId}, function(res) {
-								expect(res.statusCode).to.equal(404);
-								done();
-							});
-						});
-					});
-				});
 			});
 		});
 

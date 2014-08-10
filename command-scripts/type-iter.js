@@ -1,4 +1,4 @@
-var StepList = require('./step-list');
+var StepList = require('../step-list');
 
 function TypeIter(server) {
 	this.server = server;
