@@ -3,6 +3,7 @@ var async = require('async');
 var _ = require('underscore');
 
 var handlingError = require('../handling-error');
+var StepList = require('../../step-list');
 
 var SetFactory = require('../models/set');
 var PatternFactory = require('../models/pattern');
@@ -88,17 +89,23 @@ module.exports = function(app) {
 						});
 					});
 				},
-				function(callback) {
+				function(callbackDeleteAllChildren) {
 					// then perform a delete on all children
 					itemFactory.get(itemId, function(err, itemModel) {
 						if (handlingError(err, reply)) return callback();
+						var stepList = new StepList();
 						itemModel.rows.forEach(function(thisChild) {
-							childFactory.get(thisChild.key, function(err, childModel) {
-								childModel.delete(function(err) {
-									if (handlingError(err, reply)) return;
-									callback();
+							stepList.addStep(function(childCallback) {
+								childFactory.get(thisChild.key, function(err, childModel) {
+									childModel.delete(function(err) {
+										if (handlingError(err, reply)) return;
+										childCallback();
+									});
 								});
 							});
+						});
+						stepList.execute(function() {
+							callbackDeleteAllChildren();
 						});
 					});
 				},

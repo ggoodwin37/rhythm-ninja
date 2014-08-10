@@ -9,9 +9,7 @@
 
 - implement check-tree and clean-tree commands. add more commands if needed.
   - get a server-instance up and running, inject, etc.
-
-- tree delete. first test that this is required.
-  - judging by how many orphaned child objects I'm now seeing, yes we do need to do a tree delete.
+  - no longer have all-of-type index entrypoints
 
 - consider adding some metadata like createdTime, createdBy (user id)
 
@@ -23,3 +21,9 @@
 
 - (before ship): really ought to do some authentication in here. would be a shame if somebody just grabbed the index then deleted each.
   - in particular, in all resource handlers, we should pull the set and authenticate against it. Right now we usually don't need the set but we will for auth.
+
+- add tests:
+  - index methods (all)
+   - tree delete, set, pattern, etc
+   - updates? are there more things we need to catch here?
+   - update a pattern's rowlist to change order? make sure this works

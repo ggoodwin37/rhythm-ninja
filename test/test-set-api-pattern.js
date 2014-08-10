@@ -76,7 +76,7 @@ module.exports = function(ctx) {
 			});
 		});
 
-		it('should allow me to delete the first pattern now', function(done) {
+		it('should allow me to delete the first pattern', function(done) {
 			ctx.server.inject({method: 'delete', url: baseSetPatternUrl + '/' + patternId1}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				done();
