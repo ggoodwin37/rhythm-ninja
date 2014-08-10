@@ -17,17 +17,20 @@ get /api/set/{set_id}/pattern/{pattern_id}/patternrow/{patternrow_id}
 put /api/set/{set_id}
 put /api/set/{set_id}/song/{song_id}
 put /api/set/{set_id}/pattern/{pattern_id}
+put /api/set/{set_id}/poolentry/{poolentry_id}
 put /api/set/{set_id}/song/{song_id}/songrow/{songrow_id}
 put /api/set/{set_id}/pattern/{pattern_id}/patternrow/{patternrow_id}
 
 delete /api/set/{set_id}
 delete /api/sample/{sample_id}
+delete /api/set/{set_id}/song/{song_id}
 delete /api/set/{set_id}/pattern/{pattern_id}
 delete /api/set/{set_id}/poolentry/{poolentry_id}
 delete /api/set/{set_id}/song/{song_id}/songrow/{songrow_id}
 delete /api/set/{set_id}/pattern/{pattern_id}/patternrow/{patternrow_id}
 
 post /api/sample
+post /api/set/{set_id}/song
 post /api/set/{set_id}/pattern
 post /api/set/{set_id}/poolentry
 post /api/set/{set_id}/song/{song_id}/songrow
