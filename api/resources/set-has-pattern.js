@@ -92,13 +92,14 @@ module.exports = function(app) {
 				function(callbackDeleteAllChildren) {
 					// then perform a delete on all children
 					itemFactory.get(itemId, function(err, itemModel) {
-						if (handlingError(err, reply)) return callback();
+						if (handlingError(err, reply)) return callbackDeleteAllChildren();
 						var stepList = new StepList();
 						itemModel.rows.forEach(function(thisChild) {
 							stepList.addStep(function(childCallback) {
 								childFactory.get(thisChild.key, function(err, childModel) {
+									if (handlingError(err, reply)) return childCallback();
 									childModel.delete(function(err) {
-										if (handlingError(err, reply)) return;
+										if (handlingError(err, reply)) return childCallback();
 										childCallback();
 									});
 								});
