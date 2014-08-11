@@ -51,23 +51,36 @@ module.exports = function(ctx) {
 			});
 		});
 
-		var baseSetPatternUrl = '/api/set/' + treeOpsSetName + '/pattern';
-		var patternId1;
+		var basePatternUrl = '/api/set/' + treeOpsSetName + '/pattern';
+		var basePatternRowUrl;
+		var patternId1, rowId1;
 		it('should allow me to create a new pattern and row', function(done) {
 			var pattern = {
 				name: 'test-pattern-post',
 				length: 12,
 				locked: false
 			};
-			ctx.server.inject({method: 'post', url: baseSetPatternUrl, payload: JSON.stringify(pattern)}, function(res) {
+			ctx.server.inject({method: 'post', url: basePatternUrl, payload: JSON.stringify(pattern)}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.length).to.equal(12);
 				patternId1 = res.result.id;
-				done();
+				basePatternRowUrl = basePatternUrl + '/' + patternId1 + '/patternrow';
+				var row = {
+					poolEntry: 'my-pool-entry',
+					steps: [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+				};
+				ctx.server.inject({method: 'post', url: basePatternRowUrl, payload: row}, function(res) {
+					expect(res.statusCode).to.equal(200);
+					expect(res.result.poolEntry).to.equal('my-pool-entry');
+					rowId1 = res.result.id;
+					ctx.server.inject({method: 'get', url: basePatternUrl + '/' + patternId1}, function(res){
+						expect(res.statusCode).to.equal(200);
+						expect(res.result.rows.length).to.equal(1);
+						expect(res.result.rows[0].id).to.equal(rowId1);
+						done();
+					});
+				});
 			});
 		});
-
-
-
 	});
 };
