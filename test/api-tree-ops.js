@@ -12,7 +12,7 @@ module.exports = function(ctx) {
 	ctx.treeOps = {
 		setUrl: '/api/set/' + treeOpsSetName
 	};
-	describe('set-api-set', function () {
+	describe('set-api-tree-ops', function () {
 
 		it('should delete any existing documents with the test name ' + ctx.treeOps.setName, function(done) {
 			ctx.server.inject({
