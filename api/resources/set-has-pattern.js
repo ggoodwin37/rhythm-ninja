@@ -79,7 +79,7 @@ module.exports = function(app) {
 					parentFactory.findByIndex('name', parentId, function(err, parentModel) {
 						if (handlingError(err, reply)) return callback();
 
-						var newList = parentModel.patterns.slice(0).filter(function(thisEl) {
+						var newList = parentModel.patterns.filter(function(thisEl) {
 							return thisEl.key !== itemId;
 						});
 
@@ -105,6 +105,16 @@ module.exports = function(app) {
 								});
 							});
 						});
+
+						// TODO: this step was a theory about the test bug but didn't fix it. might
+						//  be something else in this direction though. wonder if this is needed anyways.
+						// empty the child list now so we can load it successfully in subsequent steps.
+						stepList.addStep(function(callback) {
+							itemFactory.update(itemId, {patterns: []}, function(err, newItemModel) {
+								if (handlingError(err, reply)) return callback();
+								callback();
+							});
+						});
 						stepList.execute(function() {
 							callbackDeleteAllChildren();
 						});
@@ -112,7 +122,9 @@ module.exports = function(app) {
 				},
 				function(callback) {
 					itemFactory.get(itemId, function(err, itemModel) {
+console.log('checking if pattern get succeeded');
 						if (handlingError(err, reply)) return callback();
+console.log('ok'); // NOT OK MOTHERFUCKER
 						itemModel.delete(function(err) {
 							if (handlingError(err, reply)) return;
 							callback();

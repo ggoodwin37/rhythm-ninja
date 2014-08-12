@@ -54,7 +54,7 @@ module.exports = function(ctx) {
 		var basePatternUrl = '/api/set/' + treeOpsSetName + '/pattern';
 		var basePatternRowUrl;
 		var patternId1, rowId1, patternId2, rowId2;
-		it('should allow me to create new patterns and rows', function(done) {
+		it('should allow me to create new patterns and rows, updating pattern when a child is created', function(done) {
 			var pattern = {
 				name: 'test-pattern-post',
 				length: 12,
@@ -106,13 +106,51 @@ module.exports = function(ctx) {
 					});
 				}
 			], function() {
-				var setUrl = '/api/set/' + treeOpsSetName;
-				ctx.server.inject({method: 'get', url: setUrl}, function(res){
+				ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res){
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.patterns.length).to.equal(2);
 					done();
 				});
 			});
 		});
+
+		it('should update parent list when child is removed.', function(done) {
+			var patternUrl = treeOpsSetUrl + '/pattern/' + patternId1;
+			var rowUrl = patternUrl + '/patternrow/' + rowId1;
+			ctx.server.inject({method: 'delete', url: rowUrl}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				ctx.server.inject({method: 'get', url: patternUrl}, function(res) {
+					expect(res.statusCode).to.equal(200);
+					expect(res.result.rows.length).to.equal(1); // started with 2
+					done();
+				});
+			});
+		});
+
+		it('should remove children when the parent is removed', function(done) {
+			var patternUrl = treeOpsSetUrl + '/pattern/' + patternId1;
+			var rowUrl = patternUrl + '/patternrow/' + rowId2;
+			console.log('patt=' + patternUrl + ' row=' + rowUrl);
+
+			// ctx.server.inject({method: 'get', url: patternUrl}, function(res) {
+			// 	expect(res.statusCode).to.equal(200);
+			// 	expect(res.result.rows.length).to.equal(1); // started with 2
+			// 	done();
+			// });
+
+
+			ctx.server.inject({method: 'get', url: rowUrl}, function(res) {
+				expect(res.statusCode).to.equal(200);
+
+				ctx.server.inject({method: 'delete', url: patternUrl}, function(res) {
+					expect(res.statusCode).to.equal(200); // 404??
+					ctx.server.inject({method: 'get', url: rowUrl}, function(res) {
+						expect(res.statusCode).to.equal(200);
+						done();
+					});
+				});
+			});
+		});
+
 	});
 };
