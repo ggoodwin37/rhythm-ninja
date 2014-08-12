@@ -8,7 +8,7 @@ module.exports = function(ctx) {
 	var describe = Lab.experiment;
 	var it = Lab.test;
 
-	describe('set-api-song', function() {
+	describe('verify song api', function() {
 
 		it('should start with an empty song list on set endpoint', function(done) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {

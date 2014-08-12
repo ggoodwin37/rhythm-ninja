@@ -8,7 +8,7 @@ module.exports = function(ctx) {
 	var describe = Lab.experiment;
 	var it = Lab.test;
 
-	describe('set-api-pool-entry', function() {
+	describe('verify pool-entry api', function() {
 
 		it('should start with an empty pool on set endpoint', function(done) {
 			expect(ctx.setDoc.pool.length).to.equal(0);

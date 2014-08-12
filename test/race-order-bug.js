@@ -9,7 +9,7 @@ module.exports = function(ctx) {
 	var describe = Lab.experiment;
 	var it = Lab.test;
 
-	describe('race-order-bug', function() {
+	describe('try to repro an out-of-order bug that I see occasionally. this test doesn\'t seem to hit it though.', function() {
 
 		function deleteAllPoolEntries(done) {
 			ctx.getSet(function(res) {
