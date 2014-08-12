@@ -9,16 +9,14 @@ module.exports = function(ctx) {
 	var it = Lab.test;
 
 	var treeOpsSetName = 'reserved-test-tree-stuff';
-	ctx.treeOps = {
-		setUrl: '/api/set/' + treeOpsSetName
-	};
+	var treeOpsSetUrl = '/api/set/' + treeOpsSetName;
 
 	describe('verify that we do the right thing when deleting child elements', function () {
 
-		it('should delete any existing documents with the test name ' + ctx.treeOps.setName, function(done) {
+		it('should delete any existing documents with the test name ' + treeOpsSetName, function(done) {
 			ctx.server.inject({
 				method: 'delete',
-				url: ctx.treeOps.setUrl
+				url: treeOpsSetUrl
 			}, function(res) {
 				expect(res.statusCode == 200 || res.statusCode == 404).to.equal(true);
 				done();
@@ -28,7 +26,7 @@ module.exports = function(ctx) {
 		it('should lazy create and return a new document', function(done) {
 			ctx.server.inject({
 				method: 'get',
-				url: ctx.treeOps.setUrl
+				url: treeOpsSetUrl
 			}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result).to.be.an('object');
@@ -44,7 +42,7 @@ module.exports = function(ctx) {
 		});
 
 		it('should start with an empty pattern list on set endpoint', function(done) {
-			ctx.server.inject({method: 'get', url: ctx.treeOps.setUrl}, function(res) {
+			ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.patterns.length).to.equal(0);
 				ctx.setDoc = res.result;
