@@ -46,7 +46,6 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.patterns.length).to.equal(0);
-				ctx.setDoc = res.result;
 				done();
 			});
 		});
@@ -136,6 +135,107 @@ module.exports = function(ctx) {
 
 				ctx.server.inject({method: 'delete', url: patternUrl}, function(res) {
 					expect(res.statusCode).to.equal(200); // 404??
+					ctx.server.inject({method: 'get', url: rowUrl}, function(res) {
+						expect(res.statusCode).to.equal(200);
+						done();
+					});
+				});
+			});
+		});
+
+		// do similar set of tests for song
+		it('should start with an empty song list on set endpoint', function(done) {
+			ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.songs.length).to.equal(0);
+				done();
+			});
+		});
+
+		var baseSongUrl = '/api/set/' + treeOpsSetName + '/song';
+		var baseSongRowUrl;
+		var songId1, songRowId1, songId2, songRowId2;
+		it('should allow me to create new songs and songrows, updating pattern when a child is created', function(done) {
+			var song = {
+				name: 'test-song-post',
+				locked: false
+			};
+			var songRow = {
+				patternId: 'some-pattern',
+				offset: 0,
+				len: 8,
+				count: 1
+			};
+			async.series([
+				function(cb) {
+					ctx.server.inject({method: 'post', url: baseSongUrl, payload: song}, function(res) {
+						songId1 = res.result.id;
+						cb();
+					});
+				},
+				function(cb) {
+					ctx.server.inject({method: 'post', url: baseSongUrl, payload: song}, function(res) {
+						songId2 = res.result.id;
+						cb();
+					});
+				},
+				function(cb) {
+					var songRowUrl = baseSongUrl + '/' + songId1 + '/songrow';
+					ctx.server.inject({method: 'post', url: songRowUrl, payload: songRow}, function(res) {
+						songRowId1 = res.result.id;
+						cb();
+					});
+				},
+				function(cb) {
+					var songRowUrl = baseSongUrl + '/' + songId1 + '/songrow';  // add to same song as prev
+					ctx.server.inject({method: 'post', url: songRowUrl, payload: songRow}, function(res) {
+						songRowId2 = res.result.id;
+						cb();
+					});
+				},
+				function(cb) {
+					ctx.server.inject({method: 'get', url: baseSongUrl + '/' + songId1}, function(res) {
+						expect(res.statusCode).to.equal(200);
+						expect(res.result.rows.length).to.equal(2);
+						cb();
+					});
+				},
+				function(cb) {
+					ctx.server.inject({method: 'get', url: baseSongUrl + '/' + songId2}, function(res) {
+						expect(res.statusCode).to.equal(200);
+						expect(res.result.rows.length).to.equal(0);
+						cb();
+					});
+				}
+			], function() {
+				ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res){
+					expect(res.statusCode).to.equal(200);
+					expect(res.result.songs.length).to.equal(2);
+					done();
+				});
+			});
+		});
+
+		it('should update parent list when child is removed', function(done) {
+			var songUrl = treeOpsSetUrl + '/song/' + songId1;
+			var rowUrl = songUrl + '/songrow/' + songRowId1;
+			ctx.server.inject({method: 'delete', url: rowUrl}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				ctx.server.inject({method: 'get', url: songUrl}, function(res) {
+					expect(res.statusCode).to.equal(200);
+					expect(res.result.rows.length).to.equal(1); // started with 2
+					done();
+				});
+			});
+		});
+
+		it('should remove children when the parent is removed', function(done) {
+			var songUrl = treeOpsSetUrl + '/song/' + patternId1;
+			var rowUrl = songUrl + '/songrow/' + songRowId2;
+			ctx.server.inject({method: 'get', url: rowUrl}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				ctx.server.inject({method: 'delete', url: songUrl}, function(res) {
+					expect(res.statusCode).to.equal(200);
 					ctx.server.inject({method: 'get', url: rowUrl}, function(res) {
 						expect(res.statusCode).to.equal(200);
 						done();
