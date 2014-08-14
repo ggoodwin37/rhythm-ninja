@@ -114,7 +114,7 @@ module.exports = function(ctx) {
 			});
 		});
 
-		it('should update parent list when child is removed.', function(done) {
+		it('should update parent list when child is removed', function(done) {
 			var patternUrl = treeOpsSetUrl + '/pattern/' + patternId1;
 			var rowUrl = patternUrl + '/patternrow/' + rowId1;
 			ctx.server.inject({method: 'delete', url: rowUrl}, function(res) {
@@ -135,6 +135,7 @@ module.exports = function(ctx) {
 			// ctx.server.inject({method: 'get', url: patternUrl}, function(res) {
 			// 	expect(res.statusCode).to.equal(200);
 			// 	expect(res.result.rows.length).to.equal(1); // started with 2
+			// 	ctx.inspect(res.result);
 			// 	done();
 			// });
 

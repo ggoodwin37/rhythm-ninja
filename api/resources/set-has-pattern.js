@@ -3,6 +3,7 @@ var async = require('async');
 var _ = require('underscore');
 
 var handlingError = require('../handling-error');
+var handlingErrorOrMissing = require('../handling-error-or-missing');
 var StepList = require('../../step-list');
 
 var SetFactory = require('../models/set');
@@ -24,7 +25,7 @@ module.exports = function(app) {
 		index: function(request, reply) {
 			var parentId = request.params.set_id;
 			parentFactory.findByIndex('name', parentId, function(err, parentModel) {
-				if (handlingError(err, reply)) return;
+				if (handlingErrorOrMissing(err, parentModel, reply)) return;
 				return reply(parentModel.patterns.map(function(thisPattern) { return thisPattern.toJSON(); }));
 			});
 		},
@@ -41,7 +42,7 @@ module.exports = function(app) {
 			newModel.save(function(err) {
 				if (handlingError(err, reply)) return;
 				parentFactory.findByIndex('name', parentId, function(err, parentModel) {
-					if (handlingError(err, reply)) return;
+					if (handlingErrorOrMissing(err, parentModel, reply)) return;
 					var newList = parentModel.patterns.slice(0);
 					newList.push(newModel);
 
@@ -73,15 +74,11 @@ module.exports = function(app) {
 			var parentId = request.params.set_id;
 			var itemId = request.params.pattern_id;
 
-console.log('** requested destroy on pattern ' + itemId);
 			async.series([
 				function(callback) {
-console.log('foo');
 					// first check the parent for any instances of this item and remove
 					parentFactory.findByIndex('name', parentId, function(err, parentModel) {
-console.log('foob');
-						if (handlingError(err, reply)) return callback();
-console.log('fooc');
+						if (handlingErrorOrMissing(err, parentModel, reply)) return callback();
 
 						var newList = parentModel.patterns.filter(function(thisEl) {
 							return thisEl.key !== itemId;
@@ -94,10 +91,9 @@ console.log('fooc');
 					});
 				},
 				function(callbackDeleteAllChildren) {
-console.log('unstability');
 					// then perform a delete on all children
 					itemFactory.get(itemId, function(err, itemModel) {
-console.log('** this is the item model');
+// console.log('** this is the item model');
 // if (itemModel)
 // 	inspect(itemModel.toJSON());
 // else

@@ -3,6 +3,7 @@ var async = require('async');
 var _ = require('underscore');
 
 var handlingError = require('../handling-error');
+var handlingErrorOrMissing = require('../handling-error-or-missing');
 
 var SetFactory = require('../models/set');
 var PoolEntryFactory = require('../models/pool-entry');
@@ -16,7 +17,7 @@ module.exports = function(app) {
 		index: function(request, reply) {
 			var parentId = request.params.set_id;
 			parentFactory.findByIndex('name', parentId, function(err, parentModel) {
-				if (handlingError(err, reply)) return;
+				if (handlingErrorOrMissing(err, parentModel, reply)) return;
 				return reply(parentModel.pool.map(function(thisPattern) { return thisPattern.toJSON(); }));
 			});
 		},
@@ -33,7 +34,7 @@ module.exports = function(app) {
 			newModel.save(function(err) {
 				if (handlingError(err, reply)) return;
 				parentFactory.findByIndex('name', parentId, function(err, parentModel) {
-					if (handlingError(err, reply)) return;
+					if (handlingErrorOrMissing(err, parentModel, reply)) return;
 					var newList = parentModel.pool.slice(0);
 					newList.push(newModel);
 
@@ -69,7 +70,7 @@ module.exports = function(app) {
 				function(callback) {
 					// first check the parent for any instances of this item and remove
 					parentFactory.findByIndex('name', parentId, function(err, parentModel) {
-						if (handlingError(err, reply)) return callback();
+						if (handlingErrorOrMissing(err, parentModel, reply)) return;
 
 						var newList = parentModel.pool.slice(0).filter(function(thisEl) {
 							return thisEl.key !== itemId;
