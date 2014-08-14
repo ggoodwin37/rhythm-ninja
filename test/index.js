@@ -48,3 +48,4 @@ require('./api-song')(ctx);
 // require('./race-order-bug')(ctx); // trying to track down a bug where sometimes removing an el leaves unexpected key
 // require('./api-index')(ctx);
 require('./api-tree-ops')(ctx);
+require('./api-order')(ctx);
