@@ -73,11 +73,15 @@ module.exports = function(app) {
 			var parentId = request.params.set_id;
 			var itemId = request.params.pattern_id;
 
+console.log('** requested destroy on pattern ' + itemId);
 			async.series([
 				function(callback) {
+console.log('foo');
 					// first check the parent for any instances of this item and remove
 					parentFactory.findByIndex('name', parentId, function(err, parentModel) {
+console.log('foob');
 						if (handlingError(err, reply)) return callback();
+console.log('fooc');
 
 						var newList = parentModel.patterns.filter(function(thisEl) {
 							return thisEl.key !== itemId;
@@ -90,8 +94,14 @@ module.exports = function(app) {
 					});
 				},
 				function(callbackDeleteAllChildren) {
+console.log('unstability');
 					// then perform a delete on all children
 					itemFactory.get(itemId, function(err, itemModel) {
+console.log('** this is the item model');
+// if (itemModel)
+// 	inspect(itemModel.toJSON());
+// else
+// 	console.log('wtaf');
 						if (handlingError(err, reply)) return callbackDeleteAllChildren();
 						var stepList = new StepList();
 						itemModel.rows.forEach(function(thisChild) {

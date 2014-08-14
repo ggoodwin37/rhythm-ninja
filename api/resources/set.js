@@ -78,6 +78,7 @@ module.exports = function(app) {
 		destroy: function(request, reply) {
 			var setName = request.params.set_id;
 			SetFactory.findByIndex('name', setName, function(err, setModel) {
+				console.dir(err);
 				if (handlingError(err, reply)) return;
 
 				var stepList = new StepList();
