@@ -131,15 +131,6 @@ module.exports = function(ctx) {
 			var patternUrl = treeOpsSetUrl + '/pattern/' + patternId1;
 			var rowUrl = patternUrl + '/patternrow/' + rowId2;
 			console.log('patt=' + patternUrl + ' row=' + rowUrl);
-
-			// ctx.server.inject({method: 'get', url: patternUrl}, function(res) {
-			// 	expect(res.statusCode).to.equal(200);
-			// 	expect(res.result.rows.length).to.equal(1); // started with 2
-			// 	ctx.inspect(res.result);
-			// 	done();
-			// });
-
-
 			ctx.server.inject({method: 'get', url: rowUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 
