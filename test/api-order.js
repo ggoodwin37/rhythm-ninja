@@ -100,7 +100,29 @@ module.exports = function(ctx) {
 			});
 		});
 
-		// TODO: put actual test here
+		it('should have the pattern rows in the same order I created them', function(done) {
+			ctx.server.inject({method: 'get', url: basePatternUrl + '/' + patternId}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.rows.length).to.equal(2);
+				expect(res.result.rows[0].id).to.equal(rowId1);
+				expect(res.result.rows[1].id).to.equal(rowId2);
+				done();
+			});
+		});
+
+		it('should allow me to update the order of the rows', function(done) {
+			var updateData = {
+				rows: [rowId2, rowId1]
+			};
+			var url = basePatternUrl + '/' + patternId;
+			ctx.server.inject({method: 'put', url: url, payload: updateData}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.rows.length).to.equal(2);
+				expect(res.result.rows[0].id).to.equal(rowId2);
+				expect(res.result.rows[1].id).to.equal(rowId1);
+				done();
+			});
+		});
 
 		// do similar set of tests for song
 		it('should start with an empty song list on set endpoint', function(done) {
@@ -162,8 +184,29 @@ module.exports = function(ctx) {
 			});
 		});
 
-		// TODO: actual test
+		it('should have the song rows in the same order I created them', function(done) {
+			ctx.server.inject({method: 'get', url: baseSongUrl + '/' + songId}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.rows.length).to.equal(2);
+				expect(res.result.rows[0].id).to.equal(songRowId1);
+				expect(res.result.rows[1].id).to.equal(songRowId2);
+				done();
+			});
+		});
 
+		it('should allow me to update the order of the rows', function(done) {
+			var updateData = {
+				rows: [songRowId2, songRowId1]
+			};
+			var url = baseSongUrl + '/' + songId;
+			ctx.server.inject({method: 'put', url: url, payload: updateData}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.rows.length).to.equal(2);
+				expect(res.result.rows[0].id).to.equal(songRowId2);
+				expect(res.result.rows[1].id).to.equal(songRowId1);
+				done();
+			});
+		});
 
 	});
 };
