@@ -4,13 +4,6 @@ module.exports = function(app) {
 		sample: require('./resources/sample')(app)
 	};
 
-	var dulcimer = require('dulcimer');
-	dulcimer.connect({
-		type: 'level',
-		path: __dirname + '/db',
-		bucket: 'rhythm-ninja'
-	});
-
 	var apiServerPack = {
 		plugin: require('mudskipper'),
 		options: {
