@@ -1,7 +1,7 @@
-var dulcimer = require('dulcimer');
+var verymodel = require('verymodel');
 var SongRowFactory = require('./song-row');
 
-var SongFactory = new dulcimer.Model({
+var SongFactory = new verymodel.Model({
 	id: {
 		derive: function() {
 			return this.key;

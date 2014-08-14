@@ -1,7 +1,7 @@
-var dulcimer = require('dulcimer');
+var verymodel = require('verymodel');
 var PatternRowFactory = require('./pattern-row');
 
-var PatternFactory = new dulcimer.Model({
+var PatternFactory = new verymodel.Model({
 	id: {
 		derive: function() {
 			return this.key;

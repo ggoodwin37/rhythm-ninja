@@ -1,7 +1,7 @@
-var dulcimer = require('dulcimer');
+var verymodel = require('verymodel');
 var _ = require('underscore');
 
-var PatternRowFactory = new dulcimer.Model({
+var PatternRowFactory = new verymodel.Model({
 	id: {
 		derive: function() {
 			return this.key;
@@ -12,14 +12,13 @@ var PatternRowFactory = new dulcimer.Model({
 		required: true,
 		default: 'default'
 	},
+	// TODO: fix this for mongo
 	steps: {
 		type: 'array',
 		required: true,
 		default: function() {
 			return [];
 		},
-		// note: dulcimer is doing something strange with array values, wrapping them in another array.
-		//  counteract this with a flatten call when setting this property.
 		processIn: function(inValue) {
 			return _.flatten(inValue);
 		},

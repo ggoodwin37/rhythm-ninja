@@ -1,9 +1,9 @@
-var dulcimer = require('dulcimer');
+var verymodel = require('verymodel');
 var PoolEntryFactory = require('./pool-entry');
 var PatternFactory = require('./pattern');
 var SongFactory = require('./song');
 
-var SetFactory = new dulcimer.Model({
+var SetFactory = new verymodel.Model({
 	id: {
 		derive: function() {
 			return this.key;
