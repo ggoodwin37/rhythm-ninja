@@ -41,11 +41,11 @@ before(function(done) {
 });
 
 require('./server')(ctx);
-require('./api-set')(ctx);
-require('./api-pool-entry')(ctx);
-require('./api-pattern')(ctx);
-require('./api-song')(ctx);
+// require('./api-set')(ctx);
+// require('./api-pool-entry')(ctx);
+// require('./api-pattern')(ctx);
+// require('./api-song')(ctx);
 // require('./race-order-bug')(ctx); // trying to track down a bug where sometimes removing an el leaves unexpected key
 // require('./api-index')(ctx);
-require('./api-tree-ops')(ctx);
-require('./api-order')(ctx);
+// require('./api-tree-ops')(ctx);
+// require('./api-order')(ctx);
