@@ -13,5 +13,5 @@ client/templates.js
 # generated css
 dist/css
 
-# probably shouldn't track database
-api/db
+# don't track database
+data/db
