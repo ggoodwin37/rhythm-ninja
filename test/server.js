@@ -9,7 +9,7 @@ module.exports = function(ctx) {
 	var describe = Lab.experiment;
 	var it = Lab.test;
 
-	describe('server', function () {
+	describe('server init, routing, etc', function () {
 
 		it('loaded config', function(done) {
 			expect(!!ctx.app.config).to.equal(true);

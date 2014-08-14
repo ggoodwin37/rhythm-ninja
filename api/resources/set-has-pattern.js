@@ -3,6 +3,7 @@ var async = require('async');
 var _ = require('underscore');
 
 var handlingError = require('../handling-error');
+var handlingErrorOrMissing = require('../handling-error-or-missing');
 var StepList = require('../../step-list');
 
 var SetFactory = require('../models/set');
@@ -24,7 +25,7 @@ module.exports = function(app) {
 		index: function(request, reply) {
 			var parentId = request.params.set_id;
 			parentFactory.findByIndex('name', parentId, function(err, parentModel) {
-				if (handlingError(err, reply)) return;
+				if (handlingErrorOrMissing(err, parentModel, reply)) return;
 				return reply(parentModel.patterns.map(function(thisPattern) { return thisPattern.toJSON(); }));
 			});
 		},
@@ -41,7 +42,7 @@ module.exports = function(app) {
 			newModel.save(function(err) {
 				if (handlingError(err, reply)) return;
 				parentFactory.findByIndex('name', parentId, function(err, parentModel) {
-					if (handlingError(err, reply)) return;
+					if (handlingErrorOrMissing(err, parentModel, reply)) return;
 					var newList = parentModel.patterns.slice(0);
 					newList.push(newModel);
 
@@ -77,9 +78,9 @@ module.exports = function(app) {
 				function(callback) {
 					// first check the parent for any instances of this item and remove
 					parentFactory.findByIndex('name', parentId, function(err, parentModel) {
-						if (handlingError(err, reply)) return callback();
+						if (handlingErrorOrMissing(err, parentModel, reply)) return callback();
 
-						var newList = parentModel.patterns.slice(0).filter(function(thisEl) {
+						var newList = parentModel.patterns.filter(function(thisEl) {
 							return thisEl.key !== itemId;
 						});
 
@@ -92,6 +93,11 @@ module.exports = function(app) {
 				function(callbackDeleteAllChildren) {
 					// then perform a delete on all children
 					itemFactory.get(itemId, function(err, itemModel) {
+// console.log('** this is the item model');
+// if (itemModel)
+// 	inspect(itemModel.toJSON());
+// else
+// 	console.log('wtaf');
 						if (handlingError(err, reply)) return callbackDeleteAllChildren();
 						var stepList = new StepList();
 						itemModel.rows.forEach(function(thisChild) {
@@ -105,6 +111,16 @@ module.exports = function(app) {
 								});
 							});
 						});
+
+						// TODO: this step was a theory about the test bug but didn't fix it. might
+						//  be something else in this direction though. wonder if this is needed anyways.
+						// empty the child list now so we can load it successfully in subsequent steps.
+						stepList.addStep(function(callback) {
+							itemFactory.update(itemId, {patterns: []}, function(err, newItemModel) {
+								if (handlingError(err, reply)) return callback();
+								callback();
+							});
+						});
 						stepList.execute(function() {
 							callbackDeleteAllChildren();
 						});
@@ -112,7 +128,9 @@ module.exports = function(app) {
 				},
 				function(callback) {
 					itemFactory.get(itemId, function(err, itemModel) {
+console.log('checking if pattern get succeeded');
 						if (handlingError(err, reply)) return callback();
+console.log('ok'); // NOT OK MOTHERFUCKER
 						itemModel.delete(function(err) {
 							if (handlingError(err, reply)) return;
 							callback();

@@ -8,7 +8,7 @@ module.exports = function(ctx) {
 	var describe = Lab.experiment;
 	var it = Lab.test;
 
-	describe('set-api-pattern', function() {
+	describe('verify pattern and patternrow api', function() {
 
 		it('should start with an empty pattern list on set endpoint', function(done) {
 			expect(ctx.setDoc.patterns.length).to.equal(0);

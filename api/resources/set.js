@@ -2,6 +2,7 @@ var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var async = require('async');
 var _ = require('underscore');
 var handlingError = require('../handling-error');
+var handlingErrorOrMissing = require('../handling-error-or-missing');
 var StepList = require('../../step-list');
 var SetFactory = require('../models/set');
 var SongFactory = require('../models/song');
@@ -48,17 +49,24 @@ module.exports = function(app) {
 		show: function(request, reply) {
 			var setName = request.params.set_id;
 			SetFactory.findByIndex('name', setName, function(err, setModel) {
+				var shouldCreate = false;
 				if (err) {
 					if (err.type == 'NotFoundError') {
-
+						shouldCreate = true;
+					} else {
+						return reply(new Error(err));
+					}
+				}
+				if (!setModel) {
+					shouldCreate = true;
+				}
+				if (shouldCreate) {
 						if (app.config.logThings['api--create-stuff']) {
 							console.log('lazy creating set with name: ' + setName);
 						}
-
 						return createSet(setName, reply);
-					}
-					return reply(new Error(err));
 				}
+
 				reply(setModel.toJSON());
 			});
 		},
@@ -67,7 +75,7 @@ module.exports = function(app) {
 			var setName = request.params.set_id;
 			var updatedData = request.payload;
 			SetFactory.findByIndex('name', setName, function(err, setModel) {
-				if (handlingError(err, reply)) return;
+				if (handlingErrorOrMissing(err, setModel, reply)) return;
 				var mergeObject = _.pick(request.payload, 'name', 'swing', 'bpm');
 				SetFactory.update(setModel.key, mergeObject, function(updateErr, updateResult) {
 					if (updateErr) return reply(new Error(updateErr));
@@ -78,7 +86,7 @@ module.exports = function(app) {
 		destroy: function(request, reply) {
 			var setName = request.params.set_id;
 			SetFactory.findByIndex('name', setName, function(err, setModel) {
-				if (handlingError(err, reply)) return;
+				if (handlingErrorOrMissing(err, setModel, reply)) return;
 
 				var stepList = new StepList();
 

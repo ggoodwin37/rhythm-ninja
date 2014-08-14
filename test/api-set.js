@@ -11,7 +11,7 @@ module.exports = function(ctx) {
 	ctx.setName = 'reserved-test-asdjfjjadsfh';
 	ctx.baseSetUrl = '/api/set/' + ctx.setName;
 	ctx.setDoc;
-	describe('set-api-set', function () {
+	describe('verify set api', function () {
 
 		it('should delete any existing documents with the test name', function(done) {
 			ctx.server.inject({
