@@ -26,7 +26,7 @@ module.exports = function(app) {
 			songs: songs
 		});
 
-		setInstance.save(function(err) {
+		setInstance.save(function(err, setInstance, numAffected) {
 			done(err, setInstance);
 		});
 	}
