@@ -5,9 +5,9 @@ var schema = mongoose.Schema({
 	name: String,
 	swing: Number,
 	bpm: Number,
-	pool: [mongoose.Schema.Types.ObjectId],
-	patterns: [mongoose.Schema.Types.ObjectId],
-	songs: [mongoose.Schema.Types.ObjectId]
+	pool: [String],
+	patterns: [String],
+	songs: [String]
 });
 require('./schema-id')(schema);
 var factory = mongoose.model(modelName, schema);

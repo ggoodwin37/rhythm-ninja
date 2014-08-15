@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var modelName = 'pool-entry';
 var schema = mongoose.Schema({
-	parent_id: mongoose.Schema.Types.ObjectId,
+	parent_id: String,
 	name: String,
 	volume: Number,
 	sampleType: String,
