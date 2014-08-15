@@ -41,6 +41,7 @@ before(function(done) {
 });
 
 require('./server')(ctx);
+require('./mongo-mongoose')(ctx);
 // require('./api-set')(ctx);
 // require('./api-pool-entry')(ctx);
 // require('./api-pattern')(ctx);
