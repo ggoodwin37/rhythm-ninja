@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 
 var modelName = 'pattern';
 var schema = mongoose.Schema({
+	parent_id: mongoose.Schema.Types.ObjectId,
 	name: String,
 	length: {type: Number, default: 16},
 	locked: Boolean,
