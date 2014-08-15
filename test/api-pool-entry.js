@@ -68,9 +68,12 @@ module.exports = function(ctx) {
 				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.pool.length).to.equal(2);
-					expect(res.result.pool[1].id).to.equal(poolEntryId2);
-					expect(res.result.pool[1].volume).to.equal(0.5);
-					done();
+					expect(res.result.pool[1]).to.equal(poolEntryId2);
+					ctx.server.inject({method: 'get', url: ctx.baseSetUrl + '/poolentry/' + poolEntryId2}, function(res) {
+						expect(res.statusCode).to.equal(200);
+						expect(res.result.volume).to.equal(0.5);
+						done();
+					});
 				});
 			});
 		});
@@ -89,6 +92,8 @@ module.exports = function(ctx) {
 			});
 		});
 
+		// TODO gideong: fix this: tree delete isn't implemented, and we will need to get the pool
+		//   entry to check the volume since we aren't populating.
 		it('should have removed the deleted pool entry from the set', function(done) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
