@@ -8,6 +8,7 @@ var schema = mongoose.Schema({
 	sampleType: String,
 	sampleId: String
 });
+require('./schema-id')(schema);
 var factory = mongoose.model(modelName, schema);
 
 module.exports = factory;

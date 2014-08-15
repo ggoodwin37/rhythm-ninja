@@ -7,6 +7,7 @@ var schema = mongoose.Schema({
 	locked: Boolean,
 	rows: [mongoose.Schema.Types.ObjectId]
 });
+require('./schema-id')(schema);
 var factory = mongoose.model(modelName, schema);
 
 module.exports = factory;

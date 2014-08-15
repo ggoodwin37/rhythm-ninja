@@ -9,6 +9,7 @@ var schema = mongoose.Schema({
 	patterns: [mongoose.Schema.Types.ObjectId],
 	songs: [mongoose.Schema.Types.ObjectId]
 });
+require('./schema-id')(schema);
 var factory = mongoose.model(modelName, schema);
 
 module.exports = factory;
