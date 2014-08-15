@@ -1,34 +1,12 @@
-var verymodel = require('verymodel');
+var mongoose = require('mongoose');
 
-var PoolEntryFactory = new verymodel.Model({
-	id: {
-		derive: function() {
-			return this.key;
-		}
-	},
-	name: {
-		type: 'string',
-		required: true,
-		default: 'default'
-	},
-	volume: {
-		type: 'numeric',
-		required: true,
-		default: 1.0
-	},
-	sampleType: {
-		type: 'string',
-		required: true,
-		default: 'local'
-	},
-	sampleId: {
-		type: 'string',
-		required: true,
-		default: 'default'
-	}
-}, {
-	name: 'pool-entry',
-	keyType: 'uuid'
+var modelName = 'pool-entry';
+var schema = mongoose.Schema({
+	name: String,
+	volume: Number,
+	sampleType: String,
+	sampleId: String
 });
+var factory = mongoose.model(modelName, schema);
 
-module.exports = PoolEntryFactory;
+module.exports = factory;

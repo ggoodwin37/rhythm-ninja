@@ -54,7 +54,6 @@ module.exports = function(ctx) {
 			person.save(function(err) {
 				var id = person.id;
 				expect(!err).to.equal(true);
-				console.log('person id=' + id);
 				expect(typeof id).to.equal('string');
 				done();
 			});

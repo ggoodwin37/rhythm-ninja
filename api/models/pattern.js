@@ -1,33 +1,12 @@
-var verymodel = require('verymodel');
-var PatternRowFactory = require('./pattern-row');
+var mongoose = require('mongoose');
 
-var PatternFactory = new verymodel.Model({
-	id: {
-		derive: function() {
-			return this.key;
-		}
-	},
-	name: {
-		type: 'string',
-		required: true,
-		default: 'default'
-	},
-	length: {
-		type: 'integer',
-		required: true,
-		default: 16
-	},
-	locked: {
-		type: 'boolean',
-		required: true,
-		default: false
-	},
-	rows: {
-		foreignCollection: PatternRowFactory
-	}
-}, {
-	name: 'pattern',
-	keyType: 'uuid'
+var modelName = 'pattern';
+var schema = mongoose.Schema({
+	name: String,
+	length: {type: Number, default: 16},
+	locked: Boolean,
+	rows: [mongoose.Schema.Types.ObjectId]
 });
+var factory = mongoose.model(modelName, schema);
 
-module.exports = PatternFactory;
+module.exports = factory;

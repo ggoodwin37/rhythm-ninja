@@ -1,34 +1,12 @@
-var verymodel = require('verymodel');
+var mongoose = require('mongoose');
 
-var SongRowFactory = new verymodel.Model({
-	id: {
-		derive: function() {
-			return this.key;
-		}
-	},
-	patternId: {
-		type: 'string',
-		required: true,
-		default: 'default'
-	},
-	offset: {
-		type: 'integer',
-		required: true,
-		default: 0
-	},
-	len: {
-		type: 'integer',
-		required: true,
-		default: -1  // -> natural pattern length
-	},
-	count: {
-		type: 'integer',
-		required: true,
-		default: 1
-	}
-}, {
-	name: 'song-row',
-	keyType: 'uuid'
+var modelName = 'song-row';
+var schema = mongoose.Schema({
+	pattern_id: mongoose.Schema.Types.ObjectId
+	offset: Number,
+	len: Number,
+	count: Number
 });
+var factory = mongoose.model(modelName, schema);
 
-module.exports = SongRowFactory;
+module.exports = factory;

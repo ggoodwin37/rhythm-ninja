@@ -1,29 +1,11 @@
-var verymodel = require('verymodel');
-var SongRowFactory = require('./song-row');
+var mongoose = require('mongoose');
 
-var SongFactory = new verymodel.Model({
-	id: {
-		derive: function() {
-			return this.key;
-		}
-	},
-	name: {
-		type: 'string',
-		index: true,
-		required: true,
-		default: 'default'
-	},
-	locked: {
-		type: 'boolean',
-		required: true,
-		default: false
-	},
-	rows: {
-		foreignCollection: SongRowFactory
-	}
-}, {
-	name: 'song',
-	keyType: 'uuid'
+var modelName = 'song';
+var schema = mongoose.Schema({
+	name: String,
+	locked: Boolean,
+	rows: [mongoose.Schema.Types.ObjectId]
 });
+var factory = mongoose.model(modelName, schema);
 
-module.exports = SongFactory;
+module.exports = factory;

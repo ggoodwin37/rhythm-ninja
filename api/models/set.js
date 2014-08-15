@@ -1,42 +1,14 @@
-var verymodel = require('verymodel');
-var PoolEntryFactory = require('./pool-entry');
-var PatternFactory = require('./pattern');
-var SongFactory = require('./song');
+var mongoose = require('mongoose');
 
-var SetFactory = new verymodel.Model({
-	id: {
-		derive: function() {
-			return this.key;
-		}
-	},
-	name: {
-		type: 'string',
-		index: true,
-		required: true,
-		default: 'default'
-	},
-	swing: {
-		type: 'numeric',
-		required: true,
-		default: 0.5
-	},
-	bpm: {
-		type: 'numeric',
-		required: true,
-		default: 110.0
-	},
-	pool: {
-		foreignCollection: PoolEntryFactory
-	},
-	patterns: {
-		foreignCollection: PatternFactory
-	},
-	songs: {
-		foreignCollection: SongFactory
-	}
-}, {
-	name: 'set',
-	keyType: 'uuid'
+var modelName = 'set';
+var schema = mongoose.Schema({
+	name: String,
+	swing: Number,
+	bpm: Number,
+	pool: [mongoose.Schema.Types.ObjectId],
+	patterns: [mongoose.Schema.Types.ObjectId],
+	songs: [mongoose.Schema.Types.ObjectId]
 });
+var factory = mongoose.model(modelName, schema);
 
-module.exports = SetFactory;
+module.exports = factory;
