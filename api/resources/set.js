@@ -4,52 +4,54 @@ var _ = require('underscore');
 var handlingError = require('../handling-error');
 var handlingErrorOrMissing = require('../handling-error-or-missing');
 var StepList = require('../../step-list');
-var SetFactory = require('../models/set');
-var SongFactory = require('../models/song');
-
-function createSet(setName, reply) {
-	var pool = [];
-	var patterns = [];
-	var songs = [];
-
-	var setInstance = SetFactory.create({
-		name: setName,
-		swing: 0.5,
-		bpm: 155,
-		pool: pool,
-		patterns: patterns,
-		songs: songs
-	});
-
-	setInstance.save(function(err) {
-		reply(setInstance.toJSON());
-	});
-}
+var SetModel = require('../models/set');
 
 module.exports = function(app) {
+
+	function createSet(setName, done) {
+		if (app.config.logThings['api--create-stuff']) {
+			console.log('lazy creating set with name: ' + setName);
+		}
+
+		var pool = [];
+		var patterns = [];
+		var songs = [];
+
+		var setInstance = new SetModel({
+			name: setName,
+			swing: 0.5,
+			bpm: 155,
+			pool: pool,
+			patterns: patterns,
+			songs: songs
+		});
+
+		setInstance.save(function(err) {
+			done(err, setInstance);
+		});
+	}
+
 	return {
-		hasMany: [
-			{
-				poolentry: require('./set-has-pool-entry')(app)
-			},
-			{
-				pattern: require('./set-has-pattern')(app)
-			},
-			{
-				song: require('./set-has-song')(app)
-			}
-		],
-		index: function(request, reply) {
-			// TODO: pleeease auth me
-			SetFactory.all(function(err, models, pagination) {
-				if (handlingError(err, reply)) return;
-				reply(models.map(function(model) { return model.toJSON(); }));
-			});
-		},
+		// hasMany: [
+		// 	{
+		// 		poolentry: require('./set-has-pool-entry')(app)
+		// 	},
+		// 	{
+		// 		pattern: require('./set-has-pattern')(app)
+		// 	},
+		// 	{
+		// 		song: require('./set-has-song')(app)
+		// 	}
+		// ],
 		show: function(request, reply) {
 			var setName = request.params.set_id;
-			SetFactory.findByIndex('name', setName, function(err, setModel) {
+			SetModel.find({name: setName}, function(err, setModel) {
 				var shouldCreate = false;
+				if (err) {
+					inspect(err);
+					return reply(new Error(err));
+				}
+
 				if (err) {
 					if (err.type == 'NotFoundError') {
 						shouldCreate = true;
@@ -61,10 +63,9 @@ module.exports = function(app) {
 					shouldCreate = true;
 				}
 				if (shouldCreate) {
-						if (app.config.logThings['api--create-stuff']) {
-							console.log('lazy creating set with name: ' + setName);
-						}
-						return createSet(setName, reply);
+					return createSet(setName, function(err, instance) {
+						reply(instance.toJSON());
+					});
 				}
 
 				reply(setModel.toJSON());
@@ -74,10 +75,10 @@ module.exports = function(app) {
 			// note: this does not handle updating foreigns, should do that via each foreign's dedicated endpoint.
 			var setName = request.params.set_id;
 			var updatedData = request.payload;
-			SetFactory.findByIndex('name', setName, function(err, setModel) {
+			SetModel.find({name: setName}, function(err, setModel) {
 				if (handlingErrorOrMissing(err, setModel, reply)) return;
 				var mergeObject = _.pick(request.payload, 'name', 'swing', 'bpm');
-				SetFactory.update(setModel.key, mergeObject, function(updateErr, updateResult) {
+				SetModel.update(setModel.key, mergeObject, function(updateErr, updateResult) {
 					if (updateErr) return reply(new Error(updateErr));
 					return reply(updateResult.toJSON());
 				});
@@ -85,7 +86,12 @@ module.exports = function(app) {
 		},
 		destroy: function(request, reply) {
 			var setName = request.params.set_id;
-			SetFactory.findByIndex('name', setName, function(err, setModel) {
+			SetModel.find({name: setName}, function(err, setModel) {
+				console.log('<<<<<<<< setModel:');
+				inspect(setModel);
+				console.log('<<<<<<<< err:');
+				inspect(err);
+
 				if (handlingErrorOrMissing(err, setModel, reply)) return;
 
 				var stepList = new StepList();

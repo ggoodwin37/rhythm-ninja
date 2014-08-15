@@ -8,7 +8,7 @@ module.exports = function(ctx) {
 	var describe = Lab.experiment;
 	var it = Lab.test;
 
-	ctx.setName = 'reserved-test-asdjfjjadsfh';
+	ctx.setName = 'reserved-test-set';
 	ctx.baseSetUrl = '/api/set/' + ctx.setName;
 	ctx.setDoc;
 	describe('verify set api', function () {

@@ -10,8 +10,6 @@ module.exports = function(ctx) {
 	var describe = Lab.experiment;
 	var it = Lab.test;
 
-	var mongooseStarted = false;
-
 	before(function(done) {
 		// TODO: shared setup?
 		done();
@@ -19,28 +17,37 @@ module.exports = function(ctx) {
 
 	describe('basic mongoose stuff', function() {
 
-		it('should be able to call mongoose.connect', function(done) {
-			mongoose.connect('mongodb://localhost/ggtest');
-
-			var db = mongoose.connection;
-			db.on('error', function(err) {
-				console.log('connection error: ' + err);
-				done();
-			});
-			db.once('open', function callback () {
-				mongooseStarted = true;
+		it('should wait until mongoose is connected', function(done) {
+			if (ctx.app.mongooseStarted) {
+				return done();
+			}
+			mongoose.connection.on('open', function() {
 				done();
 			});
 		});
 
+		// assume the api connected mongoose already.
+		// it('should be able to call mongoose.connect', function(done) {
+		// 	mongoose.connect('mongodb://localhost/ggtest');
+		// 	var db = mongoose.connection;
+		// 	db.on('error', function(err) {
+		// 		console.log('connection error: ' + err);
+		// 		done();
+		// 	});
+		// 	db.once('open', function callback () {
+		// 		ctx.app.mongooseStarted = true;
+		// 		done();
+		// 	});
+		// });
+
 		var personFactory;
 		it('should be able to create a schema, factory, and instance', function(done) {
-			expect(mongooseStarted).to.equal(true);
+			expect(ctx.app.mongooseStarted).to.equal(true);
 			var personSchema = mongoose.Schema({
 				name: {type: String, default: 'name'},
 				age: {type: Number, default: 1}
 			});
-			personFactory = mongoose.model('test-person', personSchema);
+			personFactory = mongoose.model('testperson', personSchema);
 			var person = new personFactory({name: 'bob'});
 			person.save(function(err) {
 				expect(!err).to.equal(true);
@@ -49,7 +56,7 @@ module.exports = function(ctx) {
 		});
 
 		it('should give me an id for a new instance', function(done) {
-			expect(mongooseStarted).to.equal(true);
+			expect(ctx.app.mongooseStarted).to.equal(true);
 			var person = new personFactory({name: 'terry'});
 			person.save(function(err) {
 				var id = person.id;
@@ -60,14 +67,14 @@ module.exports = function(ctx) {
 		});
 
 		it('should let me drop existing', function(done) {
-			expect(mongooseStarted).to.equal(true);
+			expect(ctx.app.mongooseStarted).to.equal(true);
 			personFactory.remove({}, function(err) {
 				done();
 			});
 		});
 
 		it('should have zero remaining', function(done) {
-			expect(mongooseStarted).to.equal(true);
+			expect(ctx.app.mongooseStarted).to.equal(true);
 			personFactory.find({}, function(err, docs) {
 				expect(!!err).to.equal(false);
 				expect(docs.length).to.equal(0);
