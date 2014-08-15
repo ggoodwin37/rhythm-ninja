@@ -9,6 +9,18 @@ var schema = mongoose.Schema({
 	rows: [String],
 });
 require('./schema-id')(schema);
+
+// TODO gideong: looks like we don't need app in these models any more, clean up (../api.js for one)
+
+// TODO gideong: can remove some options from the resources side if they're only consumed here.
+var tdOpts = {
+	parentFactory: require('./set'),
+	childFactory: require('./pattern-row'),
+	parentCollection: 'patterns',
+	childCollection: 'rows'
+};
+require('./tree-delete')(schema, tdOpts);
+
 var factory = mongoose.model(modelName, schema);
 
 module.exports = factory;

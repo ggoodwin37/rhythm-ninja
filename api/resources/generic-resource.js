@@ -71,15 +71,18 @@ inspect(mergeObject);
 		destroy: function(request, reply) {
 			var parentId = request.params[routeParentIdKey];
 			var itemId = request.params[routeItemIdKey];
-			// get the item first so that we can check for 404 case.
 			itemFactory.findById(itemId, function(err, itemModel) {
 				if (handlingErrorOrMissing(err, itemModel, reply)) return;
-				itemFactory.remove({_id: itemId}, function(err) {
+				itemModel.treeDelete(function(err) {
 					if (handlingError(err, reply)) return;
 					reply();
 				});
+
+				// itemFactory.remove({_id: itemId}, function(err) {
+				// 	if (handlingError(err, reply)) return;
+				// 	reply();
+				// });
 			});
-			// TODO: tree logic, consume childFactory, etc.
 		}
 	};
 };
