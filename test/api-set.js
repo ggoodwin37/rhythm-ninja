@@ -60,11 +60,17 @@ module.exports = function(ctx) {
 				payload: {bpm: ctx.setDoc.bpm}
 			}, function(res) {
 				expect(res.statusCode).to.equal(200);
-				expect(res.result).to.be.an('object');
-				expect(res.result.bpm).to.equal(161);
-				expect(res.result.songs === undefined).to.equal(false);
-				ctx.setDoc = res.result;
-				done();
+				ctx.server.inject({
+					method: 'get',
+					url: ctx.baseSetUrl
+				}, function(res) {
+					expect(res.statusCode).to.equal(200);
+					expect(res.result).to.be.an('object');
+					expect(res.result.bpm).to.equal(161);
+					expect(res.result.songs === undefined).to.equal(false);
+					ctx.setDoc = res.result;
+					done();
+				});
 			});
 		});
 

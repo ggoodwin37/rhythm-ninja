@@ -45,12 +45,8 @@ module.exports = function(app) {
 		// ],
 		show: function(request, reply) {
 			var setName = request.params.set_id;
-			SetModel.find({name: setName}, function(err, setModel) {
+			SetModel.findOne({name: setName}, function(err, setModel) {
 				var shouldCreate = false;
-				if (err) {
-					inspect(err);
-					return reply(new Error(err));
-				}
 
 				if (err) {
 					if (err.type == 'NotFoundError') {
@@ -72,87 +68,87 @@ module.exports = function(app) {
 			});
 		},
 		update: function(request, reply) {
-			// note: this does not handle updating foreigns, should do that via each foreign's dedicated endpoint.
 			var setName = request.params.set_id;
 			var updatedData = request.payload;
-			SetModel.find({name: setName}, function(err, setModel) {
-				if (handlingErrorOrMissing(err, setModel, reply)) return;
-				var mergeObject = _.pick(request.payload, 'name', 'swing', 'bpm');
-				SetModel.update(setModel.key, mergeObject, function(updateErr, updateResult) {
-					if (updateErr) return reply(new Error(updateErr));
-					return reply(updateResult.toJSON());
-				});
+			SetModel.update({name: setName}, updatedData, function(err, numUpdated) {
+				if (handlingErrorOrMissing(err, numUpdated, reply)) return;
+				return reply();
 			});
 		},
 		destroy: function(request, reply) {
 			var setName = request.params.set_id;
-			SetModel.find({name: setName}, function(err, setModel) {
-				console.log('<<<<<<<< setModel:');
-				inspect(setModel);
-				console.log('<<<<<<<< err:');
-				inspect(err);
+			SetModel.findOne({name: setName}, function(err, doc) {
+				if (handlingErrorOrMissing(err, doc, reply)) return;  // handle 404 case
 
-				if (handlingErrorOrMissing(err, setModel, reply)) return;
-
-				var stepList = new StepList();
-
-				// delete all poolEntries
-				setModel.pool.forEach(function(thisModel) {
-					stepList.addStep(function(callback) {
-						thisModel.delete(function(err) {
-							if (handlingError(err, reply)) return;
-							callback();
-						});
-					});
-				});
-
-				// delete all patterns and their child rows
-				setModel.patterns.forEach(function(thisModel) {
-					thisModel.rows.forEach(function(thisChild) {
-						stepList.addStep(function(callback) {
-							thisChild.delete(function(err) {
-								if (handlingError(err, reply)) return;
-								callback();
-							});
-						});
-					});
-					stepList.addStep(function(callback) {
-						thisModel.delete(function(err) {
-							if (handlingError(err, reply)) return;
-							callback();
-						});
-					});
-				});
-
-				// delete all songs and their child rows
-				setModel.songs.forEach(function(thisModel) {
-					thisModel.rows.forEach(function(thisChild) {
-						stepList.addStep(function(callback) {
-							thisChild.delete(function(err) {
-								if (handlingError(err, reply)) return;
-								callback();
-							});
-						});
-					});
-					stepList.addStep(function(callback) {
-						thisModel.delete(function(err) {
-							if (handlingError(err, reply)) return;
-							callback();
-						});
-					});
-				});
-
-				// finally, delete the set itself
-				stepList.addStep(function(callback) {
-					setModel.delete(function(err) {
-						if (handlingError(err, reply)) return;
-						callback();
-					});
-				});
-				stepList.execute(function() {
+				SetModel.remove({name: setName}, function(err) {
+					if (handlingError(err, reply)) return;
 					reply();
 				});
 			});
+
+			// TODO: rewrite
+			// SetModel.findOne({name: setName}, function(err, setModel) {
+			// 	if (handlingErrorOrMissing(err, setModel, reply)) return;
+
+			// 	var stepList = new StepList();
+
+			// 	delete all poolEntries
+			// 	setModel.pool.forEach(function(thisModel) {
+			// 		stepList.addStep(function(callback) {
+			// 			thisModel.delete(function(err) {
+			// 				if (handlingError(err, reply)) return;
+			// 				callback();
+			// 			});
+			// 		});
+			// 	});
+
+			// 	delete all patterns and their child rows
+			// 	setModel.patterns.forEach(function(thisModel) {
+			// 		thisModel.rows.forEach(function(thisChild) {
+			// 			stepList.addStep(function(callback) {
+			// 				thisChild.delete(function(err) {
+			// 					if (handlingError(err, reply)) return;
+			// 					callback();
+			// 				});
+			// 			});
+			// 		});
+			// 		stepList.addStep(function(callback) {
+			// 			thisModel.delete(function(err) {
+			// 				if (handlingError(err, reply)) return;
+			// 				callback();
+			// 			});
+			// 		});
+			// 	});
+
+			// 	delete all songs and their child rows
+			// 	setModel.songs.forEach(function(thisModel) {
+			// 		thisModel.rows.forEach(function(thisChild) {
+			// 			stepList.addStep(function(callback) {
+			// 				thisChild.delete(function(err) {
+			// 					if (handlingError(err, reply)) return;
+			// 					callback();
+			// 				});
+			// 			});
+			// 		});
+			// 		stepList.addStep(function(callback) {
+			// 			thisModel.delete(function(err) {
+			// 				if (handlingError(err, reply)) return;
+			// 				callback();
+			// 			});
+			// 		});
+			// 	});
+
+			// 	// finally, delete the set itself
+			// 	stepList.addStep(function(callback) {
+			// 		SetModel.delete(function(err) {
+			// 			if (handlingError(err, reply)) return;
+			// 			callback();
+			// 		});
+			// 	});
+			// 	stepList.execute(function() {
+			// 		reply();
+			// 	});
+			// });
 		}
 	};
 };
