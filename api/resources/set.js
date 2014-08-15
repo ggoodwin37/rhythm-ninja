@@ -32,17 +32,17 @@ module.exports = function(app) {
 	}
 
 	return {
-		// hasMany: [
-		// 	{
-		// 		poolentry: require('./set-has-pool-entry')(app)
-		// 	},
-		// 	{
-		// 		pattern: require('./set-has-pattern')(app)
-		// 	},
-		// 	{
-		// 		song: require('./set-has-song')(app)
-		// 	}
-		// ],
+		hasMany: [
+			{
+				poolentry: require('./set-has-pool-entry')(app)
+			},
+			{
+				pattern: require('./set-has-pattern')(app)
+			},
+			{
+				song: require('./set-has-song')(app)
+			}
+		],
 		show: function(request, reply) {
 			var setName = request.params.set_id;
 			SetModel.findOne({name: setName}, function(err, setModel) {
