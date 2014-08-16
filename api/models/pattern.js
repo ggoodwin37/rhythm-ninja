@@ -13,17 +13,8 @@ module.exports = function(app) {
 		locked: Boolean,
 		rows: [String],
 	});
-	factory = mongoose.model(modelName, schema);
-
-	// TODO gideong: can remove some options from the resources side if they're only consumed here.
-	var tdOpts = {
-		parentFactory: require('./set')(app),
-		childFactory: require('./pattern-row')(app),
-		parentCollection: 'patterns',
-		childCollection: 'rows'
-	};
-	require('./tree-delete')(schema, tdOpts);
 	require('./schema-id')(schema);
+	factory = mongoose.model(modelName, schema);
 
 	return factory;
 };

@@ -11,14 +11,8 @@ module.exports = function(app) {
 		poolEntry: String,
 		steps: [Number]
 	});
-	factory = mongoose.model(modelName, schema);
-
-	var tdOpts = {
-		parentFactory: require('./pattern')(app),
-		parentCollection: 'rows'
-	};
-	require('./tree-delete')(schema, tdOpts);
 	require('./schema-id')(schema);
+	factory = mongoose.model(modelName, schema);
 
 	return factory;
 };
