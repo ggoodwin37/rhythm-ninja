@@ -5,8 +5,8 @@ module.exports = function(app) {
 	var opts = {
 		parentQueryField: 'id',
 		itemTypeName: 'pattern-row',
-		parentFactory: require('../models/pattern'),
-		itemFactory: require('../models/pattern-row'),
+		parentFactory: require('../models/pattern')(app),
+		itemFactory: require('../models/pattern-row')(app),
 		childFactory: null,
 		parentCollection: 'rows',
 		routeParentIdKey: 'pattern_id',

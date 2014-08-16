@@ -4,9 +4,10 @@ var _ = require('underscore');
 var handlingError = require('../handling-error');
 var handlingErrorOrMissing = require('../handling-error-or-missing');
 var StepList = require('../../step-list');
-var SetModel = require('../models/set');
 
 module.exports = function(app) {
+
+	var SetModel = require('../models/set')(app);
 
 	function createSet(setName, done) {
 		if (app.config.logThings['api--create-stuff']) {

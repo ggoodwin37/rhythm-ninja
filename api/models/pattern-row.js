@@ -1,12 +1,16 @@
 var mongoose = require('mongoose');
 
-var modelName = 'pattern-row';
-var schema = mongoose.Schema({
-	parent_id: String,
-	poolEntry: String,
-	steps: [Number]
-});
-require('./schema-id')(schema);
-var factory = mongoose.model(modelName, schema);
+var factory = null;
+module.exports = function(app) {
 
-module.exports = factory;
+	if (factory) return factory;
+	var modelName = 'pattern-row';
+	var schema = mongoose.Schema({
+		parent_id: String,
+		poolEntry: String,
+		steps: [Number]
+	});
+	require('./schema-id')(schema);
+	factory = mongoose.model(modelName, schema);
+	return factory;
+};

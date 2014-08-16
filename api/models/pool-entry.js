@@ -1,14 +1,18 @@
 var mongoose = require('mongoose');
 
-var modelName = 'pool-entry';
-var schema = mongoose.Schema({
-	parent_id: String,
-	name: String,
-	volume: Number,
-	sampleType: String,
-	sampleId: String
-});
-require('./schema-id')(schema);
-var factory = mongoose.model(modelName, schema);
+var factory = null;
+module.exports = function(app) {
 
-module.exports = factory;
+	if (factory) return factory;
+	var modelName = 'pool-entry';
+	var schema = mongoose.Schema({
+		parent_id: String,
+		name: String,
+		volume: Number,
+		sampleType: String,
+		sampleId: String
+	});
+	require('./schema-id')(schema);
+	factory = mongoose.model(modelName, schema);
+	return factory;
+};

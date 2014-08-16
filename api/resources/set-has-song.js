@@ -5,9 +5,9 @@ module.exports = function(app) {
 	var opts = {
 		parentQueryField: 'name',
 		itemTypeName: 'song',
-		parentFactory: require('../models/set'),
-		itemFactory: require('../models/song'),
-		childFactory: require('../models/song-row'),
+		parentFactory: require('../models/set')(app),
+		itemFactory: require('../models/song')(app),
+		childFactory: require('../models/song-row')(app),
 		parentCollection: 'songs',
 		routeParentIdKey: 'set_id',
 		routeItemIdKey: 'song_id',
