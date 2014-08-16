@@ -5,8 +5,6 @@
   "main": "index.js",
   "scripts": {
     "test": "./run-test.sh",
-    "count-all": "./run-a-cmd.sh count-all",
-    "check-tree": "./run-a-cmd.sh check-tree",
     "db": "mongod --dbpath data/db"
   },
   "repository": {
