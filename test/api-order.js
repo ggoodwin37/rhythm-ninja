@@ -104,8 +104,8 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: basePatternUrl + '/' + patternId}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.rows.length).to.equal(2);
-				expect(res.result.rows[0]).to.equal(rowId1);
-				expect(res.result.rows[1]).to.equal(rowId2);
+				expect(res.result.rows[0].id).to.equal(rowId1);
+				expect(res.result.rows[1].id).to.equal(rowId2);
 				done();
 			});
 		});
@@ -120,8 +120,8 @@ module.exports = function(ctx) {
 				ctx.server.inject({method: 'get', url: url}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.rows.length).to.equal(2);
-					expect(res.result.rows[0]).to.equal(rowId2);
-					expect(res.result.rows[1]).to.equal(rowId1);
+					expect(res.result.rows[0].id).to.equal(rowId2);
+					expect(res.result.rows[1].id).to.equal(rowId1);
 					done();
 				});
 			});
@@ -191,8 +191,8 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: baseSongUrl + '/' + songId}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.rows.length).to.equal(2);
-				expect(res.result.rows[0]).to.equal(songRowId1);
-				expect(res.result.rows[1]).to.equal(songRowId2);
+				expect(res.result.rows[0].id).to.equal(songRowId1);
+				expect(res.result.rows[1].id).to.equal(songRowId2);
 				done();
 			});
 		});
@@ -207,8 +207,8 @@ module.exports = function(ctx) {
 				ctx.server.inject({method: 'get', url: url}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.rows.length).to.equal(2);
-					expect(res.result.rows[0]).to.equal(songRowId2);
-					expect(res.result.rows[1]).to.equal(songRowId1);
+					expect(res.result.rows[0].id).to.equal(songRowId2);
+					expect(res.result.rows[1].id).to.equal(songRowId1);
 					done();
 				});
 			});

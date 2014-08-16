@@ -51,27 +51,29 @@ module.exports = function(app) {
 		],
 		show: function(request, reply) {
 			var setName = request.params.set_id;
-			SetModel.findOne({name: setName}, function(err, setModel) {
-				var shouldCreate = false;
+			SetModel.findOne({name: setName})
+				.populate('pool patterns songs')
+				.exec(function(err, setModel) {
+					var shouldCreate = false;
 
-				if (err) {
-					if (err.type == 'NotFoundError') {
-						shouldCreate = true;
-					} else {
-						return reply(new Error(err));
+					if (err) {
+						if (err.type == 'NotFoundError') {
+							shouldCreate = true;
+						} else {
+							return reply(new Error(err));
+						}
 					}
-				}
-				if (!setModel) {
-					shouldCreate = true;
-				}
-				if (shouldCreate) {
-					return createSet(setName, function(err, instance) {
-						reply(instance.toJSON());
-					});
-				}
+					if (!setModel) {
+						shouldCreate = true;
+					}
+					if (shouldCreate) {
+						return createSet(setName, function(err, instance) {
+							reply(instance.toJSON());
+						});
+					}
 
-				reply(setModel.toJSON());
-			});
+					reply(setModel.toJSON());
+				});
 		},
 		update: function(request, reply) {
 			var setName = request.params.set_id;

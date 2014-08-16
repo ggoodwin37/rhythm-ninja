@@ -12,7 +12,8 @@ module.exports = function(app) {
 		childCollection: 'rows',
 		routeParentIdKey: 'set_id',
 		routeItemIdKey: 'pattern_id',
-		updateFields: ['name', 'length', 'locked', 'rows']
+		updateFields: ['name', 'length', 'locked', 'rows'],
+		populateFields: 'rows'
 	};
 	var genericResource = require('./generic-resource')(app, opts);
 
