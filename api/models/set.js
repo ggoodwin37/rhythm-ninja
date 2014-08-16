@@ -13,6 +13,14 @@ module.exports = function(app) {
 		patterns: [String],
 		songs: [String]
 	});
+
+	// TODO gideong: fix this so that tree-delete can work with set.
+	// var tdOpts = {
+	// 	childFactory: require('./pattern-row')(app),
+	// 	childCollections: 'rows'
+	// };
+	// require('./tree-delete')(schema, tdOpts);
+
 	require('./schema-id')(schema);
 	factory = mongoose.model(modelName, schema);
 	return factory;

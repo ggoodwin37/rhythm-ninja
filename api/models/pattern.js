@@ -14,6 +14,8 @@ module.exports = function(app) {
 	});
 	require('./schema-id')(schema);
 
+	factory = mongoose.model(modelName, schema);
+
 	// TODO gideong: can remove some options from the resources side if they're only consumed here.
 	var tdOpts = {
 		parentFactory: require('./set')(app),
@@ -23,6 +25,5 @@ module.exports = function(app) {
 	};
 	require('./tree-delete')(schema, tdOpts);
 
-	factory = mongoose.model(modelName, schema);
 	return factory;
 };

@@ -11,6 +11,15 @@ module.exports = function(app) {
 		locked: Boolean,
 		rows: [String]
 	});
+
+	var tdOpts = {
+		parentFactory: require('./set')(app),
+		childFactory: require('./song-row')(app),
+		parentCollection: 'songs',
+		childCollection: 'rows'
+	};
+	require('./tree-delete')(schema, tdOpts);
+
 	require('./schema-id')(schema);
 	factory = mongoose.model(modelName, schema);
 	return factory;

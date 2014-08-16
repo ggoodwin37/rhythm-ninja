@@ -11,6 +11,13 @@ module.exports = function(app) {
 		steps: [Number]
 	});
 	require('./schema-id')(schema);
+
+	var tdOpts = {
+		parentFactory: require('./pattern')(app),
+		parentCollection: 'rows'
+	};
+	require('./tree-delete')(schema, tdOpts);
+
 	factory = mongoose.model(modelName, schema);
 	return factory;
 };

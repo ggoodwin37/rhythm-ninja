@@ -12,6 +12,13 @@ module.exports = function(app) {
 		sampleType: String,
 		sampleId: String
 	});
+
+	var tdOpts = {
+		parentFactory: require('./set')(app),
+		parentCollection: 'pool'
+	};
+	require('./tree-delete')(schema, tdOpts);
+
 	require('./schema-id')(schema);
 	factory = mongoose.model(modelName, schema);
 	return factory;

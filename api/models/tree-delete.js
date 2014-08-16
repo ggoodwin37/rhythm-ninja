@@ -1,3 +1,5 @@
 module.exports = function(schema, opts) {
-	//schema.methods...
+	// schema.methods.treeDelete = function(done) {
+	// 	console.log('YO from ' + this.id);
+	// };
 };
