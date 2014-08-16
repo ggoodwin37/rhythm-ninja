@@ -4,6 +4,7 @@ var _ = require('underscore');
 var handlingError = require('../handling-error');
 var handlingErrorOrMissing = require('../handling-error-or-missing');
 var StepList = require('../../step-list');
+var treeDelete = require('./tree-delete');
 
 module.exports = function(app, opts) {
 
@@ -73,7 +74,7 @@ inspect(mergeObject);
 			var itemId = request.params[routeItemIdKey];
 			itemFactory.findById(itemId, function(err, itemModel) {
 				if (handlingErrorOrMissing(err, itemModel, reply)) return;
-				itemModel.treeDelete(function(err) {
+				treeDelete(itemModel, opts, function(err) {
 					if (handlingError(err, reply)) return;
 					reply();
 				});
