@@ -46,5 +46,5 @@ require('./api-set')(ctx);
 require('./api-pool-entry')(ctx);
 require('./api-pattern')(ctx);
 require('./api-song')(ctx);
-// require('./api-tree-ops')(ctx);
+require('./api-tree-ops')(ctx);
 // require('./api-order')(ctx);

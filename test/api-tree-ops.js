@@ -129,14 +129,12 @@ module.exports = function(ctx) {
 		it('should remove children when the parent is removed', function(done) {
 			var patternUrl = treeOpsSetUrl + '/pattern/' + patternId1;
 			var rowUrl = patternUrl + '/patternrow/' + rowId2;
-			console.log('patt=' + patternUrl + ' row=' + rowUrl);
 			ctx.server.inject({method: 'get', url: rowUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
-
 				ctx.server.inject({method: 'delete', url: patternUrl}, function(res) {
-					expect(res.statusCode).to.equal(200); // 404??
+					expect(res.statusCode).to.equal(200);
 					ctx.server.inject({method: 'get', url: rowUrl}, function(res) {
-						expect(res.statusCode).to.equal(200);
+						expect(res.statusCode).to.equal(404);
 						done();
 					});
 				});
@@ -230,14 +228,14 @@ module.exports = function(ctx) {
 		});
 
 		it('should remove children when the parent is removed', function(done) {
-			var songUrl = treeOpsSetUrl + '/song/' + patternId1;
+			var songUrl = treeOpsSetUrl + '/song/' + songId1;
 			var rowUrl = songUrl + '/songrow/' + songRowId2;
 			ctx.server.inject({method: 'get', url: rowUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				ctx.server.inject({method: 'delete', url: songUrl}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					ctx.server.inject({method: 'get', url: rowUrl}, function(res) {
-						expect(res.statusCode).to.equal(200);
+						expect(res.statusCode).to.equal(404);
 						done();
 					});
 				});
