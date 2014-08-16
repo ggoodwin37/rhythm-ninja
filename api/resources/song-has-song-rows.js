@@ -3,7 +3,7 @@ var _ = require('underscore');
 module.exports = function(app) {
 
 	var opts = {
-		parentQueryField: 'id',
+		parentQueryField: '_id',
 		itemTypeName: 'song-row',
 		parentFactory: require('../models/song')(app),
 		itemFactory: require('../models/song-row')(app),

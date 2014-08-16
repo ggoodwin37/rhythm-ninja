@@ -44,7 +44,7 @@ require('./server')(ctx);
 require('./mongo-mongoose')(ctx);
 require('./api-set')(ctx);
 require('./api-pool-entry')(ctx);
-// require('./api-pattern')(ctx);
+require('./api-pattern')(ctx);
 // require('./api-song')(ctx);
 // require('./race-order-bug')(ctx); // trying to track down a bug where sometimes removing an el leaves unexpected key
 // require('./api-index')(ctx);

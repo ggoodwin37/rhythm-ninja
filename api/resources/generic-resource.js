@@ -62,7 +62,6 @@ module.exports = function(app, opts) {
 				if (handlingErrorOrMissing(err, itemModel, reply)) return;
 				var args = [request.payload].concat(updateFields)
 				var mergeObject = _.pick.apply(null, args);
-inspect(mergeObject);
 				itemModel.update(mergeObject, function(err) {
 					if (handlingError(err, reply)) return;
 					reply();
