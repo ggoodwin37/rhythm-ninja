@@ -1,29 +1,19 @@
-var dulcimer = require('dulcimer');
-var SongRowFactory = require('./song-row');
+var mongoose = require('mongoose');
 
-var SongFactory = new dulcimer.Model({
-	id: {
-		derive: function() {
-			return this.key;
-		}
-	},
-	name: {
-		type: 'string',
-		index: true,
-		required: true,
-		default: 'default'
-	},
-	locked: {
-		type: 'boolean',
-		required: true,
-		default: false
-	},
-	rows: {
-		foreignCollection: SongRowFactory
-	}
-}, {
-	name: 'song',
-	keyType: 'uuid'
-});
+var factory = null;
+module.exports = function(app) {
 
-module.exports = SongFactory;
+	if (factory) return factory;
+
+	var modelName = 'song';
+	var schema = mongoose.Schema({
+		parent_id: String,
+		name: String,
+		locked: Boolean,
+		rows: [String]
+	});
+	require('./schema-id')(schema);
+	factory = mongoose.model(modelName, schema);
+
+	return factory;
+};

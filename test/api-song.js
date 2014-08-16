@@ -14,7 +14,6 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.songs.length).to.equal(0);
-				ctx.setDoc = res.result;
 				done();
 			});
 		});
@@ -33,21 +32,18 @@ module.exports = function(ctx) {
 				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.songs.length).to.equal(1);
-					expect(res.result.songs[0].name).to.equal('test-song');
-					ctx.setDoc = res.result;
+					expect(res.result.songs[0]).to.equal(song1Id);
 					done();
 				});
 			});
 		});
 
 		it('can modify song-level data', function(done) {
-			expect(ctx.setDoc.songs[0].locked).to.equal(false);
 			ctx.server.inject({method: 'put', url: baseSetSongUrl + '/' + song1Id, payload: {locked: true}}, function(res) {
 				expect(res.statusCode).to.equal(200);
-				expect(res.result.locked).to.equal(true);
-				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
+				ctx.server.inject({method: 'get', url: baseSetSongUrl + '/' + song1Id}, function(res) {
 					expect(res.statusCode).to.equal(200);
-					expect(res.result.songs[0].locked).to.equal(true);
+					expect(res.result.locked).to.equal(true);
 					done();
 				});
 			});
@@ -74,20 +70,15 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: baseSetSongUrl + '/' + song1Id}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.rows.length).to.equal(1);
-				expect(res.result.rows[0].len).to.equal(2);
-				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
-					expect(res.statusCode).to.equal(200);
-					expect(res.result.songs[0].rows.length).to.equal(1);
-					expect(res.result.songs[0].rows[0].patternId).to.equal('some-pattern');
-					done();
-				});
+				expect(res.result.rows[0]).to.equal(songRowId1);
+				done();
 			});
 		});
 
 		var songRowId2;
 		it('handles adding another song row', function(done) {
 			var songRowData = {
-				patternId: 'some-other-pattern',
+				pattern_id: 'some-other-pattern',
 				offset: 11,
 				len: 22,
 				count: 33
@@ -96,6 +87,7 @@ module.exports = function(ctx) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.offset).to.equal(11);
 				expect(res.result.count).to.equal(33);
+				expect(res.result.pattern_id).to.equal('some-other-pattern');
 				songRowId2 = res.result.id;
 				done();
 			});
@@ -108,11 +100,11 @@ module.exports = function(ctx) {
 			});
 		});
 
-		it('should update set view of song after deleting that row', function(done) {
-			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
+		it('should update song after deleting that row', function(done) {
+			ctx.server.inject({method: 'get', url: baseSetSongUrl + '/' + song1Id }, function(res) {
 				expect(res.statusCode).to.equal(200);
-				expect(res.result.songs[0].rows.length).to.equal(1);
-				expect(res.result.songs[0].rows[0].id).to.equal(songRowId2);
+				expect(res.result.rows.length).to.equal(1);
+				expect(res.result.rows[0]).to.equal(songRowId2);
 				done();
 			});
 		});
@@ -132,13 +124,9 @@ module.exports = function(ctx) {
 				expect(res.statusCode).to.equal(200);
 				ctx.server.inject({method: 'get', url: baseSetSongUrl + '/' + song1Id + '/songrow/' + songRowId2}, function(res) {
 					expect(res.statusCode).to.equal(200);
-					expect(res.result.patternId).to.equal('some-other-pattern');
+					expect(res.result.pattern_id).to.equal('some-other-pattern');
 					expect(res.result.len).to.equal(55);
-					ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
-						expect(res.statusCode).to.equal(200);
-						expect(res.result.songs[0].rows[0].len).to.equal(55);
-						done();
-					});
+					done();
 				});
 			});
 		});

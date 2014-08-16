@@ -1,33 +1,20 @@
-var dulcimer = require('dulcimer');
-var PatternRowFactory = require('./pattern-row');
+var mongoose = require('mongoose');
 
-var PatternFactory = new dulcimer.Model({
-	id: {
-		derive: function() {
-			return this.key;
-		}
-	},
-	name: {
-		type: 'string',
-		required: true,
-		default: 'default'
-	},
-	length: {
-		type: 'integer',
-		required: true,
-		default: 16
-	},
-	locked: {
-		type: 'boolean',
-		required: true,
-		default: false
-	},
-	rows: {
-		foreignCollection: PatternRowFactory
-	}
-}, {
-	name: 'pattern',
-	keyType: 'uuid'
-});
+var factory = null;
+module.exports = function(app) {
 
-module.exports = PatternFactory;
+	if (factory) return factory;
+
+	var modelName = 'pattern';
+	var schema = mongoose.Schema({
+		parent_id: String,
+		name: String,
+		length: {type: Number, default: 16},
+		locked: Boolean,
+		rows: [String],
+	});
+	require('./schema-id')(schema);
+	factory = mongoose.model(modelName, schema);
+
+	return factory;
+};

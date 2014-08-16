@@ -6,7 +6,8 @@
   "scripts": {
     "test": "./run-test.sh",
     "count-all": "./run-a-cmd.sh count-all",
-    "check-tree": "./run-a-cmd.sh check-tree"
+    "check-tree": "./run-a-cmd.sh check-tree",
+    "db": "mongod --dbpath data/db"
   },
   "repository": {
     "type": "git",
@@ -26,7 +27,6 @@
     "ampersand-view-switcher": "^1.0.2",
     "async": "^0.9.0",
     "domready": "^1.0.5",
-    "dulcimer": "^2.0.10",
     "eyes": "^0.1.8",
     "getconfig": "^0.3.0",
     "gulp": "^3.8.6",
@@ -34,10 +34,13 @@
     "hapi": "^6.2.1",
     "joi": "^4.6.1",
     "lout": "^5.0.1",
+    "mongodb": "^1.4.8",
+    "mongoose": "^3.8.14",
     "moonboots_hapi": "^2.4.0",
     "mudskipper": "^2.3.2",
     "templatizer": "^0.3.6",
     "underscore": "^1.6.0",
+    "verymodel": "^1.10.1",
     "ws": "^0.4.31"
   },
   "devDependencies": {

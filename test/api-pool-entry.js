@@ -11,11 +11,9 @@ module.exports = function(ctx) {
 	describe('verify pool-entry api', function() {
 
 		it('should start with an empty pool on set endpoint', function(done) {
-			expect(ctx.setDoc.pool.length).to.equal(0);
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.pool.length).to.equal(0);
-				ctx.setDoc = res.result;
 				done();
 			});
 		});
@@ -29,7 +27,6 @@ module.exports = function(ctx) {
 				sampleType: 'local',
 				sampleId: 'abcd-efgh'
 			};
-			console.log('baseSetPoolUrl: ' + baseSetPoolUrl);
 			ctx.server.inject({method: 'post', url: baseSetPoolUrl, payload: JSON.stringify(poolEntry)}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.volume).to.equal(0.75);
@@ -42,9 +39,12 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.pool.length).to.equal(1);
-				expect(res.result.pool[0].id).to.equal(poolEntryId1);
-				expect(res.result.pool[0].volume).to.equal(0.75);
-				done();
+				expect(res.result.pool[0]).to.equal(poolEntryId1);
+				ctx.server.inject({method: 'get', url: ctx.baseSetUrl + '/poolentry/' + poolEntryId1}, function(res) {
+					expect(res.statusCode).to.equal(200);
+					expect(res.result.volume).to.equal(0.75);
+					done();
+				});
 			});
 		});
 
@@ -66,9 +66,12 @@ module.exports = function(ctx) {
 				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.pool.length).to.equal(2);
-					expect(res.result.pool[1].id).to.equal(poolEntryId2);
-					expect(res.result.pool[1].volume).to.equal(0.5);
-					done();
+					expect(res.result.pool[1]).to.equal(poolEntryId2);
+					ctx.server.inject({method: 'get', url: ctx.baseSetUrl + '/poolentry/' + poolEntryId2}, function(res) {
+						expect(res.statusCode).to.equal(200);
+						expect(res.result.volume).to.equal(0.5);
+						done();
+					});
 				});
 			});
 		});
@@ -91,9 +94,7 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.pool.length).to.equal(1);
-				expect(res.result.pool[0].id).to.equal(poolEntryId2);
-				expect(res.result.pool[0].volume).to.equal(0.5);
-				ctx.setDoc = res.result;
+				expect(res.result.pool[0]).to.equal(poolEntryId2);
 				done();
 			});
 		});

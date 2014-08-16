@@ -4,29 +4,39 @@ var _ = require('underscore');
 var handlingError = require('../handling-error');
 var handlingErrorOrMissing = require('../handling-error-or-missing');
 var StepList = require('../../step-list');
-var SetFactory = require('../models/set');
-var SongFactory = require('../models/song');
-
-function createSet(setName, reply) {
-	var pool = [];
-	var patterns = [];
-	var songs = [];
-
-	var setInstance = SetFactory.create({
-		name: setName,
-		swing: 0.5,
-		bpm: 155,
-		pool: pool,
-		patterns: patterns,
-		songs: songs
-	});
-
-	setInstance.save(function(err) {
-		reply(setInstance.toJSON());
-	});
-}
 
 module.exports = function(app) {
+
+	var SetModel = require('../models/set')(app);
+	var PatternModel = require('../models/pattern')(app);
+	var PatternRowModel = require('../models/pattern-row')(app);
+	var PoolEntryModel = require('../models/pool-entry')(app);
+	var SongModel = require('../models/song')(app);
+	var SongRowModel = require('../models/song-row')(app);
+
+	function createSet(setName, done) {
+		if (app.config.logThings['api--create-stuff']) {
+			console.log('lazy creating set with name: ' + setName);
+		}
+
+		var pool = [];
+		var patterns = [];
+		var songs = [];
+
+		var setInstance = new SetModel({
+			name: setName,
+			swing: 0.5,
+			bpm: 155,
+			pool: pool,
+			patterns: patterns,
+			songs: songs
+		});
+
+		setInstance.save(function(err, setInstance, numAffected) {
+			done(err, setInstance);
+		});
+	}
+
 	return {
 		hasMany: [
 			{
@@ -39,17 +49,11 @@ module.exports = function(app) {
 				song: require('./set-has-song')(app)
 			}
 		],
-		index: function(request, reply) {
-			// TODO: pleeease auth me
-			SetFactory.all(function(err, models, pagination) {
-				if (handlingError(err, reply)) return;
-				reply(models.map(function(model) { return model.toJSON(); }));
-			});
-		},
 		show: function(request, reply) {
 			var setName = request.params.set_id;
-			SetFactory.findByIndex('name', setName, function(err, setModel) {
+			SetModel.findOne({name: setName}, function(err, setModel) {
 				var shouldCreate = false;
+
 				if (err) {
 					if (err.type == 'NotFoundError') {
 						shouldCreate = true;
@@ -61,90 +65,85 @@ module.exports = function(app) {
 					shouldCreate = true;
 				}
 				if (shouldCreate) {
-						if (app.config.logThings['api--create-stuff']) {
-							console.log('lazy creating set with name: ' + setName);
-						}
-						return createSet(setName, reply);
+					return createSet(setName, function(err, instance) {
+						reply(instance.toJSON());
+					});
 				}
 
 				reply(setModel.toJSON());
 			});
 		},
 		update: function(request, reply) {
-			// note: this does not handle updating foreigns, should do that via each foreign's dedicated endpoint.
 			var setName = request.params.set_id;
 			var updatedData = request.payload;
-			SetFactory.findByIndex('name', setName, function(err, setModel) {
-				if (handlingErrorOrMissing(err, setModel, reply)) return;
-				var mergeObject = _.pick(request.payload, 'name', 'swing', 'bpm');
-				SetFactory.update(setModel.key, mergeObject, function(updateErr, updateResult) {
-					if (updateErr) return reply(new Error(updateErr));
-					return reply(updateResult.toJSON());
-				});
+			SetModel.update({name: setName}, updatedData, function(err, numUpdated) {
+				if (handlingErrorOrMissing(err, numUpdated, reply)) return;
+				return reply();
 			});
 		},
 		destroy: function(request, reply) {
 			var setName = request.params.set_id;
-			SetFactory.findByIndex('name', setName, function(err, setModel) {
-				if (handlingErrorOrMissing(err, setModel, reply)) return;
+			SetModel.findOne({name: setName}, function(err, setModel) {
+				if (handlingErrorOrMissing(err, setModel, reply)) return;  // handle 404 case
 
-				var stepList = new StepList();
+				var stepListDelete = new StepList();
+				var stepListPattern = new StepList();
+				var stepListSong = new StepList();
 
-				// delete all poolEntries
-				setModel.pool.forEach(function(thisModel) {
-					stepList.addStep(function(callback) {
-						thisModel.delete(function(err) {
-							if (handlingError(err, reply)) return;
-							callback();
-						});
+				setModel.pool.forEach(function(poolEntryId) {
+					stepListDelete.addStep(function(cb) {
+						PoolEntryModel.remove({_id: poolEntryId}, cb);
 					});
 				});
 
-				// delete all patterns and their child rows
-				setModel.patterns.forEach(function(thisModel) {
-					thisModel.rows.forEach(function(thisChild) {
-						stepList.addStep(function(callback) {
-							thisChild.delete(function(err) {
-								if (handlingError(err, reply)) return;
-								callback();
+				// first generate all the delete steps for each song and each song's songrow
+				setModel.songs.forEach(function(songId) {
+					stepListSong.addStep(function(cb) {
+						SongModel.findById(songId, function(err, songModel) {
+							songModel.rows.forEach(function(songRowId) {
+								stepListDelete.addStep(function(cb) {
+									SongRowModel.remove({_id: songRowId}, cb);
+								});
+							});
+							cb();
+						});
+					});
+					stepListDelete.addStep(function(cb) {
+						SongModel.remove({_id: songId}, cb);
+					});
+				});
+
+				// after grabbing all songs and songrows (and generating delete steps for them), do patterns
+				stepListSong.execute(function() {
+					setModel.patterns.forEach(function(patternId) {
+						stepListPattern.addStep(function(cb) {
+							PatternModel.findById(patternId, function(err, patternModel) {
+								patternModel.rows.forEach(function(patternRowId) {
+									stepListDelete.addStep(function(cb) {
+										PatternRowModel.remove({_id: patternRowId}, cb);
+									});
+								});
+								cb();
 							});
 						});
-					});
-					stepList.addStep(function(callback) {
-						thisModel.delete(function(err) {
-							if (handlingError(err, reply)) return;
-							callback();
+						stepListDelete.addStep(function(cb) {
+							PatternModel.remove({_id: patternId}, cb);
 						});
 					});
-				});
 
-				// delete all songs and their child rows
-				setModel.songs.forEach(function(thisModel) {
-					thisModel.rows.forEach(function(thisChild) {
-						stepList.addStep(function(callback) {
-							thisChild.delete(function(err) {
-								if (handlingError(err, reply)) return;
-								callback();
+					// after iterating patterns and patternrows, add a delete step for set then execute all deletes
+					stepListPattern.execute(function() {
+						stepListDelete.addStep(function(cb) {
+							SetModel.remove({name: setName}, function(err) {
+								if (handlingError(err, reply)) return cb();
+								cb();
 							});
 						});
-					});
-					stepList.addStep(function(callback) {
-						thisModel.delete(function(err) {
-							if (handlingError(err, reply)) return;
-							callback();
+
+						stepListDelete.execute(function() {
+							reply();
 						});
 					});
-				});
-
-				// finally, delete the set itself
-				stepList.addStep(function(callback) {
-					setModel.delete(function(err) {
-						if (handlingError(err, reply)) return;
-						callback();
-					});
-				});
-				stepList.execute(function() {
-					reply();
 				});
 			});
 		}

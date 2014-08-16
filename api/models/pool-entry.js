@@ -1,34 +1,20 @@
-var dulcimer = require('dulcimer');
+var mongoose = require('mongoose');
 
-var PoolEntryFactory = new dulcimer.Model({
-	id: {
-		derive: function() {
-			return this.key;
-		}
-	},
-	name: {
-		type: 'string',
-		required: true,
-		default: 'default'
-	},
-	volume: {
-		type: 'numeric',
-		required: true,
-		default: 1.0
-	},
-	sampleType: {
-		type: 'string',
-		required: true,
-		default: 'local'
-	},
-	sampleId: {
-		type: 'string',
-		required: true,
-		default: 'default'
-	}
-}, {
-	name: 'pool-entry',
-	keyType: 'uuid'
-});
+var factory = null;
+module.exports = function(app) {
 
-module.exports = PoolEntryFactory;
+	if (factory) return factory;
+
+	var modelName = 'pool-entry';
+	var schema = mongoose.Schema({
+		parent_id: String,
+		name: String,
+		volume: Number,
+		sampleType: String,
+		sampleId: String
+	});
+	require('./schema-id')(schema);
+	factory = mongoose.model(modelName, schema);
+
+	return factory;
+};
