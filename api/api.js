@@ -14,8 +14,9 @@ module.exports = function(app) {
 		}
 	};
 
-	// TODO: figure out what config you need for this
-	mongoose.connect('mongodb://localhost/rn-test');
+	var dbName = app.config.dbName;
+	// TODO: don't hardcode hostname here
+	mongoose.connect('mongodb://localhost/' + dbName);
 	app.mongooseStarted = false;
 
 	var db = mongoose.connection;
@@ -24,6 +25,7 @@ module.exports = function(app) {
 	});
 	db.once('open', function callback () {
 		app.mongooseStarted = true;
+		console.log('connected to db named: ' + dbName);
 	});
 
 	return apiServerPack;
