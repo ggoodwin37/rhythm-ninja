@@ -92,14 +92,11 @@ module.exports = function(ctx) {
 			});
 		});
 
-		// TODO gideong: fix this: tree delete isn't implemented, and we will need to get the pool
-		//   entry to check the volume since we aren't populating.
 		it('should have removed the deleted pool entry from the set', function(done) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.pool.length).to.equal(1);
-				expect(res.result.pool[0].id).to.equal(poolEntryId2);
-				expect(res.result.pool[0].volume).to.equal(0.5);
+				expect(res.result.pool[0]).to.equal(poolEntryId2);
 				ctx.setDoc = res.result;
 				done();
 			});
