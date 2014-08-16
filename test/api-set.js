@@ -10,7 +10,6 @@ module.exports = function(ctx) {
 
 	ctx.setName = 'reserved-test-set';
 	ctx.baseSetUrl = '/api/set/' + ctx.setName;
-	ctx.setDoc;
 	describe('verify set api', function () {
 
 		it('should delete any existing documents with the test name', function(done) {
@@ -43,9 +42,8 @@ module.exports = function(ctx) {
 				expect(res.result.name).to.equal(ctx.setName);
 				expect(res.result.songs === undefined).to.equal(false);
 
-				ctx.setDoc = res.result;
 				if(ctx.app.config.logThings['test--list-collections']) {
-					console.log('client sees set id: ' + ctx.setDoc.id);
+					console.log('client sees set id: ' + res.result.id);
 				}
 
 				done();
@@ -53,11 +51,10 @@ module.exports = function(ctx) {
 		});
 
 		it('should handle updates to set data', function(done) {
-			ctx.setDoc.bpm = 161;
 			ctx.server.inject({
 				method: 'put',
 				url: ctx.baseSetUrl,
-				payload: {bpm: ctx.setDoc.bpm}
+				payload: {bpm: 161}
 			}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				ctx.server.inject({
@@ -68,7 +65,6 @@ module.exports = function(ctx) {
 					expect(res.result).to.be.an('object');
 					expect(res.result.bpm).to.equal(161);
 					expect(res.result.songs === undefined).to.equal(false);
-					ctx.setDoc = res.result;
 					done();
 				});
 			});

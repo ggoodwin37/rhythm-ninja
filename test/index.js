@@ -14,7 +14,6 @@ var ctx = {
 
 	setName: null,
 	baseSetUrl: null,
-	setDoc: null,
 
 	app: {config: config},
 

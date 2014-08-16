@@ -14,7 +14,6 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.songs.length).to.equal(0);
-				ctx.setDoc = res.result;
 				done();
 			});
 		});
@@ -34,7 +33,6 @@ module.exports = function(ctx) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.songs.length).to.equal(1);
 					expect(res.result.songs[0]).to.equal(song1Id);
-					ctx.setDoc = res.result;
 					done();
 				});
 			});

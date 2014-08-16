@@ -11,11 +11,9 @@ module.exports = function(ctx) {
 	describe('verify pool-entry api', function() {
 
 		it('should start with an empty pool on set endpoint', function(done) {
-			expect(ctx.setDoc.pool.length).to.equal(0);
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.pool.length).to.equal(0);
-				ctx.setDoc = res.result;
 				done();
 			});
 		});
@@ -97,7 +95,6 @@ module.exports = function(ctx) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.pool.length).to.equal(1);
 				expect(res.result.pool[0]).to.equal(poolEntryId2);
-				ctx.setDoc = res.result;
 				done();
 			});
 		});

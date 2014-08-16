@@ -11,11 +11,9 @@ module.exports = function(ctx) {
 	describe('verify pattern and patternrow api', function() {
 
 		it('should start with an empty pattern list on set endpoint', function(done) {
-			expect(ctx.setDoc.patterns.length).to.equal(0);
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.patterns.length).to.equal(0);
-				ctx.setDoc = res.result;
 				done();
 			});
 		});
@@ -93,7 +91,6 @@ module.exports = function(ctx) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.patterns.length).to.equal(1);
 				expect(res.result.patterns[0]).to.equal(patternId2);
-				ctx.setDoc = res.result;
 				done();
 			});
 		});
