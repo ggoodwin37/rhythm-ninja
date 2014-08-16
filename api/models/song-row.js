@@ -4,6 +4,7 @@ var factory = null;
 module.exports = function(app) {
 
 	if (factory) return factory;
+
 	var modelName = 'song-row';
 	var schema = mongoose.Schema({
 		parent_id: String,
@@ -12,14 +13,14 @@ module.exports = function(app) {
 		len: Number,
 		count: Number
 	});
+	factory = mongoose.model(modelName, schema);
 
 	var tdOpts = {
 		parentFactory: require('./song')(app),
 		parentCollection: 'rows'
 	};
 	require('./tree-delete')(schema, tdOpts);
-
 	require('./schema-id')(schema);
-	factory = mongoose.model(modelName, schema);
+
 	return factory;
 };

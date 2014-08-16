@@ -4,6 +4,7 @@ var factory = null;
 module.exports = function(app) {
 
 	if (factory) return factory;
+
 	var modelName = 'set';
 	var schema = mongoose.Schema({
 		name: String,
@@ -13,6 +14,7 @@ module.exports = function(app) {
 		patterns: [String],
 		songs: [String]
 	});
+	factory = mongoose.model(modelName, schema);
 
 	// TODO gideong: fix this so that tree-delete can work with set.
 	// var tdOpts = {
@@ -20,8 +22,7 @@ module.exports = function(app) {
 	// 	childCollections: 'rows'
 	// };
 	// require('./tree-delete')(schema, tdOpts);
-
 	require('./schema-id')(schema);
-	factory = mongoose.model(modelName, schema);
+
 	return factory;
 };

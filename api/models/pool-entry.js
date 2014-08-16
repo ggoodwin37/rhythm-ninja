@@ -4,6 +4,7 @@ var factory = null;
 module.exports = function(app) {
 
 	if (factory) return factory;
+
 	var modelName = 'pool-entry';
 	var schema = mongoose.Schema({
 		parent_id: String,
@@ -12,14 +13,14 @@ module.exports = function(app) {
 		sampleType: String,
 		sampleId: String
 	});
+	factory = mongoose.model(modelName, schema);
 
 	var tdOpts = {
 		parentFactory: require('./set')(app),
 		parentCollection: 'pool'
 	};
 	require('./tree-delete')(schema, tdOpts);
-
 	require('./schema-id')(schema);
-	factory = mongoose.model(modelName, schema);
+
 	return factory;
 };

@@ -4,6 +4,7 @@ var factory = null;
 module.exports = function(app) {
 
 	if (factory) return factory;
+
 	var modelName = 'pattern';
 	var schema = mongoose.Schema({
 		parent_id: String,
@@ -12,8 +13,6 @@ module.exports = function(app) {
 		locked: Boolean,
 		rows: [String],
 	});
-	require('./schema-id')(schema);
-
 	factory = mongoose.model(modelName, schema);
 
 	// TODO gideong: can remove some options from the resources side if they're only consumed here.
@@ -24,6 +23,7 @@ module.exports = function(app) {
 		childCollection: 'rows'
 	};
 	require('./tree-delete')(schema, tdOpts);
+	require('./schema-id')(schema);
 
 	return factory;
 };
