@@ -56,7 +56,7 @@ module.exports = function(ctx) {
 			});
 		});
 
-		it('should have correct structure before deletes', function(done) {
+		it('should have correct pattern structure before deletes', function(done) {
 			var patternUrl = treeOpsSetUrl + '/pattern/' + patternId;
 			ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
@@ -68,6 +68,54 @@ module.exports = function(ctx) {
 					expect(res.result.rows[0]).to.equal(rowId);
 					done();
 				});
+			});
+		});
+
+		var songId, songRowId;
+		it('should allow me to create a simple test doc down to songrows', function(done) {
+			var songUrl = treeOpsSetUrl + '/song';
+			ctx.server.inject({method: 'post', url: songUrl, payload: {}}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				songId = res.result.id;
+				ctx.server.inject({method: 'post', url: songUrl + '/' + songId + '/songrow', payload: {}}, function(res) {
+					expect(res.statusCode).to.equal(200);
+					songRowId = res.result.id;
+					done();
+				});
+			});
+		});
+
+		it('should have correct song structure before deletes', function(done) {
+			var songUrl = treeOpsSetUrl + '/song/' + songId;
+			ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.songs.length).to.equal(1);
+				expect(res.result.songs[0]).to.equal(songId);
+				ctx.server.inject({method: 'get', url: songUrl}, function(res) {
+					expect(res.statusCode).to.equal(200);
+					expect(res.result.rows.length).to.equal(1);
+					expect(res.result.rows[0]).to.equal(songRowId);
+					done();
+				});
+			});
+		});
+
+		var poolEntryId;
+		it('should allow me to create a poolentry', function(done) {
+			var poolEntryUrl = treeOpsSetUrl + '/poolentry';
+			ctx.server.inject({method: 'post', url: poolEntryUrl, payload: {}}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				poolEntryId = res.result.id;
+				done();
+			});
+		});
+
+		it('should have correct poolentry structure before deletes', function(done) {
+			ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.pool.length).to.equal(1);
+				expect(res.result.pool[0]).to.equal(poolEntryId);
+				done();
 			});
 		});
 
@@ -87,6 +135,26 @@ module.exports = function(ctx) {
 					expect(res.statusCode).to.equal(404);
 					done();
 				});
+			});
+		});
+
+		it('should have also deleted the song and the row', function(done) {
+			var songUrl = treeOpsSetUrl + '/song/' + songId;
+			var rowUrl = songUrl + '/songrow/' + songRowId;
+			ctx.server.inject({method: 'get', url: songUrl}, function(res) {
+				expect(res.statusCode).to.equal(404);
+				ctx.server.inject({method: 'get', url: rowUrl}, function(res) {
+					expect(res.statusCode).to.equal(404);
+					done();
+				});
+			});
+		});
+
+		it('should have also deleted the poolentry', function(done) {
+			var poolEntryUrl = treeOpsSetUrl + '/poolentry/' + poolEntryId;
+			ctx.server.inject({method: 'get', url: poolEntryUrl}, function(res) {
+				expect(res.statusCode).to.equal(404);
+				done();
 			});
 		});
 	});
