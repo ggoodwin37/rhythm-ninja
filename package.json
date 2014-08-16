@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "./run-test.sh",
-    "db": "mongod --dbpath data/db"
+    "db": "mongod --dbpath data/db",
+    "create-example-set": "./run-a-cmd.sh create-example-set",
+    "delete-example-set": "./run-a-cmd.sh delete-example-set"
   },
   "repository": {
     "type": "git",
