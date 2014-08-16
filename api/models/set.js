@@ -10,9 +10,9 @@ module.exports = function(app) {
 		name: String,
 		swing: Number,
 		bpm: Number,
-		pool: [String],
-		patterns: [String],
-		songs: [String]
+		pool: [{type: String, ref: 'pool-entry'}],
+		patterns: [{type: String, ref: 'pattern'}],
+		songs: [{type: String, ref: 'song'}]
 	});
 	require('./schema-id')(schema);
 	factory = mongoose.model(modelName, schema);
