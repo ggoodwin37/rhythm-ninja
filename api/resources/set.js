@@ -8,6 +8,11 @@ var StepList = require('../../step-list');
 module.exports = function(app) {
 
 	var SetModel = require('../models/set')(app);
+	var PatternModel = require('../models/pattern')(app);
+	var PatternRowModel = require('../models/pattern-row')(app);
+	var PoolEntryModel = require('../models/pool-entry')(app);
+	var SongModel = require('../models/song')(app);
+	var SongRowModel = require('../models/song-row')(app);
 
 	function createSet(setName, done) {
 		if (app.config.logThings['api--create-stuff']) {
@@ -78,78 +83,69 @@ module.exports = function(app) {
 		},
 		destroy: function(request, reply) {
 			var setName = request.params.set_id;
-			SetModel.findOne({name: setName}, function(err, doc) {
-				if (handlingErrorOrMissing(err, doc, reply)) return;  // handle 404 case
+			SetModel.findOne({name: setName}, function(err, setModel) {
+				if (handlingErrorOrMissing(err, setModel, reply)) return;  // handle 404 case
 
-				SetModel.remove({name: setName}, function(err) {
-					if (handlingError(err, reply)) return;
-					reply();
+				var stepListDelete = new StepList();
+				var stepListPattern = new StepList();
+				var stepListSong = new StepList();
+
+				setModel.pool.forEach(function(poolEntryId) {
+					stepListDelete.addStep(function(cb) {
+						PoolEntryModel.remove({_id: poolEntryId}, cb);
+					});
+				});
+
+				// first generate all the delete steps for each song and each song's songrow
+				setModel.songs.forEach(function(songId) {
+					stepListSong.addStep(function(cb) {
+						SongModel.findById(songId, function(err, songModel) {
+							songModel.rows.forEach(function(songRowId) {
+								stepListDelete.addStep(function(cb) {
+									SongRowModel.remove({_id: songRowId}, cb);
+								});
+							});
+							cb();
+						});
+					});
+					stepListDelete.addStep(function(cb) {
+						SongModel.remove({_id: songId}, cb);
+					});
+				});
+
+				// after grabbing all songs and songrows (and generating delete steps for them), do patterns
+				stepListSong.execute(function() {
+					setModel.patterns.forEach(function(patternId) {
+						stepListPattern.addStep(function(cb) {
+							PatternModel.findById(patternId, function(err, patternModel) {
+								patternModel.rows.forEach(function(patternRowId) {
+									stepListDelete.addStep(function(cb) {
+										PatternRowModel.remove({_id: patternRowId}, cb);
+									});
+								});
+								cb();
+							});
+						});
+						stepListDelete.addStep(function(cb) {
+							PatternModel.remove({_id: patternId}, cb);
+						});
+					});
+
+					// after iterating patterns and patternrows, add a delete step for set then execute all deletes
+					stepListPattern.execute(function() {
+						stepListDelete.addStep(function(cb) {
+							SetModel.remove({name: setName}, function(err) {
+								if (handlingError(err, reply)) return cb();
+								cb();
+							});
+						});
+
+						stepListDelete.execute(function() {
+							reply();
+						});
+					});
 				});
 			});
-
-			// TODO: rewrite
-			// SetModel.findOne({name: setName}, function(err, setModel) {
-			// 	if (handlingErrorOrMissing(err, setModel, reply)) return;
-
-			// 	var stepList = new StepList();
-
-			// 	delete all poolEntries
-			// 	setModel.pool.forEach(function(thisModel) {
-			// 		stepList.addStep(function(callback) {
-			// 			thisModel.delete(function(err) {
-			// 				if (handlingError(err, reply)) return;
-			// 				callback();
-			// 			});
-			// 		});
-			// 	});
-
-			// 	delete all patterns and their child rows
-			// 	setModel.patterns.forEach(function(thisModel) {
-			// 		thisModel.rows.forEach(function(thisChild) {
-			// 			stepList.addStep(function(callback) {
-			// 				thisChild.delete(function(err) {
-			// 					if (handlingError(err, reply)) return;
-			// 					callback();
-			// 				});
-			// 			});
-			// 		});
-			// 		stepList.addStep(function(callback) {
-			// 			thisModel.delete(function(err) {
-			// 				if (handlingError(err, reply)) return;
-			// 				callback();
-			// 			});
-			// 		});
-			// 	});
-
-			// 	delete all songs and their child rows
-			// 	setModel.songs.forEach(function(thisModel) {
-			// 		thisModel.rows.forEach(function(thisChild) {
-			// 			stepList.addStep(function(callback) {
-			// 				thisChild.delete(function(err) {
-			// 					if (handlingError(err, reply)) return;
-			// 					callback();
-			// 				});
-			// 			});
-			// 		});
-			// 		stepList.addStep(function(callback) {
-			// 			thisModel.delete(function(err) {
-			// 				if (handlingError(err, reply)) return;
-			// 				callback();
-			// 			});
-			// 		});
-			// 	});
-
-			// 	// finally, delete the set itself
-			// 	stepList.addStep(function(callback) {
-			// 		SetModel.delete(function(err) {
-			// 			if (handlingError(err, reply)) return;
-			// 			callback();
-			// 		});
-			// 	});
-			// 	stepList.execute(function() {
-			// 		reply();
-			// 	});
-			// });
 		}
 	};
 };
