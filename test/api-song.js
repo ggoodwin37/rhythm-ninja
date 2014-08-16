@@ -32,7 +32,7 @@ module.exports = function(ctx) {
 				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.songs.length).to.equal(1);
-					expect(res.result.songs[0]).to.equal(song1Id);
+					expect(res.result.songs[0].id).to.equal(song1Id);
 					done();
 				});
 			});
@@ -70,7 +70,7 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: baseSetSongUrl + '/' + song1Id}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.rows.length).to.equal(1);
-				expect(res.result.rows[0]).to.equal(songRowId1);
+				expect(res.result.rows[0].id).to.equal(songRowId1);
 				done();
 			});
 		});
@@ -104,7 +104,7 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: baseSetSongUrl + '/' + song1Id }, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.rows.length).to.equal(1);
-				expect(res.result.rows[0]).to.equal(songRowId2);
+				expect(res.result.rows[0].id).to.equal(songRowId2);
 				done();
 			});
 		});

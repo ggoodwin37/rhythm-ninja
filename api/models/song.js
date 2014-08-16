@@ -10,7 +10,7 @@ module.exports = function(app) {
 		parent_id: String,
 		name: String,
 		locked: Boolean,
-		rows: [String]
+		rows: [{type: String, ref: 'song-row'}]
 	});
 	require('./schema-id')(schema);
 	factory = mongoose.model(modelName, schema);

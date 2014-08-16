@@ -61,11 +61,11 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.patterns.length).to.equal(1);
-				expect(res.result.patterns[0]).to.equal(patternId);
+				expect(res.result.patterns[0].id).to.equal(patternId);
 				ctx.server.inject({method: 'get', url: patternUrl}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.rows.length).to.equal(1);
-					expect(res.result.rows[0]).to.equal(rowId);
+					expect(res.result.rows[0].id).to.equal(rowId);
 					done();
 				});
 			});
@@ -90,11 +90,11 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.songs.length).to.equal(1);
-				expect(res.result.songs[0]).to.equal(songId);
+				expect(res.result.songs[0].id).to.equal(songId);
 				ctx.server.inject({method: 'get', url: songUrl}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.rows.length).to.equal(1);
-					expect(res.result.rows[0]).to.equal(songRowId);
+					expect(res.result.rows[0].id).to.equal(songRowId);
 					done();
 				});
 			});
@@ -114,7 +114,7 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.pool.length).to.equal(1);
-				expect(res.result.pool[0]).to.equal(poolEntryId);
+				expect(res.result.pool[0].id).to.equal(poolEntryId);
 				done();
 			});
 		});

@@ -18,11 +18,16 @@ module.exports = function(app, opts) {
 	var routeParentIdKey = opts.routeParentIdKey;
 	var routeItemIdKey = opts.routeItemIdKey;
 	var updateFields = opts.updateFields;
+	var populateFields = opts.populateFields;
 
 	return {
 		show: function(request, reply) {
 			var itemId = request.params[routeItemIdKey];
-			itemFactory.findById(itemId, function(err, itemModel) {
+			var query = itemFactory.findById(itemId);
+			if (populateFields) {
+				query.populate(populateFields);
+			}
+			query.exec(function(err, itemModel) {
 				if (handlingErrorOrMissing(err, itemModel, reply)) return;
 				return reply(itemModel.toJSON());
 			});

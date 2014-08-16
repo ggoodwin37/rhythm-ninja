@@ -11,7 +11,7 @@ module.exports = function(app) {
 		name: String,
 		length: {type: Number, default: 16},
 		locked: Boolean,
-		rows: [String],
+		rows: [{type: String, ref: 'pattern-row'}]
 	});
 	require('./schema-id')(schema);
 	factory = mongoose.model(modelName, schema);

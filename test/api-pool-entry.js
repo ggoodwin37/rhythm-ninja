@@ -39,7 +39,7 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.pool.length).to.equal(1);
-				expect(res.result.pool[0]).to.equal(poolEntryId1);
+				expect(res.result.pool[0].id).to.equal(poolEntryId1);
 				ctx.server.inject({method: 'get', url: ctx.baseSetUrl + '/poolentry/' + poolEntryId1}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.volume).to.equal(0.75);
@@ -66,7 +66,7 @@ module.exports = function(ctx) {
 				ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					expect(res.result.pool.length).to.equal(2);
-					expect(res.result.pool[1]).to.equal(poolEntryId2);
+					expect(res.result.pool[1].id).to.equal(poolEntryId2);
 					ctx.server.inject({method: 'get', url: ctx.baseSetUrl + '/poolentry/' + poolEntryId2}, function(res) {
 						expect(res.statusCode).to.equal(200);
 						expect(res.result.volume).to.equal(0.5);
@@ -94,7 +94,7 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'get', url: ctx.baseSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.pool.length).to.equal(1);
-				expect(res.result.pool[0]).to.equal(poolEntryId2);
+				expect(res.result.pool[0].id).to.equal(poolEntryId2);
 				done();
 			});
 		});
