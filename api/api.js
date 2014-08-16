@@ -24,7 +24,6 @@ module.exports = function(app) {
 	});
 	db.once('open', function callback () {
 		app.mongooseStarted = true;
-		console.log('mongoose started');
 	});
 
 	return apiServerPack;

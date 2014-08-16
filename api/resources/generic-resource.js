@@ -72,17 +72,12 @@ inspect(mergeObject);
 		destroy: function(request, reply) {
 			var parentId = request.params[routeParentIdKey];
 			var itemId = request.params[routeItemIdKey];
-			itemFactory.findById(itemId, function(err, itemModel) {
+			itemFactory.findById(itemId, function(err, itemModel) {  // make sure it exists
 				if (handlingErrorOrMissing(err, itemModel, reply)) return;
-				treeDelete(itemModel, opts, function(err) {
+				treeDelete(itemModel, opts, reply, function(err) {
 					if (handlingError(err, reply)) return;
 					reply();
 				});
-
-				// itemFactory.remove({_id: itemId}, function(err) {
-				// 	if (handlingError(err, reply)) return;
-				// 	reply();
-				// });
 			});
 		}
 	};

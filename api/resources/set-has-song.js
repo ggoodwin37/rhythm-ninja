@@ -9,6 +9,7 @@ module.exports = function(app) {
 		itemFactory: require('../models/song')(app),
 		childFactory: require('../models/song-row')(app),
 		parentCollection: 'songs',
+		childCollection: 'rows',
 		routeParentIdKey: 'set_id',
 		routeItemIdKey: 'song_id',
 		updateFields: ['name', 'locked', 'rows']

@@ -9,6 +9,7 @@ module.exports = function(app) {
 		itemFactory: require('../models/pattern')(app),
 		childFactory: require('../models/pattern-row')(app),
 		parentCollection: 'patterns',
+		childCollection: 'rows',
 		routeParentIdKey: 'set_id',
 		routeItemIdKey: 'pattern_id',
 		updateFields: ['name', 'length', 'locked', 'rows']
