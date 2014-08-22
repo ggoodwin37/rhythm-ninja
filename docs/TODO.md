@@ -1,8 +1,16 @@
 
+- working on basic UI for now.
+  - now we need to fetch the set from the api.
+  - fill in set templates with set data.
+  - figure out how the "add" row will work in the template.
+  - links to other pages.
+  - other pages.
+  - give it at least a quick once-over to not look too crappy.
+
+
 - consider adding some metadata like createdTime, createdBy (user id)
 
-- then take a stab at: {users | samples | basic UI | sequencer engine}
-  - user stuff: name, location in doc. me.
+- user stuff: name, location in doc. me.
 
 - what conflict scenarios do we have?
   - the main scenario where two users are editing the same pattern. do we need some sense of "recently touched" or can it be simpler than that?
