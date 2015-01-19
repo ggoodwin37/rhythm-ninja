@@ -23,8 +23,25 @@ module.exports = View.extend({
 	bindings: {
 		'model.name': 'setName'
 	},
+	initialize: function(params) {
+		this.params = params || {};
+	},
 	render: function() {
 		this.renderWithTemplate();
+		if (!this.model) {
+			this.fetchModel();
+		}
 		// TODO: need to render subviews?
+	},
+	fetchModel: function() {
+		if (!this.params.setName) {
+			console.log('can\'t get a set unless I have a set name.');
+			return;
+		}
+
+		console.log('requesting set model with setName: ' + this.params.setName);
+		app.sets.getOrFetch(this.params.setName, function(err, model) {
+			console.log('received set model:', model);
+		});
 	}
 });

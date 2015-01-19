@@ -22,6 +22,7 @@
   "dependencies": {
     "ampersand-dom": "^1.2.1",
     "ampersand-model": "^3.0.4",
+    "ampersand-rest-collection": "^2.0.4",
     "ampersand-router": "^1.0.2",
     "ampersand-view": "^6.0.8",
     "ampersand-view-switcher": "^1.0.2",

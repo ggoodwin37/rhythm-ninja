@@ -1,5 +1,6 @@
 var domready = require('domready');
 
+var Sets = require('./models/sets');
 var MainView = require('./views/main');
 var Router = require('./router');
 
@@ -10,6 +11,7 @@ window.app = {
 	init: function() {
 		var self = this;
 
+		this.sets = new Sets();
 		//this.me = new Me();
 
 		this.router = new Router();
