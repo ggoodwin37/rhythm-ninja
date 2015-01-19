@@ -4,6 +4,8 @@ var PoolView = require('../views/set/pool.js');
 var PatternsView = require('../views/set/patterns.js');
 var SongsView = require('../views/set/songs.js');
 
+var Set = require('../models/set');
+
 module.exports = View.extend({
 	template: templates.pages.set(),
 	subviews: {
@@ -25,23 +27,17 @@ module.exports = View.extend({
 	},
 	initialize: function(params) {
 		this.params = params || {};
+		this.model = new Set(this.params);
+		this.model.fetch({
+			success: function(model, response) {
+				console.log('successfully fetched a set:', model);
+			},
+			error: function(model, response) {
+				console.log('error fetching set:', response);
+			}
+		});
 	},
 	render: function() {
 		this.renderWithTemplate();
-		if (!this.model) {
-			this.fetchModel();
-		}
-		// TODO: need to render subviews?
-	},
-	fetchModel: function() {
-		if (!this.params.setName) {
-			console.log('can\'t get a set unless I have a set name.');
-			return;
-		}
-
-		console.log('requesting set model with setName: ' + this.params.setName);
-		app.sets.getOrFetch(this.params.setName, function(err, model) {
-			console.log('received set model:', model);
-		});
 	}
 });
