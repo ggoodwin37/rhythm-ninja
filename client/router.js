@@ -5,7 +5,6 @@ var PatternPage = require('./pages/pattern');
 var PoolPage = require('./pages/pool');
 var SetPage = require('./pages/set');
 var SongPage = require('./pages/song');
-var Test1Model = require('./models/test1');
 
 module.exports = Router.extend({
 	routes: {
