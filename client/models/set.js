@@ -11,7 +11,7 @@ module.exports = AmpModel.extend({
         swing: ['number']
     },
 	initialize: function(params) {
-		this.id = params.setName;
+		this.id = (params || {}).setName;
 	},
 	url: function() {
 		return '/api/set/' + this.id;
