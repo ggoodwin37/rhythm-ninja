@@ -44,6 +44,7 @@ require('./mongo-mongoose')(ctx);
 require('./api-set')(ctx);
 require('./api-pool-entry')(ctx);
 require('./api-pattern')(ctx);
+require('./api-set-pattern')(ctx);
 require('./api-song')(ctx);
 require('./delete-set')(ctx, 'reserved-test-set');
 require('./api-tree-ops')(ctx);
