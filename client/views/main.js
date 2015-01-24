@@ -11,7 +11,8 @@ module.exports = View.extend({
 	},
 	render: function() {
 		this.renderWithTemplate();
-		this.pages = new ViewSwitcher(this.getByRole('page-container'));
+		var el = this.queryByHook('page-container');
+		this.pages = new ViewSwitcher(el);
 	},
 	handlePage: function(pageView) {
 		this.pages.set(pageView);

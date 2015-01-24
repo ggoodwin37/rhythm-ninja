@@ -12,10 +12,10 @@ module.exports = View.extend({
 	subviews: {
 		pool: {
 			constructor: PoolView,
-			role: 'pool'
+			hook: 'pool'
 		},
 		patterns: {
-			container: '[role=patterns]',
+			hook: 'patterns',
 			prepareView: function(el) {
 				console.log('PREP PATTERN SUBVIEW');
 				var self = this;
@@ -33,7 +33,7 @@ module.exports = View.extend({
 		},
 		songs: {
 			constructor: SongsView,
-			role: 'songs'
+			hook: 'songs'
 		}
 	},
 	bindings: {
