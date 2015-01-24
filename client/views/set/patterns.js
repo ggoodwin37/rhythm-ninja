@@ -13,21 +13,15 @@ module.exports = View.extend({
 		});
 	},
 	render: function() {
-		var patterns;
-		if (this.model && this.model.patterns) {
-			this.setLoading(false);
-			patterns = this.model.patterns;
-		} else {
-			this.setLoading(true);
-			patterns = [];
-		}
+		var patterns = (this.model && this.model.patterns) ? this.model.patterns : [];
 		this.renderWithTemplate({patterns: patterns});
+		this.setLoading(!patterns.length);
 	},
 	setLoading: function(isLoading) {
 		if (isLoading) {
-			dom.addClass(this.el, 'default-loading');
+			dom.addClass(this.queryByHook('view-container'), 'default-loading');
 		} else {
-			dom.removeClass(this.el, 'default-loading');
+			dom.removeClass(this.queryByHook('view-container'), 'default-loading');
 		}
 	}
 });
