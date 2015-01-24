@@ -17,14 +17,12 @@ module.exports = View.extend({
 		patterns: {
 			hook: 'patterns',
 			prepareView: function(el) {
-				console.log('PREP PATTERN SUBVIEW');
 				var self = this;
 				var subview = new PatternsView({
 					el: el,
 					model: this.model
 				});
 				this.on('model-loaded', function(model) {
-					console.log('listener firing with model:', model);
 					subview.model = model;
 					// TODO: can we get subview to hear an event when this changes? then we can render stuff.
 				});
@@ -40,15 +38,13 @@ module.exports = View.extend({
 		'model.name': 'setName'
 	},
 	initialize: function(params) {
-		console.log('INIT SET PAGE');
 		var self = this;
 		this.params = params || {};
 		Events.createEmitter(this);
 		this.model = new Set(this.params);
 		this.model.fetch({
 			success: function(model, response) {
-				console.log('MODEL LOADED: ' + model.toJSON());
-				console.log('fetched set:', model);
+				console.log('fetched set model: ' + JSON.stringify(model));
 				self.trigger('model-loaded', model);
 			},
 			error: function(model, response) {
