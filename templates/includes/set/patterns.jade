@@ -1,2 +1,8 @@
-div(data-hook="view-container")
-	div Here be patterns with length #{patterns.length}
+div(data-hook="patterns-view-container")
+	if patterns.length > 0
+		h3 Patterns
+		ul
+			each pattern in patterns
+				li #{pattern.name}
+	else
+		h3 No patterns here

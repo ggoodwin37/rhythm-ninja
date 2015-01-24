@@ -18,10 +18,12 @@ module.exports = View.extend({
 		this.setLoading(!patterns.length);
 	},
 	setLoading: function(isLoading) {
+		var el = this.queryByHook('patterns-view-container');
+		var className = 'default-loading';
 		if (isLoading) {
-			dom.addClass(this.queryByHook('view-container'), 'default-loading');
+			dom.addClass(el, className);
 		} else {
-			dom.removeClass(this.queryByHook('view-container'), 'default-loading');
+			dom.removeClass(el, className);
 		}
 	}
 });
