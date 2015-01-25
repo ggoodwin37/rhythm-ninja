@@ -22,6 +22,7 @@ module.exports = View.extend({
 					el: el,
 					model: this.model
 				});
+				// TODO: probably need to update other subviews on this same event, so should consolidate.
 				this.on('model-loaded', function(model) {
 					subview.model = model;
 				});
@@ -40,7 +41,6 @@ module.exports = View.extend({
 	initialize: function(params) {
 		var self = this;
 		this.params = params || {};
-		Events.createEmitter(this);
 		this.model = new Set(this.params);
 		this.model.fetch({
 			success: function(model, response) {
