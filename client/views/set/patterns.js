@@ -5,7 +5,7 @@ var templates = require('../../templates');
 module.exports = View.extend({
 	template: templates.includes.set.patterns,
 	events: {
-		'click a.pattern': 'handlePatternClick'
+		'click a.client-nav': 'handlePatternClick'
 	},
 	initialize: function(params) {
 		var self = this;

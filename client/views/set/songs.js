@@ -5,7 +5,7 @@ var templates = require('../../templates');
 module.exports = View.extend({
 	template: templates.includes.set.songs,
 	events: {
-		'click a.song': 'handleSongClick'
+		'click a.client-nav': 'handleSongClick'
 	},
 	initialize: function(params) {
 		var self = this;
