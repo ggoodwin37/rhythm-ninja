@@ -5,7 +5,7 @@ div.set-group(data-hook="patterns-view-container")
 			each pattern in patterns
 				li
 					- var destRoute = slugger('/set/' + setName + '/pattern/' + pattern.name);
-					a.pattern(data-dest-route="#{destRoute}" href="javascript:;") #{pattern.name}
+					a.client-nav(data-dest-route="#{destRoute}" href="#{destRoute}") #{pattern.name}
 	else
 		if patterns
 			h3 No patterns here

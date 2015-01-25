@@ -4,9 +4,6 @@ var templates = require('../../templates');
 
 module.exports = View.extend({
 	template: templates.includes.set.songs,
-	events: {
-		'click a.song': 'handleSongClick'
-	},
 	initialize: function(params) {
 		var self = this;
 
@@ -25,11 +22,6 @@ module.exports = View.extend({
 			}
 		});
 		this.setLoading(!songs);
-	},
-	handleSongClick: function(e) {
-		e.preventDefault();
-		var targetRoute = e.target.getAttribute('data-dest-route');
-		window.app.router.navigate(targetRoute, {trigger: true});
 	},
 	setLoading: function(isLoading) {
 		var el = this.queryByHook('songs-view-container');
