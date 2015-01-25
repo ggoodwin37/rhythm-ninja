@@ -24,7 +24,6 @@ module.exports = View.extend({
 				});
 				this.on('model-loaded', function(model) {
 					subview.model = model;
-					// TODO: can we get subview to hear an event when this changes? then we can render stuff.
 				});
 				return subview;
 			}
@@ -34,6 +33,7 @@ module.exports = View.extend({
 			hook: 'songs'
 		}
 	},
+	// TODO: fix this binding so set name shows up in header
 	bindings: {
 		'model.name': 'setName'
 	},
@@ -44,7 +44,6 @@ module.exports = View.extend({
 		this.model = new Set(this.params);
 		this.model.fetch({
 			success: function(model, response) {
-				console.log('fetched set model: ' + JSON.stringify(model));
 				self.trigger('model-loaded', model);
 			},
 			error: function(model, response) {
