@@ -6,8 +6,6 @@ var PatternsView = require('../views/set/patterns.js');
 var PoolView = require('../views/set/pool.js');
 var SongsView = require('../views/set/songs.js');
 
-var Set = require('../models/set');
-
 module.exports = View.extend({
 	template: templates.pages.set,
 	subviews: {
@@ -55,19 +53,11 @@ module.exports = View.extend({
 		this.poolSubview = null;
 		this.patternSubview = null;
 		this.songSubview = null;
-		
-		this.params = params || {};
-		this.model = new Set(this.params);
-		this.model.fetch({
-			success: function(model, response) {
-				self.trigger('model-loaded', model);
-			},
-			error: function(model, response) {
-				console.log('error fetching set:', response);
-			}
-		});
 
-		this.on('model-loaded', function(model) {
+		this.params = params || {};
+		this.model = window.app.getCachedSetModel(this.params);
+
+		this.model.on('model-loaded', function(model) {
 			if (self.patternSubview) self.patternSubview.model = model;
 			if (self.poolSubview) self.poolSubview.model = model;
 			if (self.songSubview) self.songSubview.model = model;
