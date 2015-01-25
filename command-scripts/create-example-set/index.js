@@ -36,7 +36,7 @@ function beginCommand() {
 		locked: false
 	};
 	var pattern2Data = {
-		name: 'pattern-1',
+		name: 'pattern-2',
 		length: 16,
 		locked: false
 	};

@@ -27,10 +27,18 @@ module.exports = function(app, opts) {
 			if (populateFields) {
 				query.populate(populateFields);
 			}
-			query.exec(function(err, itemModel) {
-				if (handlingErrorOrMissing(err, itemModel, reply)) return;
-				return reply(itemModel.toJSON());
-			});
+			var execQuery = function() {
+				query.exec(function(err, itemModel) {
+					if (handlingErrorOrMissing(err, itemModel, reply)) return;
+					return reply(itemModel.toJSON());
+				});
+			}
+			var fakeDelayMs = 0;
+			if (app.config.fakeDelayOnGetMs > 0) {
+				setTimeout(execQuery, app.config.fakeDelayOnGetMs);
+			} else {
+				execQuery();
+			}
 		},
 		create: function(request, reply) {
 			var parentId = request.params[routeParentIdKey];

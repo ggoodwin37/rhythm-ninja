@@ -4,6 +4,8 @@
 	serverPort: 8080,
 	dbName: 'rn-dev',
 
+	fakeDelayOnGetMs: 350,
+
 	logThings: {
 		'test--show-config': false,
 		'test--show-all-api-routes': false,

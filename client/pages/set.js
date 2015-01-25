@@ -1,4 +1,5 @@
 var View = require('ampersand-view');
+var Events = require('ampersand-events');
 var templates = require('../templates');
 var PoolView = require('../views/set/pool.js');
 var PatternsView = require('../views/set/patterns.js');
@@ -11,27 +12,29 @@ module.exports = View.extend({
 	subviews: {
 		pool: {
 			constructor: PoolView,
-			role: 'pool'
+			hook: 'pool'
 		},
 		patterns: {
-			container: '[role=patterns]',
-			// TODO: resume here. trying to figure out how to hook up the rehydrated patterns with
-			//  the pattern subview. this waitFor trigger is breaking somehow. would prefer to wait
-			//  for the whole model, but I think that means I have to instantiate this.model differently
-			//  than I'm doing now in initialize()
-			// waitFor: 'model.patterns',
+			hook: 'patterns',
 			prepareView: function(el) {
-				return new PatternsView({
+				var self = this;
+				var subview = new PatternsView({
 					el: el,
-					model: this.model.patterns
+					model: this.model
 				});
+				// TODO: probably need to update other subviews on this same event, so should consolidate.
+				this.on('model-loaded', function(model) {
+					subview.model = model;
+				});
+				return subview;
 			}
 		},
 		songs: {
 			constructor: SongsView,
-			role: 'songs'
+			hook: 'songs'
 		}
 	},
+	// TODO: fix this binding so set name shows up in header
 	bindings: {
 		'model.name': 'setName'
 	},
@@ -41,7 +44,7 @@ module.exports = View.extend({
 		this.model = new Set(this.params);
 		this.model.fetch({
 			success: function(model, response) {
-				console.log('fetched set:', model);
+				self.trigger('model-loaded', model);
 			},
 			error: function(model, response) {
 				console.log('error fetching set:', response);
