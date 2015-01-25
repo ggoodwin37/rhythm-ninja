@@ -4,6 +4,9 @@ var templates = require('../../templates');
 
 module.exports = View.extend({
 	template: templates.includes.set.patterns,
+	events: {
+		'click a.pattern': 'handlePatternClick'
+	},
 	initialize: function(params) {
 		var self = this;
 
@@ -14,8 +17,19 @@ module.exports = View.extend({
 	},
 	render: function() {
 		var patterns = (this.model && this.model.patterns) ? this.model.patterns : [];
-		this.renderWithTemplate({patterns: patterns});
+		this.renderWithTemplate({
+			patterns: patterns,
+			setName: this.model.name,
+			slugger: function(input) {
+				return input.replace(' ', '-'); // TODO: better slugger
+			}
+		});
 		this.setLoading(!patterns.length);
+	},
+	handlePatternClick: function(e) {
+		e.preventDefault();
+		var targetRoute = e.target.getAttribute('data-dest-route');
+		window.app.router.navigate(targetRoute, {trigger: true});
 	},
 	setLoading: function(isLoading) {
 		var el = this.queryByHook('patterns-view-container');

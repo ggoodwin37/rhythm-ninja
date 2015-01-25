@@ -3,6 +3,8 @@ div(data-hook="patterns-view-container")
 		h3 Patterns
 		ul
 			each pattern in patterns
-				li #{pattern.name}
+				li
+					- var destRoute = '/set/' + setName + '/pattern/' + pattern.name;
+					a.pattern(data-dest-route="#{destRoute}" href="javascript:;") #{pattern.name}
 	else
 		h3 No patterns here
