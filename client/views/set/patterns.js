@@ -16,7 +16,7 @@ module.exports = View.extend({
 		});
 	},
 	render: function() {
-		var patterns = (this.model && this.model.patterns) ? this.model.patterns : [];
+		var patterns = (this.model && this.model.patterns) ? this.model.patterns : null;
 		this.renderWithTemplate({
 			patterns: patterns,
 			setName: this.model.name,
@@ -24,7 +24,7 @@ module.exports = View.extend({
 				return input.replace(' ', '-'); // TODO: better slugger
 			}
 		});
-		this.setLoading(!patterns.length);
+		this.setLoading(!patterns);
 	},
 	handlePatternClick: function(e) {
 		e.preventDefault();

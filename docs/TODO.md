@@ -1,12 +1,10 @@
 
 - working on basic UI for now.
-  - now we need to fetch the set from the api.
-  - fill in set templates with set data.
   - figure out how the "add" row will work in the template.
-  - links to other pages.
   - other pages.
   - give it at least a quick once-over to not look too crappy.
 
+- need to decouple "loading set" from "rendering set page" so that we can avoid re-loading unnecessarily, get notified of changes, etc.
 
 - consider adding some metadata like createdTime, createdBy (user id)
 

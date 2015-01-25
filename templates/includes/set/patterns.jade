@@ -1,5 +1,5 @@
 div(data-hook="patterns-view-container")
-	if patterns.length > 0
+	if patterns && patterns.length > 0
 		h3 Patterns
 		ul
 			each pattern in patterns
@@ -7,4 +7,6 @@ div(data-hook="patterns-view-container")
 					- var destRoute = '/set/' + setName + '/pattern/' + pattern.name;
 					a.pattern(data-dest-route="#{destRoute}" href="javascript:;") #{pattern.name}
 	else
-		h3 No patterns here
+		if patterns
+			h3 No patterns here
+		//- else we're in loading or error state
