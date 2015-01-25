@@ -34,8 +34,15 @@ module.exports = View.extend({
 			}
 		},
 		songs: {
-			constructor: SongsView,
-			hook: 'songs'
+			hook: 'songs',
+			prepareView: function(el) {
+				var self = this;
+				this.songSubview = new SongsView({
+					el: el,
+					model: this.model
+				});
+				return this.songSubview;
+			}
 		}
 	},
 	// TODO: fix this binding so set name shows up in header
@@ -63,6 +70,7 @@ module.exports = View.extend({
 		this.on('model-loaded', function(model) {
 			if (self.patternSubview) self.patternSubview.model = model;
 			if (self.poolSubview) self.poolSubview.model = model;
+			if (self.songSubview) self.songSubview.model = model;
 		});
 	},
 	render: function() {
