@@ -4,9 +4,6 @@ var templates = require('../../templates');
 
 module.exports = View.extend({
 	template: templates.includes.set.patterns,
-	events: {
-		'click a.client-nav': 'handlePatternClick'
-	},
 	initialize: function(params) {
 		var self = this;
 
@@ -25,11 +22,6 @@ module.exports = View.extend({
 			}
 		});
 		this.setLoading(!patterns);
-	},
-	handlePatternClick: function(e) {
-		e.preventDefault();
-		var targetRoute = e.target.getAttribute('data-dest-route');
-		window.app.router.navigate(targetRoute, {trigger: true});
 	},
 	setLoading: function(isLoading) {
 		var el = this.queryByHook('patterns-view-container');
