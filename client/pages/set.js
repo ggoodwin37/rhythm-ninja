@@ -3,6 +3,7 @@ var Events = require('ampersand-events');
 var templates = require('../templates');
 var PoolView = require('../views/set/pool.js');
 var PatternsView = require('../views/set/patterns.js');
+var PoolView = require('../views/set/pool.js');
 var SongsView = require('../views/set/songs.js');
 
 var Set = require('../models/set');
@@ -11,27 +12,37 @@ module.exports = View.extend({
 	template: templates.pages.set,
 	subviews: {
 		pool: {
-			constructor: PoolView,
-			hook: 'pool'
+			hook: 'pool',
+			prepareView: function(el) {
+				var self = this;
+				this.poolSubview = new PoolView({
+					el: el,
+					model: this.model
+				});
+				return this.poolSubview;
+			}
 		},
 		patterns: {
 			hook: 'patterns',
 			prepareView: function(el) {
 				var self = this;
-				var subview = new PatternsView({
+				this.patternSubview = new PatternsView({
 					el: el,
 					model: this.model
 				});
-				// TODO: probably need to update other subviews on this same event, so should consolidate.
-				this.on('model-loaded', function(model) {
-					subview.model = model;
-				});
-				return subview;
+				return this.patternSubview;
 			}
 		},
 		songs: {
-			constructor: SongsView,
-			hook: 'songs'
+			hook: 'songs',
+			prepareView: function(el) {
+				var self = this;
+				this.songSubview = new SongsView({
+					el: el,
+					model: this.model
+				});
+				return this.songSubview;
+			}
 		}
 	},
 	// TODO: fix this binding so set name shows up in header
@@ -40,6 +51,11 @@ module.exports = View.extend({
 	},
 	initialize: function(params) {
 		var self = this;
+
+		this.poolSubview = null;
+		this.patternSubview = null;
+		this.songSubview = null;
+		
 		this.params = params || {};
 		this.model = new Set(this.params);
 		this.model.fetch({
@@ -49,6 +65,12 @@ module.exports = View.extend({
 			error: function(model, response) {
 				console.log('error fetching set:', response);
 			}
+		});
+
+		this.on('model-loaded', function(model) {
+			if (self.patternSubview) self.patternSubview.model = model;
+			if (self.poolSubview) self.poolSubview.model = model;
+			if (self.songSubview) self.songSubview.model = model;
 		});
 	},
 	render: function() {

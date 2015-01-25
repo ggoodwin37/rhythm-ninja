@@ -1,1 +1,12 @@
-div Here be songs
+div.set-group(data-hook="songs-view-container")
+	if songs && songs.length > 0
+		h3 Songs
+		ul
+			each song in songs
+				li
+					- var destRoute = slugger('/set/' + setName + '/song/' + song.name);
+					a.song(data-dest-route="#{destRoute}" href="javascript:;") #{song.name}
+	else
+		if songs
+			h3 No songs here
+		//- else we're in loading or error state

@@ -12,7 +12,7 @@ module.exports = Router.extend({
 		'set/:set': 'set',
 		'set/:set/pattern/:pattern': 'pattern',
 		'set/:set/pool': 'pool',
-		'set/:set/song': 'song'
+		'set/:set/song/:song': 'song'
 	},
 
 	home: function() {
@@ -27,7 +27,7 @@ module.exports = Router.extend({
 	pool: function(setName) {
 		this.trigger('page', new PoolPage({setName: setName}));
 	},
-	song: function(setName) {
-		this.trigger('page', new SongPage({setName: setName}));
+	song: function(setName, songName) {
+		this.trigger('page', new SongPage({setName: setName, songName: songName}));
 	}
 });

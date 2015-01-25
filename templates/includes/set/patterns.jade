@@ -1,10 +1,10 @@
-div(data-hook="patterns-view-container")
+div.set-group(data-hook="patterns-view-container")
 	if patterns && patterns.length > 0
 		h3 Patterns
 		ul
 			each pattern in patterns
 				li
-					- var destRoute = '/set/' + setName + '/pattern/' + pattern.name;
+					- var destRoute = slugger('/set/' + setName + '/pattern/' + pattern.name);
 					a.pattern(data-dest-route="#{destRoute}" href="javascript:;") #{pattern.name}
 	else
 		if patterns
