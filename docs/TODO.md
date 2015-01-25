@@ -4,8 +4,6 @@
   - other pages.
   - give it at least a quick once-over to not look too crappy.
 
-- need to decouple "loading set" from "rendering set page" so that we can avoid re-loading unnecessarily, get notified of changes, etc.
-
 - consider adding some metadata like createdTime, createdBy (user id)
 
 - user stuff: name, location in doc. me.
