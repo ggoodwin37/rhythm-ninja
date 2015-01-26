@@ -12,7 +12,9 @@ module.exports = View.extend({
 				var self = this;
 				this.stepGridSubview = new StepGridView({
 					el: el,
-					model: this.model
+					model: this.model,
+					setName: this.params.setName,
+					patternName: this.params.patternName
 				});
 				return this.stepGridSubview;
 			}
@@ -23,13 +25,13 @@ module.exports = View.extend({
 
 		this.stepGridSubview = null;
 
-		console.log('pattern page params: ' + JSON.stringify(params));
+		// TODO: just pass setName in to getCachedSetModel (and in other call sites)
 		this.params = params || {};
-		var setModel = window.app.getCachedSetModel(this.params);
-		this.model = setModel.patterns.filter(function(pattern) { return pattern._id === self.params.patternId; })[0];
+		this.model = window.app.getCachedSetModel(this.params);
 
 		this.model.on('model-loaded', function(model) {
 			if (self.stepGridSubview) self.stepGridSubview.model = model;
+			self.model = model;
 		});
 	},
 	render: function() {
