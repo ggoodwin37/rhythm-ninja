@@ -85,16 +85,16 @@ function beginCommand() {
 		});
 	});
 	stepList.addStep(function(cb) {
-		server.inject({method: 'post', url: '/api/set/' + setName + '/pattern/' + pattern1Id + 'patternrow', payload: patternRow1Data}, function(result) { cb(); });
+		server.inject({method: 'post', url: '/api/set/' + setName + '/pattern/' + pattern1Id + '/patternrow', payload: patternRow1Data}, function(result) { cb(); });
 	});
 	stepList.addStep(function(cb) {
-		server.inject({method: 'post', url: '/api/set/' + setName + '/pattern/' + pattern1Id + 'patternrow', payload: patternRow2Data}, function(result) { cb(); });
+		server.inject({method: 'post', url: '/api/set/' + setName + '/pattern/' + pattern1Id + '/patternrow', payload: patternRow2Data}, function(result) { cb(); });
 	});
 	stepList.addStep(function(cb) {
-		server.inject({method: 'post', url: '/api/set/' + setName + '/pattern/' + pattern2Id + 'patternrow', payload: patternRow1Data}, function(result) { cb(); });
+		server.inject({method: 'post', url: '/api/set/' + setName + '/pattern/' + pattern2Id + '/patternrow', payload: patternRow1Data}, function(result) { cb(); });
 	});
 	stepList.addStep(function(cb) {
-		server.inject({method: 'post', url: '/api/set/' + setName + '/pattern/' + pattern2Id + 'patternrow', payload: patternRow2Data}, function(result) { cb(); });
+		server.inject({method: 'post', url: '/api/set/' + setName + '/pattern/' + pattern2Id + '/patternrow', payload: patternRow2Data}, function(result) { cb(); });
 	});
 	stepList.addStep(function(cb) {
 		server.inject({method: 'post', url: '/api/set/' + setName + '/poolentry', payload: poolEntry1Data}, function(result) { cb(); });

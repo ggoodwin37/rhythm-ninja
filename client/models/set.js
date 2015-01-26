@@ -10,10 +10,10 @@ module.exports = AmpModel.extend({
         songs: ['array'],
         swing: ['number']
     },
-	initialize: function(params) {
-		this.id = (params || {}).setName;
+	initialize: function(setName) {
+		this.setName = setName;
 	},
 	url: function() {
-		return '/api/set/' + this.id;
+		return '/api/set/' + this.setName;
 	}
 });
