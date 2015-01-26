@@ -25,31 +25,31 @@ window.app = {
 			self.router.history.start({pushState: true});
 		});
 	},
-	getCachedSetModel: function(params) {
+	getCachedSetModel: function(setName) {
 		var self = this;
 		var setModel, xhr;
-		if (this.cachedSets[params.setName]) {
-			setModel = this.cachedSets[params.setName].model;
-			xhr = this.cachedSets[params.setName].xhr;
+		if (this.cachedSets[setName]) {
+			setModel = this.cachedSets[setName].model;
+			xhr = this.cachedSets[setName].xhr;
 			if (!xhr) {
 				setTimeout(function() {
 					setModel.trigger('model-loaded', setModel);
 				}, 0);
 			}
 		} else {
-			setModel = new Set(params);
+			setModel = new Set(setName);
 			xhr = setModel.fetch({
 				success: function(model, response) {
 					setModel.trigger('model-loaded', setModel);
-					self.cachedSets[params.setName].xhr = null;
+					self.cachedSets[setName].xhr = null;
 				},
 				error: function(model, response) {
 					setModel.trigger('model-load-error', setModel, response);
-					self.cachedSets[params.setName].xhr = null;
+					self.cachedSets[setName].xhr = null;
 					console.log('error fetching set:', response);
 				}
 			});
-			this.cachedSets[params.setName] = {
+			this.cachedSets[setName] = {
 				model: setModel,
 				xhr: xhr
 			}

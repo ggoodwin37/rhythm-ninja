@@ -55,8 +55,8 @@ module.exports = View.extend({
 		this.songSubview = null;
 
 		this.params = params || {};
-		this.model = window.app.getCachedSetModel(this.params);
 
+		this.model = window.app.getCachedSetModel(this.params.setName);
 		this.model.on('model-loaded', function(model) {
 			if (self.patternSubview) self.patternSubview.model = model;
 			if (self.poolSubview) self.poolSubview.model = model;

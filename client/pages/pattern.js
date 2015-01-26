@@ -25,10 +25,9 @@ module.exports = View.extend({
 
 		this.stepGridSubview = null;
 
-		// TODO: just pass setName in to getCachedSetModel (and in other call sites)
 		this.params = params || {};
-		this.model = window.app.getCachedSetModel(this.params);
 
+		this.model = window.app.getCachedSetModel(this.params.setName);
 		this.model.on('model-loaded', function(model) {
 			if (self.stepGridSubview) self.stepGridSubview.model = model;
 			self.model = model;
