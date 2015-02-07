@@ -40,7 +40,21 @@ module.exports = function(ctx) {
 					var patternData = {
 						name: patternName,
 						length: 8,
-						locked: false
+						locked: false,
+						rows: [
+							{
+								poolEntry: 'some-pool-entry-1',
+								steps: [1, 0, 0, 0, 1, 0, 0, 0.5]
+							},
+							{
+								poolEntry: 'some-pool-entry-2',
+								steps: [1, 0, 0, 0, 1, 0, 0, 0.75]
+							},
+							{
+								poolEntry: 'some-pool-entry-3',
+								steps: [1, 0, 0, 0, 1, 0, 0, 0.875]
+							},
+						]
 					};
 					ctx.server.inject({method: 'post', url: baseSetPatternUrl, payload: JSON.stringify(patternData)}, function(res) {
 						expect(res.statusCode).to.equal(200);
@@ -69,12 +83,14 @@ module.exports = function(ctx) {
 		});
 
 		it('should have populated result set', function(done) {
+			console.log('resSet: ' + JSON.stringify(resSet));
 			resSet.patterns.forEach(function(pattern) {
 				expect(patternNames.some(function(name) {
 					return name === pattern.name;
 				})).to.equal(true);
 				expect(pattern.length).to.equal(8);
 			});
+			expect(resSet.patterns[1].patternRows[2].poolEntry).to.equal('some-pool-entry-3');
 			done();
 		});
 
