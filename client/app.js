@@ -40,6 +40,10 @@ window.app = {
 			setModel = new Set(setName);
 			xhr = setModel.fetch({
 				success: function(model, response) {
+					// TODO: the model is not deeply populated here, wtf? didn't this work before?
+					console.log('app model:', model);
+					console.log('app model JSON:' + JSON.stringify(model));
+
 					setModel.trigger('model-loaded', setModel);
 					self.cachedSets[setName].xhr = null;
 				},
