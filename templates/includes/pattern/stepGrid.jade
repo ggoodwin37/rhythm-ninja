@@ -2,5 +2,15 @@ div(data-hook="step-grid-view-container")
 	if !rows
 		div.loading #{'loading...'}
 	else
-		each row,index in rows
-			div.row row here: #{JSON.stringify(row)}
+		thead
+		table
+			each row in rows
+				tr
+					- for (var iStep = 0; iStep < row.steps.length; ++iStep) {
+						td(class=row.steps[iStep] >= 0.5 ? 'step-on' : '') #{row.steps[iStep] >= 0.5 ? 'X' : 'O'}
+					- }
+					td.delete-row
+						button -
+			tr.add-row
+				td.add-row
+					button +
