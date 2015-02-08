@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var deepPopulate = require('mongoose-deep-populate');
 
 var factory = null;
 module.exports = function(app) {
@@ -15,6 +16,10 @@ module.exports = function(app) {
 		songs: [{type: String, ref: 'song'}]
 	});
 	require('./schema-id')(schema);
+
+	var deepPopulateOptions = {
+	};
+	schema.plugin(deepPopulate, deepPopulateOptions);
 	factory = mongoose.model(modelName, schema);
 
 	return factory;

@@ -53,7 +53,7 @@ module.exports = function(app) {
 			var setName = request.params.set_id;
 			var execQuery = function() {
 				SetModel.findOne({name: setName})
-					.populate('pool patterns songs')
+					.deepPopulate('pool patterns.rows songs.rows')
 					.exec(function(err, setModel) {
 						var shouldCreate = false;
 
