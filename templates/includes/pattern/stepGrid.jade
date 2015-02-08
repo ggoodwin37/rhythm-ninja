@@ -1,1 +1,6 @@
-div(data-hook="step-grid-view-container") Step grid here: #{JSON.stringify(rows)}
+div(data-hook="step-grid-view-container")
+	if !rows
+		div.loading #{'loading...'}
+	else
+		each row,index in rows
+			div.row row here: #{JSON.stringify(row)}
