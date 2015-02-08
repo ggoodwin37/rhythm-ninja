@@ -46,6 +46,10 @@ module.exports = function(app, opts) {
 			var parentQuery = {};
 			parentQuery[parentQueryField] = parentId;
 			parentFactory.findOne(parentQuery, function(err, parentModel) {
+				if (err) {
+					// this can happen when passing name instead of id
+					console.log('generic resource create error: ' + err);
+				}
 				var newModel = new itemFactory(_.extend({parent_id: parentModel.id}, request.payload));
 				newModel.save(function(err, newModel, numAffected) {
 					if (handlingErrorOrMissing(err, numAffected, reply)) return;

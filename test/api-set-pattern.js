@@ -32,40 +32,50 @@ module.exports = function(ctx) {
 
 		var baseSetPatternUrl = '/api/set/' + ctx.setName + '/pattern';
 		var patternNames = ['test-set-patt-1', 'test-set-patt-2', 'test-set-patt-3'];
+		var rows = [
+			{
+				poolEntry: 'some-pool-entry-1',
+				steps: [1, 0, 0, 0, 1, 0, 0, 0.5]
+			},
+			{
+				poolEntry: 'some-pool-entry-2',
+				steps: [1, 0, 0, 0, 1, 0, 0, 0.75]
+			},
+			{
+				poolEntry: 'some-pool-entry-3',
+				steps: [1, 0, 0, 0, 1, 0, 0, 0.875]
+			}
+		];
 		var patternIds = [];
 		it('should allow me to create several new patterns', function(done) {
 			var tasks = [];
 			patternNames.forEach(function(patternName) {
+				var thisPatternId;
 				tasks.push(function(cb) {
 					var patternData = {
 						name: patternName,
 						length: 8,
-						locked: false,
-						rows: [
-							{
-								poolEntry: 'some-pool-entry-1',
-								steps: [1, 0, 0, 0, 1, 0, 0, 0.5]
-							},
-							{
-								poolEntry: 'some-pool-entry-2',
-								steps: [1, 0, 0, 0, 1, 0, 0, 0.75]
-							},
-							{
-								poolEntry: 'some-pool-entry-3',
-								steps: [1, 0, 0, 0, 1, 0, 0, 0.875]
-							},
-						]
+						locked: false
 					};
 					ctx.server.inject({method: 'post', url: baseSetPatternUrl, payload: JSON.stringify(patternData)}, function(res) {
 						expect(res.statusCode).to.equal(200);
 						expect(res.result.length).to.equal(8);
-						patternIds.push(res.result.id);
+						thisPatternId = res.result.id;
+						patternIds.push(thisPatternId);
 						cb();
 					});
 				});
+
+				rows.forEach(function(rowData) {
+					tasks.push(function(cb) {
+						var rowUrl = baseSetPatternUrl + '/' + thisPatternId + '/patternrow';
+						ctx.server.inject({method: 'post', url: rowUrl, payload: JSON.stringify(rowData)}, function(res) {
+							expect(res.statusCode).to.equal(200);
+							cb();
+						});
+					});
+				});
 			});
-			// note: if I ran this in parallel, the following test fails, as if there is some race condition here? scary
-			// TODO: figure out if this is a problem
 			async.series(tasks, function(err, result) {
 				expect(!!err).to.equal(false);
 				done();
@@ -83,14 +93,13 @@ module.exports = function(ctx) {
 		});
 
 		it('should have populated result set', function(done) {
-			console.log('resSet: ' + JSON.stringify(resSet));
 			resSet.patterns.forEach(function(pattern) {
 				expect(patternNames.some(function(name) {
 					return name === pattern.name;
 				})).to.equal(true);
 				expect(pattern.length).to.equal(8);
 			});
-			expect(resSet.patterns[1].patternRows[2].poolEntry).to.equal('some-pool-entry-3');
+			expect(resSet.patterns[1].rows[2].poolEntry).to.equal('some-pool-entry-3');
 			done();
 		});
 
