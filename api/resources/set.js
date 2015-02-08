@@ -53,7 +53,7 @@ module.exports = function(app) {
 			var setName = request.params.set_id;
 			var execQuery = function() {
 				SetModel.findOne({name: setName})
-					.populate('pool patterns songs')
+					.deepPopulate('pool patterns.rows songs.rows')
 					.exec(function(err, setModel) {
 						var shouldCreate = false;
 
@@ -110,7 +110,7 @@ module.exports = function(app) {
 				setModel.songs.forEach(function(songId) {
 					stepListSong.addStep(function(cb) {
 						SongModel.findById(songId, function(err, songModel) {
-							songModel.rows.forEach(function(songRowId) {
+							songModel && songModel.rows.forEach(function(songRowId) {
 								stepListDelete.addStep(function(cb) {
 									SongRowModel.remove({_id: songRowId}, cb);
 								});
@@ -128,7 +128,7 @@ module.exports = function(app) {
 					setModel.patterns.forEach(function(patternId) {
 						stepListPattern.addStep(function(cb) {
 							PatternModel.findById(patternId, function(err, patternModel) {
-								patternModel.rows.forEach(function(patternRowId) {
+								patternModel && patternModel.rows.forEach(function(patternRowId) {
 									stepListDelete.addStep(function(cb) {
 										PatternRowModel.remove({_id: patternRowId}, cb);
 									});

@@ -39,6 +39,7 @@
     "lout": "^5.0.1",
     "mongodb": "^1.4.8",
     "mongoose": "^3.8.14",
+    "mongoose-deep-populate": "0.0.7",
     "moonboots_hapi": "^2.4.0",
     "mudskipper": "^2.3.2",
     "templatizer": "^0.3.6",
