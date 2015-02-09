@@ -11,7 +11,7 @@ div(data-hook="step-grid-view-container")
 						td.grid-step(class=row.steps[iStep] >= 0.5 ? 'step-on' : '' data-row-id="#{row.id}" data-step-index="#{iStep}")
 					- }
 					td.delete-row
-						button.delete-row -
+						button.delete-row(data-row-id="#{row.id}") -
 			tr.add-row
 				td(colspan=2)
 					button.add-row +

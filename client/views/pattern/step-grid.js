@@ -5,7 +5,9 @@ var templates = require('../../templates');
 module.exports = View.extend({
 	template: templates.includes.pattern.stepGrid,
 	events: {
-		'click td.grid-step': 'handleGridStepClick'
+		'click td.grid-step': 'handleGridStepClick',
+		'click button.add-row': 'handleAddRowClick',
+		'click button.delete-row': 'handleDeleteRowClick'
 	},
 	initialize: function(params) {
 		var self = this;
@@ -46,6 +48,12 @@ module.exports = View.extend({
 			dom.removeClass(el, className);
 		}
 	},
+	getRowById: function(rowId) {
+		var matches = this.patternData.rows.filter(function(otherRow) {
+			return otherRow.id === rowId;
+		});
+		return matches.length > 0 ? matches[0] : null;
+	},
 	handleGridStepClick: function(ev) {
 		if (dom.hasClass(ev.target, 'step-on')) {
 			dom.removeClass(ev.target, 'step-on');
@@ -54,5 +62,22 @@ module.exports = View.extend({
 		}
 		// TODO: update model
 		//console.log('ev rowId=' + ev.target.dataset.rowId + ' stepIndex=' + ev.target.dataset.stepIndex);
+	},
+	handleAddRowClick: function(ev) {
+		console.log('add row');
+		// TODO: how the fuck do I implement this? need models for patternRows.
+	},
+	handleDeleteRowClick: function(ev) {
+		var rowId = ev.target.dataset.rowId || null;
+		var rowModel = this.getRowById(rowId);
+		if (!rowModel) {
+			console.warn('problem: non-existent delete button?');
+			return;
+		}
+		if (typeof rowModel.save !== 'function') {
+			console.log('problem: your row is not a real ampersand-model');
+			// TODO: fix this
+		}
+		// TODO: rowModel.destroy() should work.
 	}
 });
