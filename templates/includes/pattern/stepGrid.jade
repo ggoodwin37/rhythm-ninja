@@ -5,11 +5,12 @@ div(data-hook="step-grid-view-container")
 		thead
 		table
 			each row in rows
-				tr
+				tr.grid-row
 					- for (var iStep = 0; iStep < row.steps.length; ++iStep) {
 						td.grid-step(class=row.steps[iStep] >= 0.5 ? 'step-on' : '')
 					- }
 					td.delete-row
 						button.delete-row -
-		div.add-row
-			button.add-row +
+			tr.add-row
+				td(colspan=2)
+					button.add-row +

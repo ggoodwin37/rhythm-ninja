@@ -1,14 +1,24 @@
 @cell-size: 48px;
-@main-color: #f00;
-@cell-off-color: #ff0;
-@cell-on-color: #f0f;
-@cell-off-hover-color: #00f;
-@cell-on-hover-color: #0f0;
+@add-button-height: 32px;
+@main-color: #f7e78d;
+@cell-off-color: #f7d619;
+@cell-on-color: #193af7;
+@cell-off-hover-color: #5ff719;
+@cell-on-hover-color: #aaf55b;
 
 [data-hook="step-grid-view-container"] {
-	background-color: @main-color;
-	tr {
+	table {
+		margin: 32px auto;
+		background-color: @main-color;
+	}
+	tr.grid-row {
 		height: @cell-size;
+	}
+	tr.add-button {
+		height: @add-button-height;
+		td {
+			width: @cell-size;
+		}
 	}
 	td.grid-step {
 		border-radius: 2px;
