@@ -1,0 +1,40 @@
+@cell-size: 48px;
+@add-button-height: 32px;
+@main-color: #f7e78d;
+@cell-off-color: #f7d619;
+@cell-on-color: #193af7;
+@cell-off-hover-color: #aaf55b;
+@cell-on-hover-color: #5ff719;
+
+[data-hook="step-grid-view-container"] {
+	table {
+		margin: 32px auto;
+		background-color: @main-color;
+	}
+	tr.grid-row {
+		height: @cell-size;
+	}
+	tr.add-button {
+		height: @add-button-height;
+		td {
+			width: @cell-size;
+		}
+	}
+	td.grid-step {
+		border-radius: 2px;
+		width: @cell-size;
+		background-color: @cell-off-color;
+		&:hover {
+			background-color: @cell-off-hover-color;
+		}
+		&.step-on {
+			&:hover {
+				background-color: @cell-on-hover-color;
+			}
+			background-color: @cell-on-color;
+		}
+	}
+	button.add-row, button.delete-row {
+		margin: 4px 24px;
+	}
+}
