@@ -7,10 +7,9 @@ div(data-hook="step-grid-view-container")
 			each row in rows
 				tr
 					- for (var iStep = 0; iStep < row.steps.length; ++iStep) {
-						td(class=row.steps[iStep] >= 0.5 ? 'step-on' : '') #{row.steps[iStep] >= 0.5 ? 'X' : 'O'}
+						td.grid-step(class=row.steps[iStep] >= 0.5 ? 'step-on' : '')
 					- }
 					td.delete-row
-						button -
-			tr.add-row
-				td.add-row
-					button +
+						button.delete-row -
+		div.add-row
+			button.add-row +

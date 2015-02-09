@@ -1,3 +1,30 @@
+@cell-size: 48px;
+@main-color: #f00;
+@cell-off-color: #ff0;
+@cell-on-color: #f0f;
+@cell-off-hover-color: #00f;
+@cell-on-hover-color: #0f0;
+
 [data-hook="step-grid-view-container"] {
-	background-color: blue;
+	background-color: @main-color;
+	tr {
+		height: @cell-size;
+	}
+	td.grid-step {
+		border-radius: 2px;
+		width: @cell-size;
+		background-color: @cell-off-color;
+		&:hover {
+			background-color: @cell-off-hover-color;
+		}
+		&.step-on {
+			&:hover {
+				background-color: @cell-on-hover-color;
+			}
+			background-color: @cell-on-color;
+		}
+	}
+	button.add-row, button.delete-row {
+		margin: 4px 24px;
+	}
 }
