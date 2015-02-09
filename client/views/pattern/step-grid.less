@@ -5,10 +5,12 @@
 @cell-on-color: #193af7;
 @cell-off-hover-color: #aaf55b;
 @cell-on-hover-color: #5ff719;
+@text-bg: #b8b8b8;
 
 [data-hook="step-grid-view-container"] {
 	table {
 		margin: 32px auto;
+		padding: 8px;
 		background-color: @main-color;
 	}
 	tr.grid-row {
@@ -18,6 +20,13 @@
 		height: @add-button-height;
 		td {
 			width: @cell-size;
+		}
+	}
+	td.metadata-cell {
+		span {
+			background-color: @text-bg;
+			padding: 2px 8px;
+			margin: 0px 16px;
 		}
 	}
 	td.grid-step {
