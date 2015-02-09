@@ -7,7 +7,7 @@ div(data-hook="step-grid-view-container")
 			each row in rows
 				tr.grid-row
 					- for (var iStep = 0; iStep < row.steps.length; ++iStep) {
-						td.grid-step(class=row.steps[iStep] >= 0.5 ? 'step-on' : '')
+						td.grid-step(class=row.steps[iStep] >= 0.5 ? 'step-on' : '' data-row-id="#{row.id}" data-step-index="#{iStep}")
 					- }
 					td.delete-row
 						button.delete-row -

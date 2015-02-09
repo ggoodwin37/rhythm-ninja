@@ -4,6 +4,9 @@ var templates = require('../../templates');
 
 module.exports = View.extend({
 	template: templates.includes.pattern.stepGrid,
+	events: {
+		'click td.grid-step': 'handleGridStepClick'
+	},
 	initialize: function(params) {
 		var self = this;
 
@@ -42,5 +45,14 @@ module.exports = View.extend({
 		} else {
 			dom.removeClass(el, className);
 		}
+	},
+	handleGridStepClick: function(ev) {
+		if (dom.hasClass(ev.target, 'step-on')) {
+			dom.removeClass(ev.target, 'step-on');
+		} else {
+			dom.addClass(ev.target, 'step-on');
+		}
+		// TODO: update model
+		//console.log('ev rowId=' + ev.target.dataset.rowId + ' stepIndex=' + ev.target.dataset.stepIndex);
 	}
 });
