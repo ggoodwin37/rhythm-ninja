@@ -69,8 +69,18 @@ module.exports = View.extend({
 		//console.log('ev rowId=' + ev.target.dataset.rowId + ' stepIndex=' + ev.target.dataset.stepIndex);
 	},
 	handleAddRowClick: function(ev) {
-		console.log('add row');
-		// TODO: how the fuck do I implement this? need models for patternRows.
+		var patternLength = this.patternModel.length;
+		var stepData = [];
+		for (var i = 0; i < patternLength; ++i) stepData.push(0);
+		var rowData = {
+			poolEntry: 'blank',
+			steps: stepData
+		};
+		this.patternModel.rows.add(rowData);
+		this.patternModel.save();
+		// TODO: verify this is doing the right thing. on db side, the pattern's row list should be updated and the
+		//       new row itself must exist. on the client side, need to make sure client models are correct and view
+		//       re-renders.
 	},
 	handleDeleteRowClick: function(ev) {
 		var rowId = ev.target.dataset.rowId || null;

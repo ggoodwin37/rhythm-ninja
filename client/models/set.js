@@ -1,7 +1,7 @@
 var AmpModel = require('ampersand-model');
 var PatternCollection = require('./pattern-collection');
 
-module.exports = AmpModel.extend({
+var SetModel = AmpModel.extend({
 	props: {
 		id: 'string',
 		bpm: 'number',
@@ -20,3 +20,5 @@ module.exports = AmpModel.extend({
 		return '/api/set/' + this.setName;
 	}
 });
+
+module.exports = SetModel;
