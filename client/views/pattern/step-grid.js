@@ -79,5 +79,9 @@ module.exports = View.extend({
 			// TODO: fix this
 		}
 		// TODO: rowModel.destroy() should work.
+	},
+	destroy: function() {
+		// TODO: this is not being called. probably need to call this explicitly from page destroy
+		console.log('just testing. step-grid::destroy() called.');
 	}
 });

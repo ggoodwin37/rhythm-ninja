@@ -27,7 +27,7 @@ module.exports = View.extend({
 
 		this.params = params || {};
 
-		this.model = window.app.getCachedSetModel(this.params.setName);
+		this.model = window.app.getCachedSetModel(this.params.setName);  // TODO: get rid of global ref, pass in app.
 		this.model.on('model-loaded', function(model) {
 			if (self.stepGridSubview) self.stepGridSubview.model = model;
 			self.model = model;
