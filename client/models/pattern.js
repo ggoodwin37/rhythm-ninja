@@ -3,6 +3,7 @@ var PatternRowsCollection = require('./pattern-rows-collection');
 
 module.exports = AmpModel.extend({
     props: {
+		id: 'string',
 		name: 'string',
 		locked: 'boolean',
 		length: 'number'

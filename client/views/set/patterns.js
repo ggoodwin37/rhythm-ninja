@@ -9,19 +9,24 @@ module.exports = View.extend({
 
 		this.model = params.model;
 		this.model.on('change:patterns', function() {
+			// TODO: make sure this isn't firing too often once we have pattern editing.
+			console.log('set pattern view: rerendering on model patterns change.');
+			self.render();
+		}).on('model-loaded', function() {
+			console.log('set pattern view: rerendering on model load.');
 			self.render();
 		});
 	},
 	render: function() {
-		var patterns = (this.model && this.model.patterns) ? this.model.patterns : null;
+		var patternsCollection = (this.model && this.model.patterns) ? this.model.patterns : null;
 		this.renderWithTemplate({
-			patterns: patterns,
+			patterns: patternsCollection.models || null,
 			setName: this.model.name,
 			slugger: function(input) {
 				return input.replace(' ', '-'); // TODO: better slugger
 			}
 		});
-		this.setLoading(!patterns);
+		this.setLoading(!patternsCollection);
 	},
 	setLoading: function(isLoading) {
 		var el = this.queryByHook('patterns-view-container');

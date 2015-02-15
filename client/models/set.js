@@ -3,12 +3,11 @@ var PatternCollection = require('./pattern-collection');
 
 module.exports = AmpModel.extend({
 	props: {
-		_id: 'string',
+		id: 'string',
 		bpm: 'number',
 		name: 'string',
 		pool: 'array',
 		songs: 'array',  // TODO: extract collection
-		// patterns: 'array',
 		swing: 'number'
 	},
 	collections: {

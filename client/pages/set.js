@@ -58,14 +58,10 @@ module.exports = View.extend({
 
 		this.model = window.app.getCachedSetModel(this.params.setName);
 		this.model.on('model-loaded', function(model) {
-			// TODO: shouldn't each subview do this itself?
+			// TODO: shouldn't each subview do this itself? and why do these need the whole set anyways?
 			if (self.patternSubview) self.patternSubview.model = model;
 			if (self.poolSubview) self.poolSubview.model = model;
 			if (self.songSubview) self.songSubview.model = model;
-
-			// test code: do we have child models?
-			var testPattern = model.patterns[0];
-			console.log(testPattern);  // not a model
 		});
 	},
 	render: function() {

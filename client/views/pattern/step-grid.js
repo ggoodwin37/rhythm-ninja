@@ -15,11 +15,9 @@ module.exports = View.extend({
 		this.model = params.model;
 		this.setName = params.setName;
 		this.patternName = params.patternName;
-		// TODO: this is going down a bad road where the set is a true model but all subelements are treated as raw js objects.
-		//   maybe need to add models for all subelements? how to instantiate them?
-		this.patternData = null;
+		this.patternModel = null;
 		this.model.on('model-loaded', function() {
-			self.patternData = self.model.patterns.filter(function(thisPattern) {
+			self.patternModel = self.model.patterns.models.filter(function(thisPattern) {
 				return thisPattern.name === self.patternName;
 			})[0];
 			self.render();
@@ -27,16 +25,16 @@ module.exports = View.extend({
 		// TODO: need to off this event too, since it's on the model which outlives this view.
 	},
 	render: function() {
-		var rows = (this.patternData && this.patternData.rows) ? this.patternData.rows : null;
+		var rowsCollection = (this.patternModel && this.patternModel.rows) ? this.patternModel.rows : null;
 		this.renderWithTemplate({
-			rows: rows,
+			rows: rowsCollection ? rowsCollection.models : null,
 			setName: this.setName,
 			patternName: this.patternName,
 			slugger: function(input) {
 				return input.replace(' ', '-'); // TODO: better slugger
 			}
 		});
-		this.setLoading(!rows);
+		this.setLoading(!rowsCollection);
 	},
 	// TODO: this should be shared
 	setLoading: function(isLoading) {
@@ -49,7 +47,7 @@ module.exports = View.extend({
 		}
 	},
 	getRowById: function(rowId) {
-		var matches = this.patternData.rows.filter(function(otherRow) {
+		var matches = this.patternModel.rows.models.filter(function(otherRow) {
 			return otherRow.id === rowId;
 		});
 		return matches.length > 0 ? matches[0] : null;
@@ -73,10 +71,6 @@ module.exports = View.extend({
 		if (!rowModel) {
 			console.warn('problem: non-existent delete button?');
 			return;
-		}
-		if (typeof rowModel.save !== 'function') {
-			console.log('problem: your row is not a real ampersand-model');
-			// TODO: fix this
 		}
 		// TODO: rowModel.destroy() should work.
 	},
