@@ -24,17 +24,23 @@ module.exports = View.extend({
 		});
 		// TODO: need to off this event too, since it's on the model which outlives this view.
 	},
+	getRowModels: function() {
+		if (this.patternModel && this.patternModel.rows && this.patternModel.rows.models) {
+			return this.patternModel.rows.models;
+		}
+		return null;
+	},
 	render: function() {
-		var rowsCollection = (this.patternModel && this.patternModel.rows) ? this.patternModel.rows : null;
+		var rowModels = this.getRowModels();
 		this.renderWithTemplate({
-			rows: rowsCollection ? rowsCollection.models : null,
+			rows: rowModels,
 			setName: this.setName,
 			patternName: this.patternName,
 			slugger: function(input) {
 				return input.replace(' ', '-'); // TODO: better slugger
 			}
 		});
-		this.setLoading(!rowsCollection);
+		this.setLoading(rowModels === null);
 	},
 	// TODO: this should be shared
 	setLoading: function(isLoading) {
@@ -47,7 +53,8 @@ module.exports = View.extend({
 		}
 	},
 	getRowById: function(rowId) {
-		var matches = this.patternModel.rows.models.filter(function(otherRow) {
+		var rowModels = this.getRowModels();
+		var matches = rowModels.filter(function(otherRow) {
 			return otherRow.id === rowId;
 		});
 		return matches.length > 0 ? matches[0] : null;
