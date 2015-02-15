@@ -34,6 +34,8 @@ module.exports = View.extend({
 		});
 	},
 	render: function() {
-		this.renderWithTemplate();
+		this.renderWithTemplate({
+			setUrl: '/set/' + this.params.setName
+		});
 	}
 });
