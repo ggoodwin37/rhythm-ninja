@@ -15,28 +15,32 @@ module.exports = View.extend({
 		this.model = params.model;
 		this.setName = params.setName;
 		this.patternName = params.patternName;
-		// TODO: this is going down a bad road where the set is a true model but all subelements are treated as raw js objects.
-		//   maybe need to add models for all subelements? how to instantiate them?
-		this.patternData = null;
+		this.patternModel = null;
 		this.model.on('model-loaded', function() {
-			self.patternData = self.model.patterns.filter(function(thisPattern) {
+			self.patternModel = self.model.patterns.models.filter(function(thisPattern) {
 				return thisPattern.name === self.patternName;
 			})[0];
 			self.render();
 		});
 		// TODO: need to off this event too, since it's on the model which outlives this view.
 	},
+	getRowModels: function() {
+		if (this.patternModel && this.patternModel.rows && this.patternModel.rows.models) {
+			return this.patternModel.rows.models;
+		}
+		return null;
+	},
 	render: function() {
-		var rows = (this.patternData && this.patternData.rows) ? this.patternData.rows : null;
+		var rowModels = this.getRowModels();
 		this.renderWithTemplate({
-			rows: rows,
+			rows: rowModels,
 			setName: this.setName,
 			patternName: this.patternName,
 			slugger: function(input) {
 				return input.replace(' ', '-'); // TODO: better slugger
 			}
 		});
-		this.setLoading(!rows);
+		this.setLoading(rowModels === null);
 	},
 	// TODO: this should be shared
 	setLoading: function(isLoading) {
@@ -49,7 +53,8 @@ module.exports = View.extend({
 		}
 	},
 	getRowById: function(rowId) {
-		var matches = this.patternData.rows.filter(function(otherRow) {
+		var rowModels = this.getRowModels();
+		var matches = rowModels.filter(function(otherRow) {
 			return otherRow.id === rowId;
 		});
 		return matches.length > 0 ? matches[0] : null;
@@ -64,8 +69,19 @@ module.exports = View.extend({
 		//console.log('ev rowId=' + ev.target.dataset.rowId + ' stepIndex=' + ev.target.dataset.stepIndex);
 	},
 	handleAddRowClick: function(ev) {
-		console.log('add row');
-		// TODO: how the fuck do I implement this? need models for patternRows.
+		var patternLength = this.patternModel.length;
+		var stepData = [];
+		for (var i = 0; i < patternLength; ++i) stepData.push(0);
+		var rowData = {
+			poolEntry: 'blank',
+			steps: stepData
+		};
+		var rowOptions = {
+			setName: this.setName,
+			patternId: this.patternModel.id
+		};
+		this.patternModel.rows.create(rowData, rowOptions);
+		this.render();
 	},
 	handleDeleteRowClick: function(ev) {
 		var rowId = ev.target.dataset.rowId || null;
@@ -74,10 +90,15 @@ module.exports = View.extend({
 			console.warn('problem: non-existent delete button?');
 			return;
 		}
-		if (typeof rowModel.save !== 'function') {
-			console.log('problem: your row is not a real ampersand-model');
-			// TODO: fix this
-		}
-		// TODO: rowModel.destroy() should work.
+		// TODO: improve this. Need a more general way to pass arbitrary data to models.
+		//       models are either rehydrated at load, or created client-side during add.
+		rowModel.setName = this.setName;
+		rowModel.patternId = this.patternModel.id;
+		rowModel.destroy();
+		this.render();
+	},
+	destroy: function() {
+		// TODO: this is not being called. probably need to call this explicitly from page destroy
+		console.log('just testing. step-grid::destroy() called.');
 	}
 });

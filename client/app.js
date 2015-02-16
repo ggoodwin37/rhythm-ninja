@@ -3,7 +3,7 @@ var domready = require('domready');
 var MainView = require('./views/main');
 var Router = require('./router');
 
-var Set = require('./models/set');
+var SetModel = require('./models/set');
 
 var clientConfig = require('./client-config.json');
 
@@ -37,7 +37,7 @@ window.app = {
 				}, 0);
 			}
 		} else {
-			setModel = new Set(setName);
+			setModel = new SetModel(setName);
 			xhr = setModel.fetch({
 				success: function(model, response) {
 					setModel.trigger('model-loaded', setModel);

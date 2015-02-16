@@ -27,13 +27,18 @@ module.exports = View.extend({
 
 		this.params = params || {};
 
-		this.model = window.app.getCachedSetModel(this.params.setName);
+		this.model = window.app.getCachedSetModel(this.params.setName);  // TODO: get rid of global ref, pass in app.
 		this.model.on('model-loaded', function(model) {
 			if (self.stepGridSubview) self.stepGridSubview.model = model;
 			self.model = model;
 		});
 	},
 	render: function() {
-		this.renderWithTemplate();
+		this.renderWithTemplate({
+			setName: this.params.setName,
+			slugger: function(input) {
+				return input.replace(' ', '-'); // TODO: better slugger
+			}
+		});
 	}
 });

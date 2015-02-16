@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/ggoodwin37/rhythm-ninja",
   "dependencies": {
+    "ampersand-collection": "^1.4.0",
     "ampersand-dom": "^1.2.1",
     "ampersand-events": "^1.0.1",
     "ampersand-model": "^3.0.4",
