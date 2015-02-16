@@ -1,4 +1,4 @@
-var Collection = require('ampersand-collection');
+var Collection = require('ampersand-rest-collection');
 var PatternRowModel = require('./pattern-row');
 
 var PatternRowsCollection = Collection.extend({

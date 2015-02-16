@@ -10,8 +10,7 @@ var PatternRowModel = AmpModel.extend({
 		this.patternRowId = patternRowData.id;
 	},
 	url: function() {
-		var url = 'pattern-row/' + this.patternRowId;
-		console.log('patternRowModel url: ' + url);
+		var url = this.patternRowId;
 		return url;
 	}
 });

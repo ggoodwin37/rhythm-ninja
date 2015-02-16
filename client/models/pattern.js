@@ -16,7 +16,6 @@ var PatternModel = AmpModel.extend({
 	},
 	url: function() {
 		var url = this.patternId;
-		console.log('patternModel url: ' + url);
 		return url;
 	}
 });
