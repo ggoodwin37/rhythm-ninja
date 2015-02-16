@@ -11,13 +11,13 @@ var PatternModel = AmpModel.extend({
 	collections: {
 		rows: PatternRowsCollection
 	},
-	initialize: function(patternModel) {
-		this.setName = 'HUH';
+	initialize: function(patternData) {
+		this.patternId = patternData.id;
 	},
-	urlRoot: function() {
-		var urlRoot = '/api/set/' + this.setName + '/pattern';
-		console.log('patternModel urlRoot: ' + urlRoot);
-		return urlRoot;
+	url: function() {
+		var url = this.patternId;
+		console.log('patternModel url: ' + url);
+		return url;
 	}
 });
 

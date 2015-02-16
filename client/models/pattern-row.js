@@ -6,14 +6,13 @@ var PatternRowModel = AmpModel.extend({
 		poolEntry: 'string',
 		steps: 'array'
 	},
-	initialize: function(model) {
-		this.setName = 'TODO';
-		this.patternName = 'WTF';
+	initialize: function(patternRowData) {
+		this.patternRowId = patternRowData.id;
 	},
-	urlRoot: function() {
-		var urlRoot = '/api/set/' + this.setName + '/pattern/' + this.patternName;
-		console.log('pattern-row: urlRoot is: ' + urlRoot);
-		return urlRoot;
+	url: function() {
+		var url = 'pattern-row/' + this.patternRowId;
+		console.log('patternRowModel url: ' + url);
+		return url;
 	}
 });
 
