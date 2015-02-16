@@ -76,7 +76,11 @@ module.exports = View.extend({
 			poolEntry: 'blank',
 			steps: stepData
 		};
-		this.patternModel.rows.create(rowData);
+		var rowOptions = {
+			setName: this.setName,
+			patternId: this.patternModel.id
+		};
+		this.patternModel.rows.create(rowData, rowOptions);
 		// TODO: verify this is doing the right thing. on db side, the pattern's row list should be updated and the
 		//       new row itself must exist. on the client side, need to make sure client models are correct and view
 		//       re-renders.
