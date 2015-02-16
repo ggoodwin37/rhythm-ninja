@@ -35,7 +35,10 @@ module.exports = View.extend({
 	},
 	render: function() {
 		this.renderWithTemplate({
-			setUrl: '/set/' + this.params.setName
+			setName: this.params.setName,
+			slugger: function(input) {
+				return input.replace(' ', '-'); // TODO: better slugger
+			}
 		});
 	}
 });
