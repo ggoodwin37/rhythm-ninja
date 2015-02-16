@@ -82,9 +82,6 @@ module.exports = View.extend({
 		};
 		this.patternModel.rows.create(rowData, rowOptions);
 		this.render();
-		// TODO: verify this is doing the right thing. on db side, the pattern's row list should be updated and the
-		//       new row itself must exist. on the client side, need to make sure client models are correct and view
-		//       re-renders.
 	},
 	handleDeleteRowClick: function(ev) {
 		var rowId = ev.target.dataset.rowId || null;
@@ -93,7 +90,12 @@ module.exports = View.extend({
 			console.warn('problem: non-existent delete button?');
 			return;
 		}
-		// TODO: rowModel.destroy() should work.
+		// TODO: improve this. Need a more general way to pass arbitrary data to models.
+		//       models are either rehydrated at load, or created client-side during add.
+		rowModel.setName = this.setName;
+		rowModel.patternId = this.patternModel.id;
+		rowModel.destroy();
+		this.render();
 	},
 	destroy: function() {
 		// TODO: this is not being called. probably need to call this explicitly from page destroy
