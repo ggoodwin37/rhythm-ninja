@@ -21,8 +21,15 @@ module.exports = View.extend({
 				return thisPattern.name === self.patternName;
 			})[0];
 			self.render();
+
+			self.patternModel.rows.on('sync', function() {
+				// this render is used to update the dom with ids when a new row was created.
+				// we also render it speculatively right when its created client-side, this is
+				// a little inefficient.
+				self.render();
+			});
 		});
-		// TODO: need to off this event too, since it's on the model which outlives this view.
+		// TODO: need to off any model event handlers too, since it's on the model which outlives this view.
 	},
 	getRowModels: function() {
 		if (this.patternModel && this.patternModel.rows && this.patternModel.rows.models) {
@@ -87,7 +94,7 @@ module.exports = View.extend({
 		var rowId = ev.target.dataset.rowId || null;
 		var rowModel = this.getRowById(rowId);
 		if (!rowModel) {
-			console.warn('problem: non-existent delete button?');
+			console.warn('problem: non-existent delete button for rowId=' + rowId);
 			return;
 		}
 		// TODO: improve this. Need a more general way to pass arbitrary data to models.
