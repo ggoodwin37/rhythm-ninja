@@ -15,7 +15,10 @@ var PatternModel = AmpModel.extend({
 		this.patternId = patternData.id;
 	},
 	url: function() {
-		var url = this.patternId;
+		var url = '/api/set/' + this.setName + '/pattern';
+		if (this.patternId) {
+			url += '/' + this.patternId;
+		}
 		return url;
 	}
 });
