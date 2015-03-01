@@ -27,10 +27,6 @@ function startServerInstance(done) {
 	server.pack.register(require('lout'), function () {});
 
 	var serverPackList = [
-		// {
-		// 	plugin: require('./notify'),
-		// 	options: { publicUrl: 'http://' + config.serverHost + ':' + config.serverPort }
-		// },
 		{
 			plugin: require('moonboots_hapi'),
 			options: {
