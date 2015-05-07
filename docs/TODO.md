@@ -1,3 +1,8 @@
+- currently blocked: issue when updating a row step.
+  - the PUT succeeds and the payload looks right.
+  - however, immediately after the put, the parent pattern's row array is in a bad state.
+	'[Object object]' instead of row id.
+  - the new test passes though, what's different?
 
 - working on basic UI for now.
   - figure out how the "add" row will work in the template.

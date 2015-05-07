@@ -74,14 +74,18 @@ module.exports = function(app, opts) {
 			});
 		},
 		update: function(request, reply) {
+			console.log('BEGIN GENERIC UPDATE [');
 			var itemId = request.params[routeItemIdKey];
 			itemFactory.findById(itemId, function(err, itemModel) {
 				if (handlingErrorOrMissing(err, itemModel, reply)) return;
 				var args = [request.payload].concat(updateFields)
 				var mergeObject = _.pick.apply(null, args);
+				console.log('mergeObject:');
+				inspect(mergeObject);
 				itemModel.update(mergeObject, function(err) {
 					if (handlingError(err, reply)) return;
 					reply();
+					console.log('] END GENERIC UPDATE');
 				});
 			});
 		},
