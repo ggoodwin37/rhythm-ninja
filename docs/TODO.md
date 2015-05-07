@@ -3,6 +3,9 @@
   - however, immediately after the put, the parent pattern's row array is in a bad state.
 	'[Object object]' instead of row id.
   - the new test passes though, what's different?
+  - doc diving: http://mongoosejs.com/docs/2.7.x/docs/embedded-documents.html
+  - the branch 'fix-stuff' uses an embedded document, but cascading test break.
+  - modelInstance.update() vs modelInstance.save()?
 
 - working on basic UI for now.
   - figure out how the "add" row will work in the template.
