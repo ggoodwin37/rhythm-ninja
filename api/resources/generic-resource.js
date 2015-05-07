@@ -74,13 +74,25 @@ module.exports = function(app, opts) {
 			});
 		},
 		update: function(request, reply) {
+			console.log('generic-resource update with params:');
+			inspect(request.params);
+			console.log('  and payload:');
+			inspect(request.payload);
+
 			var itemId = request.params[routeItemIdKey];
 			itemFactory.findById(itemId, function(err, itemModel) {
 				if (handlingErrorOrMissing(err, itemModel, reply)) return;
-				var args = [request.payload].concat(updateFields)
-				var mergeObject = _.pick.apply(null, args);
-				itemModel.update(mergeObject, function(err) {
+				// var args = [request.payload].concat(updateFields)
+				// var mergeObject = _.pick.apply(null, args);
+
+				// da fuq? a) is this really necessary? b) slicker way to do this with _?
+				Object.keys(request.payload).forEach(function(key) {
+					itemModel[key] = request.payload[key];
+				});
+				console.log('saving this:'); inspect(itemModel);
+				itemModel.save(function(err, result) {
 					if (handlingError(err, reply)) return;
+					console.log('success?');
 					reply();
 				});
 			});

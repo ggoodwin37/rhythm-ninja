@@ -132,6 +132,7 @@ module.exports = View.extend({
 		this.queuedUpdateTimer = window.setTimeout(this.writePatternUpdates, UPDATE_DELAY);
 	},
 	writePatternUpdates: function() {
+		console.log('writePatternUpdates()');
 		this.queuedUpdateTimer = null;
 		this.patternModel.save();
 	},
