@@ -74,11 +74,7 @@ module.exports = function(app, opts) {
 			});
 		},
 		update: function(request, reply) {
-			console.log('generic-resource update with params:');
-			inspect(request.params);
-			console.log('  and payload:');
-			inspect(request.payload);
-
+			console.log('BEGIN GENERIC UPDATE [');
 			var itemId = request.params[routeItemIdKey];
 			itemFactory.findById(itemId, function(err, itemModel) {
 				if (handlingErrorOrMissing(err, itemModel, reply)) return;
@@ -94,6 +90,7 @@ module.exports = function(app, opts) {
 					if (handlingError(err, reply)) return;
 					console.log('success?');
 					reply();
+					console.log('] END GENERIC UPDATE');
 				});
 			});
 		},
