@@ -89,7 +89,6 @@ module.exports = function(ctx) {
 		it('set should look right after update', function(done) {
 			ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
-				console.log('yo: ' + JSON.stringify(res.result));
 				expect(res.result.patterns[0].rows.length).to.equal(1);
 				expect(res.result.patterns[0].rows[0].steps[0]).to.equal(1);
 				expect(res.result.patterns[0].rows[0].steps[2]).to.equal(0.5);
