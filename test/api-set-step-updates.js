@@ -52,6 +52,7 @@ module.exports = function(ctx) {
 			poolEntry: 'some-pool-entry-for-updating-1',
 			steps: [1, 0, 0.25, 0, 1, 0, 0, 0]
 		};
+		var patternRowUrl;
 		it('should allow me to create a simple test doc down to patternrows', function(done) {
 			var patternUrl = treeOpsSetUrl + '/pattern';
 			ctx.server.inject({method: 'post', url: patternUrl, payload: patternData}, function(res) {
@@ -60,25 +61,37 @@ module.exports = function(ctx) {
 				ctx.server.inject({method: 'post', url: patternUrl + '/' + patternId + '/patternrow', payload: rowData}, function(res) {
 					expect(res.statusCode).to.equal(200);
 					rowId = res.result.id;
+					patternRowUrl = patternUrl + '/' + patternId + '/patternrow/' + rowId;
 					done();
 				});
 			});
 		});
 
+		var patternRowModel;
 		it('set should look right', function(done) {
 			ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.patterns[0].rows[0].steps[2]).to.equal(0.25);
+				patternRowModel = res.result.patterns[0].rows[0];
 				done();
 			});
 		});
 
-		// TODO: update
+		it('should be able to update a step', function(done) {
+			patternRowModel.steps[2] = 0.5;
+			ctx.server.inject({method: 'put', url: patternRowUrl}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				done();
+			});
+		});
 
 		it('set should look right after update', function(done) {
 			ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
-				expect(res.result.patterns[0].rows[0].steps[2]).to.equal(0.25);
+				console.log('yo: ' + JSON.stringify(res.result));
+				expect(res.result.patterns[0].rows.length).to.equal(1);
+				expect(res.result.patterns[0].rows[0].steps[0]).to.equal(1);
+				expect(res.result.patterns[0].rows[0].steps[2]).to.equal(0.5);
 				done();
 			});
 		});
