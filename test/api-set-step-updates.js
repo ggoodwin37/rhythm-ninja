@@ -12,7 +12,7 @@ module.exports = function(ctx) {
 	var treeOpsSetName = 'reserved-test-set-step-updates';
 	var treeOpsSetUrl = '/api/set/' + treeOpsSetName;
 
-	describe('verify that we do the right thing when updating a row step', function () {
+	describe('verify that we do the right thing when updating a row step:', function () {
 
 		it('should delete any existing documents with the test name ' + treeOpsSetName, function(done) {
 			ctx.server.inject({
@@ -78,7 +78,7 @@ module.exports = function(ctx) {
 			});
 		});
 
-		it('should be able to update a step', function(done) {
+		it('should be able to update a step via patternRow PUT', function(done) {
 			patternRowModel.steps[2] = 0.5;
 			ctx.server.inject({method: 'put', url: patternRowUrl, payload: patternRowModel}, function(res) {
 				expect(res.statusCode).to.equal(200);
@@ -86,12 +86,36 @@ module.exports = function(ctx) {
 			});
 		});
 
-		it('set should look right after update', function(done) {
+		var patternModel;
+		it('set should look right after patternRow update', function(done) {
 			ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.patterns[0].rows.length).to.equal(1);
 				expect(res.result.patterns[0].rows[0].steps[0]).to.equal(1);
+				expect(res.result.patterns[0].rows[0].steps[1]).to.equal(0);
 				expect(res.result.patterns[0].rows[0].steps[2]).to.equal(0.5);
+				patternModel = res.result.patterns[0];
+				done();
+			});
+		});
+
+		it('should be able to update a step via pattern PUT', function(done) {
+			var patternUrl = treeOpsSetUrl + '/pattern/' + patternId;
+			patternModel.rows[0].steps[1] = 0.25;
+			ctx.server.inject({method: 'put', url: patternUrl, payload: patternModel}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				done();
+			});
+		});
+
+		it('set should look right after pattern update', function(done) {
+			ctx.server.inject({method: 'get', url: treeOpsSetUrl}, function(res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.patterns[0].rows.length).to.equal(1);
+				expect(res.result.patterns[0].rows[0].steps[0]).to.equal(1);
+				expect(res.result.patterns[0].rows[0].steps[1]).to.equal(0.25);
+				expect(res.result.patterns[0].rows[0].steps[2]).to.equal(0.5);
+				patternModel = res.result.patterns[0];
 				done();
 			});
 		});
