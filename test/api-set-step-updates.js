@@ -58,7 +58,8 @@ module.exports = function(ctx) {
 			ctx.server.inject({method: 'post', url: patternUrl, payload: patternData}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				patternId = res.result.id;
-				ctx.server.inject({method: 'post', url: patternUrl + '/' + patternId + '/patternrow', payload: rowData}, function(res) {
+				ctx.server.inject({method: 'post', url: patternUrl + '/' + patternId + '/patternrow', payload: rowData},
+								  function(res) {
 					expect(res.statusCode).to.equal(200);
 					rowId = res.result.id;
 					patternRowUrl = patternUrl + '/' + patternId + '/patternrow/' + rowId;
@@ -79,7 +80,7 @@ module.exports = function(ctx) {
 
 		it('should be able to update a step', function(done) {
 			patternRowModel.steps[2] = 0.5;
-			ctx.server.inject({method: 'put', url: patternRowUrl}, function(res) {
+			ctx.server.inject({method: 'put', url: patternRowUrl, payload: patternRowModel}, function(res) {
 				expect(res.statusCode).to.equal(200);
 				done();
 			});
