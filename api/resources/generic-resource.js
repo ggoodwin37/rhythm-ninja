@@ -1,4 +1,5 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
+var async = require('async');
 var _ = require('underscore');
 
 var handlingError = require('../handling-error');
@@ -41,59 +42,74 @@ module.exports = function(app, opts) {
 			}
 		},
 		create: function(request, reply) {
-			var parentId = request.params[routeParentIdKey];
-
-			var parentQuery = {};
-			parentQuery[parentQueryField] = parentId;
-			parentFactory.findOne(parentQuery, function(err, parentModel) {
-				if (err) {
-					// this can happen when passing name instead of id
-					console.log('generic resource create error: ' + err);
-				}
-				var newModel = new itemFactory(_.extend({parent_id: parentModel.id}, request.payload));
-				newModel.save(function(err, newModel, numAffected) {
-					if (handlingErrorOrMissing(err, numAffected, reply)) return;
-
-					// update the parent's collection with our new id.
-					var newParentCollection = parentModel[parentCollection].slice();
-					newParentCollection.push(newModel.id);
-
-					var updateData = {};
-					updateData[parentCollection] = newParentCollection;
-
-					parentModel.update(updateData, function(err) {
+			var parentId = request.params[routeParentIdKey],
+				newModel;
+			function createAndSaveNewModel(cb) {
+				var newData = _.extend({parent_id: parentId}, request.payload);
+				newModel = new itemFactory(newData);
+				newModel.save(function(err, newModelResult) {
+					if (handlingError(err, reply)) return;
+					cb(null, newModelResult.id);
+				});
+			}
+			function updateParentModelCollection(newModelId, cb) {
+				var parentQuery = {};
+				parentQuery[parentQueryField] = parentId;
+				parentFactory.findOne(parentQuery, function(err, parentModel) {
+					if (handlingError(err, reply)) return;
+					// console.log('parentModel:'); inspect(parentModel);
+					// console.log('parentModel[pc]:'); inspect(parentModel[parentCollection]);
+					parentModel[parentCollection].push(newModelId);
+					parentModel.save(function(err, parentModel) {
 						if (handlingError(err, reply)) return;
-
-						if (app.config.logThings['api--create-stuff']) {
-							console.log('created a new ' + itemTypeName + ' with id ' + newModel.id);
-						}
-
-						reply(newModel.toJSON());
+						cb(null);
 					});
 				});
+			}
+			async.waterfall([createAndSaveNewModel, updateParentModelCollection], function(err) {
+				if (handlingError(err, reply)) return;
+				reply(newModel.toJSON());
 			});
 		},
 		update: function(request, reply) {
 			console.log('BEGIN GENERIC UPDATE [');
-			var itemId = request.params[routeItemIdKey];
-			itemFactory.findById(itemId, function(err, itemModel) {
-				if (handlingErrorOrMissing(err, itemModel, reply)) return;
-				// var args = [request.payload].concat(updateFields)
-				// var mergeObject = _.pick.apply(null, args);
-				inspect(itemModel);
-
-				// da fuq? a) is this really necessary? b) slicker way to do this with _?
-				Object.keys(request.payload).forEach(function(key) {
-					itemModel[key] = request.payload[key];
-				});
-				console.log('saving this:'); inspect(itemModel);
-				itemModel.save(function(err, result) {
-					if (handlingError(err, reply)) return;
-					console.log('success?');
-					reply();
-					console.log('] END GENERIC UPDATE');
-				});
+			var itemId = request.params[routeItemIdKey] || null,
+				conditions = {
+					_id: itemId
+				},
+				updateData = request.payload,
+				options = {
+					upsert: true
+				};
+			console.log('request.params, key is:' + routeItemIdKey + ', data:'); inspect(request.params);
+			console.log('conditions:'); inspect(conditions);
+			console.log('updateData:'); inspect(updateData);
+			itemFactory.findOneAndUpdate(conditions, updateData, options, function(err, numChanged) {
+				console.log('done: ' + JSON.stringify(err));
+				if (handlingError(err, reply)) return;
+				console.log('done2');
+				reply();
+				console.log('] END GENERIC UPDATE, numChanged=' + numChanged);
 			});
+
+			// itemFactory.findById(itemId, function(err, itemModel) {
+			// 	if (handlingErrorOrMissing(err, itemModel, reply)) return;
+			// 	// var args = [request.payload].concat(updateFields)
+			// 	// var mergeObject = _.pick.apply(null, args);
+			// 	inspect(itemModel);
+
+			// 	// da fuq? a) is this really necessary? b) slicker way to do this with _?
+			// 	Object.keys(request.payload).forEach(function(key) {
+			// 		itemModel[key] = request.payload[key];
+			// 	});
+			// 	console.log('saving this:'); inspect(itemModel);
+			// 	itemModel.save(function(err, result) {
+			// 		if (handlingError(err, reply)) return;
+			// 		console.log('success?');
+			// 		reply();
+			// 		console.log('] END GENERIC UPDATE');
+			// 	});
+			// });
 		},
 		destroy: function(request, reply) {
 			var parentId = request.params[routeParentIdKey];

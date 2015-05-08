@@ -24,7 +24,10 @@ module.exports = function(model, opts, reply, done) {
 	// remove from parent collection
 	if (opts.parentFactory) {
 		stepList.addStep(function(cb) {
-			opts.parentFactory.findById(model.parent_id, function(err, parentModel) {
+			var parentQuery = {};
+			parentQuery[opts.parentQueryField] = model.parent_id;
+			opts.parentFactory.findOne(parentQuery, function(err, parentModel) {
+				if (handlingErrorOrMissing(err, reply)) return;
 				var newParentCollection = parentModel[opts.parentCollection].filter(function(childId) {
 					return childId != model.id;
 				});
