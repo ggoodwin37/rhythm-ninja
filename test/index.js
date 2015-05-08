@@ -41,16 +41,16 @@ before(function(done) {
 
 require('./server')(ctx);
 require('./mongo-mongoose')(ctx);
-// require('./api-set')(ctx);
-// require('./api-pool-entry')(ctx);
-// require('./api-pattern')(ctx);
+require('./api-set')(ctx);
+require('./api-pool-entry')(ctx);
+require('./api-pattern')(ctx);
 // require('./api-set-pattern')(ctx);
 // require('./api-song')(ctx);
 // require('./delete-set')(ctx, 'reserved-test-set');
 // require('./api-tree-ops')(ctx);
 // require('./delete-set')(ctx, 'reserved-test-tree-stuff');
 // require('./api-set-tree-ops')(ctx);
-require('./api-set-step-updates')(ctx);
+// require('./api-set-step-updates')(ctx);
 // require('./api-order')(ctx);
 // require('./delete-set')(ctx, 'reserved-test-order-stuff');
 // require('./delete-set')(ctx, 'bogus', 404);
