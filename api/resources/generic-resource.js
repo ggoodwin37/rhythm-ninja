@@ -80,6 +80,7 @@ module.exports = function(app, opts) {
 				if (handlingErrorOrMissing(err, itemModel, reply)) return;
 				// var args = [request.payload].concat(updateFields)
 				// var mergeObject = _.pick.apply(null, args);
+				inspect(itemModel);
 
 				// da fuq? a) is this really necessary? b) slicker way to do this with _?
 				Object.keys(request.payload).forEach(function(key) {
