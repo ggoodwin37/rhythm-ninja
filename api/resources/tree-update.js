@@ -2,6 +2,7 @@ var inspect = require('eyes').inspector({maxLength: null});
 var StepList = require('../../step-list');
 var handlingError = require('../handling-error');
 var handlingErrorOrMissing = require('../handling-error-or-missing');
+var _ = require('underscore');
 
 module.exports = function(opts, itemId, itemData, done) {
 	var stepList = new StepList();
@@ -13,8 +14,10 @@ module.exports = function(opts, itemId, itemData, done) {
 		};
 		var options = {};
 
-		// mongoose converts child collection to ids and does a shallow update here.
-		opts.itemFactory.findOneAndUpdate(conditions, itemData, options, function(err, numChanged) {
+		// mongoose tries to do a shallow update in findOneAndUpdate, but was casting some values
+		// incorrectly. get around this by doing an explicit shallow copy.
+		var shallowItemData = createShallowItem(itemData);
+		opts.itemFactory.findOneAndUpdate(conditions, shallowItemData, options, function(err, numChanged) {
 			if (handlingError(err, done)) return cb();
 			cb();
 		});
@@ -43,4 +46,15 @@ module.exports = function(opts, itemId, itemData, done) {
 	stepList.execute(function() {
 		done();
 	});
+
+	function createShallowItem(originalItem) {
+		var result = _.clone(originalItem);  // shallow clone
+		if (opts.childCollection && result[opts.childCollection]) {
+			result[opts.childCollection] = result[opts.childCollection].map(function(item) {
+				if (typeof item === 'string') return item;
+				else return item.id;
+			});
+		}
+		return result;
+	}
 };
