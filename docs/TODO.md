@@ -1,13 +1,14 @@
-- currently blocked: issue when updating a row step.
-  - it works now, after working around an issue with mongoose where child ids were being serialized incorrectly
-    - (but only from web client. test succeeded. some fields were missing, maybe lack of _id confused mongoose?
-  - another issue which is nonfatal (doesn't corrupt db like serialization one):
-    - step data appears as a bunch of unicode in mongo query, is that bad?
-	- resolved: this appears to be some kind of mongoose logging bug. data over wire and in db looks fine.
-  - TODO: delete this comment
+up next:
+- do a TODO pass to find pressing stuff.
+- flesh out UI just enough
+- pick next big task:
+  - basic sample playback in web audio -> loading sample from db -> uploading samples -> audio client
+  - react ui
+  - users/auth
+  - dirty/conflict basics
+  - ??
 
-- working on basic UI for now.
-  - other pages.
+// backlog
 
 - consider adding some metadata like createdTime, createdBy (user id)
 
