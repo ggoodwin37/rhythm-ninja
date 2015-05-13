@@ -8,7 +8,8 @@ module.exports = function(model, opts, reply, done) {
 
 	// delete all children
 	// TODO: this is not recursive so it can't be used for things with more than
-	//  one level of children (set)
+	//  one level of children, set in particular. Also, this assumes there's only
+	//  one child collection, which happens to be true for everything other than set.
 	if (opts.childFactory) {
 		var childIds = model[opts.childCollection];
 		childIds.forEach(function(thisChildId) {

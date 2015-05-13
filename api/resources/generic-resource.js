@@ -5,6 +5,7 @@ var _ = require('underscore');
 var handlingError = require('../handling-error');
 var handlingErrorOrMissing = require('../handling-error-or-missing');
 var StepList = require('../../step-list');
+var treeUpdate = require('./tree-update');
 var treeDelete = require('./tree-delete');
 
 module.exports = function(app, opts) {
@@ -70,16 +71,8 @@ module.exports = function(app, opts) {
 			});
 		},
 		update: function(request, reply) {
-			var itemId = request.params[routeItemIdKey] || null,
-				conditions = {
-					_id: itemId
-				},
-				updateData = request.payload,
-				options = {};
-			itemFactory.findOneAndUpdate(conditions, updateData, options, function(err, numChanged) {
-				if (handlingError(err, reply)) return;
-				reply();
-			});
+			var itemId = request.params[routeItemIdKey] || null
+			treeUpdate(opts, itemId, request.payload, reply);
 		},
 		destroy: function(request, reply) {
 			var parentId = request.params[routeParentIdKey];
