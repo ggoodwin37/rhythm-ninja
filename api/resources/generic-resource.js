@@ -57,8 +57,6 @@ module.exports = function(app, opts) {
 				parentQuery[parentQueryField] = parentId;
 				parentFactory.findOne(parentQuery, function(err, parentModel) {
 					if (handlingError(err, reply)) return;
-					// console.log('parentModel:'); inspect(parentModel);
-					// console.log('parentModel[pc]:'); inspect(parentModel[parentCollection]);
 					parentModel[parentCollection].push(newModelId);
 					parentModel.save(function(err, parentModel) {
 						if (handlingError(err, reply)) return;
@@ -72,7 +70,6 @@ module.exports = function(app, opts) {
 			});
 		},
 		update: function(request, reply) {
-			console.log('BEGIN GENERIC UPDATE [');
 			var itemId = request.params[routeItemIdKey] || null,
 				conditions = {
 					_id: itemId
@@ -81,35 +78,10 @@ module.exports = function(app, opts) {
 				options = {
 					upsert: true
 				};
-			console.log('request.params, key is:' + routeItemIdKey + ', data:'); inspect(request.params);
-			console.log('conditions:'); inspect(conditions);
-			console.log('updateData:'); inspect(updateData);
 			itemFactory.findOneAndUpdate(conditions, updateData, options, function(err, numChanged) {
-				console.log('done: ' + JSON.stringify(err));
 				if (handlingError(err, reply)) return;
-				console.log('done2');
 				reply();
-				console.log('] END GENERIC UPDATE, numChanged=' + numChanged);
 			});
-
-			// itemFactory.findById(itemId, function(err, itemModel) {
-			// 	if (handlingErrorOrMissing(err, itemModel, reply)) return;
-			// 	// var args = [request.payload].concat(updateFields)
-			// 	// var mergeObject = _.pick.apply(null, args);
-			// 	inspect(itemModel);
-
-			// 	// da fuq? a) is this really necessary? b) slicker way to do this with _?
-			// 	Object.keys(request.payload).forEach(function(key) {
-			// 		itemModel[key] = request.payload[key];
-			// 	});
-			// 	console.log('saving this:'); inspect(itemModel);
-			// 	itemModel.save(function(err, result) {
-			// 		if (handlingError(err, reply)) return;
-			// 		console.log('success?');
-			// 		reply();
-			// 		console.log('] END GENERIC UPDATE');
-			// 	});
-			// });
 		},
 		destroy: function(request, reply) {
 			var parentId = request.params[routeParentIdKey];
