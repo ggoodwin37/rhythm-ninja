@@ -14,6 +14,10 @@ module.exports = function(app) {
 		}
 	};
 
+	if (app.config.mongooseDebug) {
+		mongoose.set('debug', true);
+	}
+
 	var dbName = app.config.dbName;
 	// TODO: don't hardcode hostname here
 	mongoose.connect('mongodb://localhost/' + dbName);
