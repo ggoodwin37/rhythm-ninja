@@ -2,7 +2,7 @@ var View = require('ampersand-view');
 var dom = require('ampersand-dom');
 var templates = require('../../templates');
 
-var UPDATE_DELAY = 5 * 1000;
+var UPDATE_DELAY = 500;  // TODO: make this higher
 
 module.exports = View.extend({
 	template: templates.includes.pattern.stepGrid,
