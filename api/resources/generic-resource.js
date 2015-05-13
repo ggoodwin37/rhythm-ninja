@@ -75,9 +75,7 @@ module.exports = function(app, opts) {
 					_id: itemId
 				},
 				updateData = request.payload,
-				options = {
-					upsert: true
-				};
+				options = {};
 			itemFactory.findOneAndUpdate(conditions, updateData, options, function(err, numChanged) {
 				if (handlingError(err, reply)) return;
 				reply();
