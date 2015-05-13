@@ -3,6 +3,7 @@
 	serverHost: "localhost",
 	serverPort: 8080,
 	dbName: 'rn-test',
+	mongooseDebug: false,
 
 	logThings: {
 		'test--show-config': false,

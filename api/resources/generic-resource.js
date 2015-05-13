@@ -1,9 +1,11 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
+var async = require('async');
 var _ = require('underscore');
 
 var handlingError = require('../handling-error');
 var handlingErrorOrMissing = require('../handling-error-or-missing');
 var StepList = require('../../step-list');
+var treeUpdate = require('./tree-update');
 var treeDelete = require('./tree-delete');
 
 module.exports = function(app, opts) {
@@ -41,53 +43,36 @@ module.exports = function(app, opts) {
 			}
 		},
 		create: function(request, reply) {
-			var parentId = request.params[routeParentIdKey];
-
-			var parentQuery = {};
-			parentQuery[parentQueryField] = parentId;
-			parentFactory.findOne(parentQuery, function(err, parentModel) {
-				if (err) {
-					// this can happen when passing name instead of id
-					console.log('generic resource create error: ' + err);
-				}
-				var newModel = new itemFactory(_.extend({parent_id: parentModel.id}, request.payload));
-				newModel.save(function(err, newModel, numAffected) {
-					if (handlingErrorOrMissing(err, numAffected, reply)) return;
-
-					// update the parent's collection with our new id.
-					var newParentCollection = parentModel[parentCollection].slice();
-					newParentCollection.push(newModel.id);
-
-					var updateData = {};
-					updateData[parentCollection] = newParentCollection;
-
-					parentModel.update(updateData, function(err) {
+			var parentId = request.params[routeParentIdKey],
+				newModel;
+			function createAndSaveNewModel(cb) {
+				var newData = _.extend({parent_id: parentId}, request.payload);
+				newModel = new itemFactory(newData);
+				newModel.save(function(err, newModelResult) {
+					if (handlingError(err, reply)) return;
+					cb(null, newModelResult.id);
+				});
+			}
+			function updateParentModelCollection(newModelId, cb) {
+				var parentQuery = {};
+				parentQuery[parentQueryField] = parentId;
+				parentFactory.findOne(parentQuery, function(err, parentModel) {
+					if (handlingError(err, reply)) return;
+					parentModel[parentCollection].push(newModelId);
+					parentModel.save(function(err, parentModel) {
 						if (handlingError(err, reply)) return;
-
-						if (app.config.logThings['api--create-stuff']) {
-							console.log('created a new ' + itemTypeName + ' with id ' + newModel.id);
-						}
-
-						reply(newModel.toJSON());
+						cb(null);
 					});
 				});
+			}
+			async.waterfall([createAndSaveNewModel, updateParentModelCollection], function(err) {
+				if (handlingError(err, reply)) return;
+				reply(newModel.toJSON());
 			});
 		},
 		update: function(request, reply) {
-			console.log('BEGIN GENERIC UPDATE [');
-			var itemId = request.params[routeItemIdKey];
-			itemFactory.findById(itemId, function(err, itemModel) {
-				if (handlingErrorOrMissing(err, itemModel, reply)) return;
-				var args = [request.payload].concat(updateFields)
-				var mergeObject = _.pick.apply(null, args);
-				console.log('mergeObject:');
-				inspect(mergeObject);
-				itemModel.update(mergeObject, function(err) {
-					if (handlingError(err, reply)) return;
-					reply();
-					console.log('] END GENERIC UPDATE');
-				});
-			});
+			var itemId = request.params[routeItemIdKey] || null
+			treeUpdate(opts, itemId, request.payload, reply);
 		},
 		destroy: function(request, reply) {
 			var parentId = request.params[routeParentIdKey];
