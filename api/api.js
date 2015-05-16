@@ -7,7 +7,7 @@ module.exports = function(app) {
 	};
 
 	var apiServerPack = {
-		plugin: require('mudskipper'),
+		register: require('mudskipper'),
 		options: {
 			namespace: 'api',
 			resources: resources

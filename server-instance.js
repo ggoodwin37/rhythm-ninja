@@ -10,26 +10,15 @@ function startServerInstance(done) {
 		inspect: inspect
 	};
 
-	var server = new hapi.Server(config.serverPort, config.serverHost, {
-		// not using any server views right now.
-		// views: {
-		//     engines: { jade: require('jade') },
-		//     path: __dirname + '/templates'
-		// },
-
-		// haven't tested cors yet
-		// cors: {
-		//     origin: ['*'],
-		//     headers: ['Authorization', 'Content-Type', 'If-None-Match', 'Auth-Token']
-		// }
+	var server = new hapi.Server();
+	server.connection({
+		host: config.serverHost,
+		port: config.serverPort
 	});
 
-	// wants an older version of hapi. TODO: fix this, or look at swagger or something
-	// server.pack.register(require('lout'), function () {});
-
-	var serverPackList = [
+	var serverPluginList = [
 		{
-			plugin: require('moonboots_hapi'),
+			register: require('moonboots_hapi'),
 			options: {
 				// TODO: not optimal. I want '/' and '/set/{p*}' to both be handled by moonboots. how to specify
 				//   multiple routes to handle, without making multiple moonboots instances? probably just use a regex.
@@ -54,10 +43,10 @@ function startServerInstance(done) {
 		}
 	];
 
-	serverPackList.push(getApiPlugin(app));
-	serverPackList.push(require(bell));
+	serverPluginList.push(getApiPlugin(app));
+	serverPluginList.push(require('bell'));
 
-	server.pack.register(serverPackList, function (err) {
+	server.register(serverPluginList, function (err) {
 		if (err) throw err;
 
 		if (config.twitterAuth) {
