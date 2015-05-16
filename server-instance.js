@@ -24,7 +24,8 @@ function startServerInstance(done) {
 		// }
 	});
 
-	server.pack.register(require('lout'), function () {});
+	// wants an older version of hapi. TODO: fix this, or look at swagger or something
+	// server.pack.register(require('lout'), function () {});
 
 	var serverPackList = [
 		{
@@ -54,22 +55,32 @@ function startServerInstance(done) {
 	];
 
 	serverPackList.push(getApiPlugin(app));
+	serverPackList.push(require(bell));
 
 	server.pack.register(serverPackList, function (err) {
 		if (err) throw err;
 
-		// TODO: /api/{etc*}  <- actually, do we need to specify api routes here or did mudskipper handle that?
-
-		// server.route(require('./resources/client')());
-		// server.route({
-		//     method: 'GET',
-		//     path: '/public/{param*}',
-		//     handler: {
-		//         directory: {
-		//             path: 'public'
-		//         }
-		//     }
-		// });
+		if (config.twitterAuth) {
+			server.auth.strategy('twitter', 'bell', {
+				provider: 'twitter',
+				password: config.cookieEncryptionPassword,
+				clientId: config.twitterAuth.clientId,
+				clientSecret: config.twitterAuth.clientSecret,
+				isSecure: true
+			});
+		}
+		server.route({
+			method: ['GET', 'POST'],
+			path: '/login',
+			config: {
+				auth: 'twitter',
+				handler: function(req, reply) {
+					console.log('twitter login handler firing');
+					// TODO: figure out what happens here, probably need hapi-auth-cookie hookup here.
+					return reply.redirect('/');
+				}
+			}
+		});
 
 		server.start(function () {
 			console.log('rhythm-ninja is running at', server.info.uri);

@@ -7,6 +7,13 @@
 
 	fakeDelayOnGetMs: 350,
 
+	cookieEncryptionPassword: '$aladIsTast33',
+
+	twitterAuth: {
+		clientId: '5XrggjLUXj2fi87xQQbM54GOZ',
+		clientSecret: 'oLDf91CULF0llCGfbJVFE69745ivxpljoEAcxdfaHYvCoexXqv'
+	},
+
 	logThings: {
 		'test--show-config': false,
 		'test--show-all-api-routes': false,

@@ -7,7 +7,7 @@
 
 	logThings: {
 		'test--show-config': false,
-		'test--show-all-api-routes': false,
+		'test--show-all-api-routes': true,
 		'test--list-collections': false,
 		'test--show-set-models': false,
 		'test--show-all-models': false,
