@@ -5,6 +5,8 @@
 	dbName: 'rn-test',
 	mongooseDebug: false,
 
+	cookiePassword: 'Cookie$AreTast33',
+
 	logThings: {
 		'test--show-config': false,
 		'test--show-all-api-routes': true,
