@@ -55,21 +55,20 @@ function startServerInstance(done) {
 				password: config.cookieEncryptionPassword,
 				clientId: config.twitterAuth.clientId,
 				clientSecret: config.twitterAuth.clientSecret,
-				isSecure: true
+				isSecure: false  // TODO: enable isSecure (need to turn on https first)
+			});
+			server.route({
+				method: ['GET', 'POST'],
+				path: '/login',
+				config: {
+					auth: 'twitter',
+					handler: function(request, reply) {
+						// TODO: figure out what happens here, probably need hapi-auth-cookie hookup here.
+						return reply('<pre>' + JSON.stringify(request.auth.credentials, null, 4) + '</pre>');
+					}
+				}
 			});
 		}
-		server.route({
-			method: ['GET', 'POST'],
-			path: '/login',
-			config: {
-				auth: 'twitter',
-				handler: function(req, reply) {
-					console.log('twitter login handler firing');
-					// TODO: figure out what happens here, probably need hapi-auth-cookie hookup here.
-					return reply.redirect('/');
-				}
-			}
-		});
 
 		server.start(function () {
 			console.log('rhythm-ninja is running at', server.info.uri);
