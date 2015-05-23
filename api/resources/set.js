@@ -1,6 +1,8 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var async = require('async');
 var _ = require('underscore');
+var boom = require('boom');
+
 var handlingError = require('../handling-error');
 var handlingErrorOrMissing = require('../handling-error-or-missing');
 var StepList = require('../../step-list');
@@ -51,8 +53,14 @@ module.exports = function(app) {
 		],
 		show: {
 			handler: function(request, reply) {
-				var foo = request.auth.session;  // ??
-				inspect(foo);
+				// TODO: flesh this out, reuse, test 401 case.
+				// TODO: add user field to set on write, check on read.
+				// TODO: add auth check to all endpoints smoothly.
+				if (!(request.auth && request.auth.isAuthenticated)) {
+					return reply(boom.unauthorized('not authenticated'));
+				}
+				console.log('set.show auth:');
+				inspect(request.auth);
 
 				var setName = request.params.set_id;
 				var execQuery = function() {

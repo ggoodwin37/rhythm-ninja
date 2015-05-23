@@ -29,6 +29,7 @@
     "ampersand-view": "^7.2.0",
     "ampersand-view-switcher": "^1.0.2",
     "async": "^0.9.0",
+    "boom": "^2.7.2",
     "bson": "^0.2.18",
     "domready": "^1.0.5",
     "eyes": "^0.1.8",
