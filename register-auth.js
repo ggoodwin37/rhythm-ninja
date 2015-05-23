@@ -10,10 +10,13 @@ function registerAuth(server, config) {
 			clientSecret: config.twitterAuth.clientSecret,
 			isSecure: isSecure
 		});
-		server.auth.strategy('session', 'cookie', {
+		// using mode 'optional' and no redirectUrl here so that we can get unauthenticated requests
+		// to our handlers. This will let us handle 'guest' scenarios. We will still do some checking
+		// of the auth info in the handlers and potentially 401 out.
+		// TODO: still can't get an unauthorized request into user-info, hapi is 401'ing before I get there?
+		server.auth.strategy('session', 'cookie', 'optional', {
 			password: config.cookiePassword,
 			cookie: 'sid',
-			redirectTo: '/login',
 			isSecure: isSecure
 		});
 		server.route({
@@ -35,7 +38,7 @@ function registerAuth(server, config) {
 			}
 		});
 		server.route({
-			method: 'POST',
+			method: ['GET', 'POST'],  // TODO: seems like this should be POST only, but will require extra handling on client side
 			path: '/logout',
 			handler: function(request, reply) {
 				if (request.auth && request.auth.session) {
@@ -43,6 +46,22 @@ function registerAuth(server, config) {
 					console.log('cleared session');
 				}
 				return reply('<h2>You are now logged out.</h2>');
+			}
+		});
+		server.route({
+			method: 'GET',
+			path: '/user-info',
+			handler: function(request, reply) {
+				if (request.auth && request.auth.isAuthenticated) {
+					return reply('<h2>You are currently logged in:</h2><pre>' + JSON.stringify(request.auth.credentials) + '</pre>');
+				} else {
+					return reply('<h2>You are not logged in at the moment</h2>');
+				}
+			},
+			config: {
+				auth: {
+					strategy: 'session'
+				}
 			}
 		});
 	}
