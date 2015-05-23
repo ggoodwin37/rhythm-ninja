@@ -1,4 +1,6 @@
-function registerAuth(config) {
+var inspect = require('eyes').inspector({maxLength: null});
+
+function registerAuth(server, config) {
 	if (config.twitterAuth) {
 		var isSecure = false;  // TODO: enable isSecure (need to turn on https first)
 		server.auth.strategy('twitter', 'bell', {

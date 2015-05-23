@@ -49,38 +49,48 @@ module.exports = function(app) {
 				song: require('./set-has-song')(app)
 			}
 		],
-		show: function(request, reply) {
-			var setName = request.params.set_id;
-			var execQuery = function() {
-				SetModel.findOne({name: setName})
-					.deepPopulate('pool patterns.rows songs.rows')
-					.exec(function(err, setModel) {
-						var shouldCreate = false;
+		show: {
+			handler: function(request, reply) {
+				var foo = request.auth.session;  // ??
+				inspect(foo);
 
-						if (err) {
-							if (err.type == 'NotFoundError') {
-								shouldCreate = true;
-							} else {
-								return reply(new Error(err));
+				var setName = request.params.set_id;
+				var execQuery = function() {
+					SetModel.findOne({name: setName})
+						.deepPopulate('pool patterns.rows songs.rows')
+						.exec(function(err, setModel) {
+							var shouldCreate = false;
+
+							if (err) {
+								if (err.type == 'NotFoundError') {
+									shouldCreate = true;
+								} else {
+									return reply(new Error(err));
+								}
 							}
-						}
-						if (!setModel) {
-							shouldCreate = true;
-						}
-						if (shouldCreate) {
-							return createSet(setName, function(err, instance) {
-								reply(instance.toJSON());
-							});
-						}
+							if (!setModel) {
+								shouldCreate = true;
+							}
+							if (shouldCreate) {
+								return createSet(setName, function(err, instance) {
+									reply(instance.toJSON());
+								});
+							}
 
-						reply(setModel.toJSON());
-					});
-			}
+							reply(setModel.toJSON());
+						});
+				}
 
-			if (app.config.fakeDelayOnGetMs > 0) {
-				setTimeout(execQuery, app.config.fakeDelayOnGetMs);
-			} else {
-				execQuery();
+				if (app.config.fakeDelayOnGetMs > 0) {
+					setTimeout(execQuery, app.config.fakeDelayOnGetMs);
+				} else {
+					execQuery();
+				}
+			},
+			config: {
+				auth: {
+					strategy: 'session'
+				}
 			}
 		},
 		update: function(request, reply) {
