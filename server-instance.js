@@ -28,7 +28,7 @@ function startServerInstance(done) {
 		if (err) throw err;
 
 		// set up oauth login and auth session cookie schemes, needed by API.
-		registerAuth(server, config);
+		registerAuth(server, app);
 
 		server.register(getApiPlugin(app), function(err) {
 			if (err) throw err;

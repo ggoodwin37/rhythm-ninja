@@ -56,11 +56,14 @@ module.exports = function(app) {
 				// TODO: flesh this out, reuse, test 401 case.
 				// TODO: add user field to set on write, check on read.
 				// TODO: add auth check to all endpoints smoothly.
-				if (!(request.auth && request.auth.isAuthenticated)) {
-					return reply(boom.unauthorized('not authenticated'));
+				// TODO: better way to disable auth for test, and/or test auth?
+				if (app.authConfig) {
+					if (!(request.auth && request.auth.isAuthenticated)) {
+						return reply(boom.unauthorized('not authenticated'));
+					}
+					console.log('set.show auth:');
+					inspect(request.auth);
 				}
-				console.log('set.show auth:');
-				inspect(request.auth);
 
 				var setName = request.params.set_id;
 				var execQuery = function() {
@@ -96,9 +99,7 @@ module.exports = function(app) {
 				}
 			},
 			config: {
-				auth: {
-					strategy: 'session'
-				}
+				auth: app.authConfig
 			}
 		},
 		update: function(request, reply) {

@@ -1,13 +1,13 @@
 var inspect = require('eyes').inspector({maxLength: null});
 
-function registerAuth(server, config) {
-	if (config.twitterAuth) {
+function registerAuth(server, app) {
+	if (app.config.twitterAuth) {
 		var isSecure = false;  // TODO: enable isSecure (need to turn on https first)
 		server.auth.strategy('twitter', 'bell', {
 			provider: 'twitter',
-			password: config.cookieEncryptionPassword,
-			clientId: config.twitterAuth.clientId,
-			clientSecret: config.twitterAuth.clientSecret,
+			password: app.config.cookieEncryptionPassword,
+			clientId: app.config.twitterAuth.clientId,
+			clientSecret: app.config.twitterAuth.clientSecret,
 			isSecure: isSecure
 		});
 		// using mode 'optional' and no redirectUrl here so that we can get unauthenticated requests
@@ -15,7 +15,7 @@ function registerAuth(server, config) {
 		// of the auth info in the handlers and potentially 401 out.
 		// TODO: still can't get an unauthorized request into user-info, hapi is 401'ing before I get there?
 		server.auth.strategy('session', 'cookie', 'optional', {
-			password: config.cookiePassword,
+			password: app.config.cookiePassword,
 			cookie: 'sid',
 			isSecure: isSecure
 		});
@@ -64,6 +64,9 @@ function registerAuth(server, config) {
 				}
 			}
 		});
+		app.authConfig = {
+			strategy: 'session'
+		};
 	}
 }
 
