@@ -3,7 +3,7 @@ var Hapi = require('hapi');
 var config = require('getconfig');
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 
-var getApiPlugin = require('../api/api');
+var startServerInstance = require('../server-instance');
 
 // Test shortcuts
 var before = Lab.before;
@@ -16,7 +16,7 @@ var ctx = {
 	setName: null,
 	baseSetUrl: null,
 
-	app: {config: config},
+	app: null,
 
 	getSet: function(done) {
 		if (!this.server || !this.baseSetUrl) return done({bad:'fail'}, null);
@@ -26,17 +26,11 @@ var ctx = {
 };
 
 before(function(done) {
-	ctx.server = new Hapi.Server();
-	ctx.server.connection({
-		host: 'localhost',
-		port: 8080
-	});
-	ctx.server.register(getApiPlugin(ctx.app), function (err) {
-		if (err) throw err;
-		ctx.server.start(function () {
-			console.log('test is running at', ctx.server.info.uri);
-			done();
-		});
+	startServerInstance(function(server, app) {
+		ctx.server = server;
+		ctx.app = app;
+		console.log('test is running at', ctx.server.info.uri);
+		done();
 	});
 });
 

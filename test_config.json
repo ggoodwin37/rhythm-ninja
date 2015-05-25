@@ -5,6 +5,12 @@
 	dbName: 'rn-test',
 	mongooseDebug: false,
 
+	cookieEncryptionPassword: '$aladIsTast33',
+
+	twitterAuth: {
+		clientId: '5XrggjLUXj2fi87xQQbM54GOZ',
+		clientSecret: 'oLDf91CULF0llCGfbJVFE69745ivxpljoEAcxdfaHYvCoexXqv'
+	},
 	cookiePassword: 'Cookie$AreTast33',
 
 	logThings: {

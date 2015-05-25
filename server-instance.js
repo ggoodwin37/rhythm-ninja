@@ -35,7 +35,7 @@ function startServerInstance(done) {
 
 			server.start(function () {
 				console.log('rhythm-ninja is running at', server.info.uri);
-				done && done(server);
+				done && done(server, app);
 			});
 		});
 	});
