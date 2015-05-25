@@ -1,8 +1,9 @@
 var Lab = require('lab');
 var Hapi = require('hapi');
 var config = require('getconfig');
+var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 
-var getApiPlugin = require('../api/api');
+var startServerInstance = require('../server-instance');
 
 // Test shortcuts
 var before = Lab.before;
@@ -15,27 +16,21 @@ var ctx = {
 	setName: null,
 	baseSetUrl: null,
 
-	app: {config: config},
+	app: null,
 
-	getRouteKey: function(route) {
-		var routeKey = route.method.toLowerCase() + ' ' + route.path;
-		return routeKey;
-	},
 	getSet: function(done) {
 		if (!this.server || !this.baseSetUrl) return done({bad:'fail'}, null);
 		this.server.inject({method: 'get', url: this.baseSetUrl}, done);
 	},
-	inspect: require('eyes').inspector({hideFunctions: true, maxLength: null})
+	inspect: inspect
 };
 
 before(function(done) {
-	ctx.server = new Hapi.Server(8080, 'localhost');
-	ctx.server.pack.register(getApiPlugin(ctx.app), function (err) {
-		if (err) throw err;
-		ctx.server.start(function () {
-			console.log('test is running at', ctx.server.info.uri);
-			done();
-		});
+	startServerInstance(function(server, app) {
+		ctx.server = server;
+		ctx.app = app;
+		console.log('test is running at', ctx.server.info.uri);
+		done();
 	});
 });
 

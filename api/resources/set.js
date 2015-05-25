@@ -1,6 +1,8 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var async = require('async');
 var _ = require('underscore');
+var boom = require('boom');
+
 var handlingError = require('../handling-error');
 var handlingErrorOrMissing = require('../handling-error-or-missing');
 var StepList = require('../../step-list');
@@ -49,38 +51,55 @@ module.exports = function(app) {
 				song: require('./set-has-song')(app)
 			}
 		],
-		show: function(request, reply) {
-			var setName = request.params.set_id;
-			var execQuery = function() {
-				SetModel.findOne({name: setName})
-					.deepPopulate('pool patterns.rows songs.rows')
-					.exec(function(err, setModel) {
-						var shouldCreate = false;
+		show: {
+			handler: function(request, reply) {
+				// TODO: flesh this out, reuse, test 401 case.
+				// TODO: add user field to set on write, check on read.
+				// TODO: add auth check to all endpoints smoothly.
+				// TODO: better way to disable auth for test, and/or test auth?
+				if (app.authConfig) {
+					if (!(request.auth && request.auth.isAuthenticated)) {
+						return reply(boom.unauthorized('not authenticated'));
+					}
+					console.log('set.show auth:');
+					inspect(request.auth);
+				}
 
-						if (err) {
-							if (err.type == 'NotFoundError') {
-								shouldCreate = true;
-							} else {
-								return reply(new Error(err));
+				var setName = request.params.set_id;
+				var execQuery = function() {
+					SetModel.findOne({name: setName})
+						.deepPopulate('pool patterns.rows songs.rows')
+						.exec(function(err, setModel) {
+							var shouldCreate = false;
+
+							if (err) {
+								if (err.type == 'NotFoundError') {
+									shouldCreate = true;
+								} else {
+									return reply(new Error(err));
+								}
 							}
-						}
-						if (!setModel) {
-							shouldCreate = true;
-						}
-						if (shouldCreate) {
-							return createSet(setName, function(err, instance) {
-								reply(instance.toJSON());
-							});
-						}
+							if (!setModel) {
+								shouldCreate = true;
+							}
+							if (shouldCreate) {
+								return createSet(setName, function(err, instance) {
+									reply(instance.toJSON());
+								});
+							}
 
-						reply(setModel.toJSON());
-					});
-			}
+							reply(setModel.toJSON());
+						});
+				}
 
-			if (app.config.fakeDelayOnGetMs > 0) {
-				setTimeout(execQuery, app.config.fakeDelayOnGetMs);
-			} else {
-				execQuery();
+				if (app.config.fakeDelayOnGetMs > 0) {
+					setTimeout(execQuery, app.config.fakeDelayOnGetMs);
+				} else {
+					execQuery();
+				}
+			},
+			config: {
+				auth: app.authConfig
 			}
 		},
 		update: function(request, reply) {

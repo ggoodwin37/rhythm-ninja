@@ -32,11 +32,14 @@ module.exports = function(ctx) {
 		});
 
 		it('can dump all routes', function(done) {
-			ctx.table.forEach(function(route) {
-				if(ctx.app.config.logThings['test--show-all-api-routes']) {
-					console.log(ctx.getRouteKey(route));
-				}
-			});
+			if(ctx.app.config.logThings['test--show-all-api-routes']) {
+				ctx.table.forEach(function(tableEntry) {
+					tableEntry.table.forEach(function(innerTableEntry) {
+						console.log('' + innerTableEntry.method + ' ' + innerTableEntry.path);
+					});
+				});
+			}
+
 			done();
 		});
 

@@ -3,9 +3,17 @@
 	serverHost: "localhost",
 	serverPort: 8080,
 	dbName: 'rn-dev',
-	mongooseDebug: true,
+	mongooseDebug: false,
 
 	fakeDelayOnGetMs: 350,
+
+	cookieEncryptionPassword: '$aladIsTast33',
+
+	twitterAuth: {
+		clientId: '5XrggjLUXj2fi87xQQbM54GOZ',
+		clientSecret: 'oLDf91CULF0llCGfbJVFE69745ivxpljoEAcxdfaHYvCoexXqv'
+	},
+	cookiePassword: 'Cookie$AreTast33',
 
 	logThings: {
 		'test--show-config': false,

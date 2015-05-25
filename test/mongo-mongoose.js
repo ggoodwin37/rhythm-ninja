@@ -26,20 +26,6 @@ module.exports = function(ctx) {
 			});
 		});
 
-		// assume the api connected mongoose already.
-		// it('should be able to call mongoose.connect', function(done) {
-		// 	mongoose.connect('mongodb://localhost/ggtest');
-		// 	var db = mongoose.connection;
-		// 	db.on('error', function(err) {
-		// 		console.log('connection error: ' + err);
-		// 		done();
-		// 	});
-		// 	db.once('open', function callback () {
-		// 		ctx.app.mongooseStarted = true;
-		// 		done();
-		// 	});
-		// });
-
 		var personFactory;
 		it('should be able to create a schema, factory, and instance', function(done) {
 			expect(ctx.app.mongooseStarted).to.equal(true);
