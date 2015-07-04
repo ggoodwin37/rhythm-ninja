@@ -1,17 +1,13 @@
-- working on users and auth right now:
-  - just plugged in bell and hapi-auth-cookie, need to apply session scheme to endpoints and do user check
-  - need to make concept of users, Me, set ownership 1st class (see wolves code for example of Me)
-    - do users have a concept of location within a set?
-  - add more auth providers besides just twitter
-  - need a 401 page etc.
-
-
+- samples
+  - need to be able to upload samples to sample pool
+  - need to be able to load samples from db to browser
+  - need to be able to play a sample using webAudio
 
 up next:
 - do a TODO pass to find pressing stuff.
 - flesh out UI just enough
 - pick next big task:
-  - basic sample playback in web audio -> loading sample from db -> uploading samples -> audio client
+  - audio client
   - react ui
   - dirty/conflict basics
   - ??
@@ -26,3 +22,9 @@ up next:
   - the main scenario where two users are editing the same pattern. do we need some sense of "recently touched" or can it be simpler than that?
 
 - get page->view destroy chain working when we nav around.
+
+- resume working on users and auth:
+  - need to make concept of users, Me, set ownership 1st class (see wolves code for example of Me)
+    - do users have a concept of location within a set?
+  - need to do authorization (we have authentication, but any authenticated user can do anything to any data right now).
+  - (add more auth providers besides just twitter)
