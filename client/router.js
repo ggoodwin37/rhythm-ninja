@@ -5,6 +5,7 @@ var PatternPage = require('./pages/pattern');
 var PoolPage = require('./pages/pool');
 var SetPage = require('./pages/set');
 var SongPage = require('./pages/song');
+var UnauthorizedPage = require('./pages/unauthorized');
 
 module.exports = Router.extend({
 	routes: {
@@ -12,7 +13,9 @@ module.exports = Router.extend({
 		'set/:set': 'set',
 		'set/:set/pattern/:pattern': 'pattern',
 		'set/:set/pool': 'pool',
-		'set/:set/song/:song': 'song'
+		'set/:set/song/:song': 'song',
+
+		'401': 'unauthorized'
 	},
 
 	home: function() {
@@ -29,5 +32,8 @@ module.exports = Router.extend({
 	},
 	song: function(setName, songName) {
 		this.trigger('page', new SongPage({setName: setName, songName: songName}));
+	},
+	unauthorized: function() {
+		this.trigger('page', new UnauthorizedPage());
 	}
 });

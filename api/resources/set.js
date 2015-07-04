@@ -1,13 +1,13 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var async = require('async');
 var _ = require('underscore');
-var boom = require('boom');
 
 var handlingError = require('../handling-error');
 var handlingErrorOrMissing = require('../handling-error-or-missing');
 var StepList = require('../../step-list');
 
 module.exports = function(app) {
+	var verifyAuth = require('./verify-auth')(app);
 
 	var SetModel = require('../models/set')(app);
 	var PatternModel = require('../models/pattern')(app);
@@ -53,17 +53,7 @@ module.exports = function(app) {
 		],
 		show: {
 			handler: function(request, reply) {
-				// TODO: flesh this out, reuse, test 401 case.
-				// TODO: add user field to set on write, check on read.
-				// TODO: add auth check to all endpoints smoothly.
-				// TODO: better way to disable auth for test, and/or test auth?
-				if (app.authConfig) {
-					if (!(request.auth && request.auth.isAuthenticated)) {
-						return reply(boom.unauthorized('not authenticated'));
-					}
-					console.log('set.show auth:');
-					inspect(request.auth);
-				}
+				if (!verifyAuth(request, reply)) return;
 
 				var setName = request.params.set_id;
 				var execQuery = function() {
@@ -102,79 +92,93 @@ module.exports = function(app) {
 				auth: app.authConfig
 			}
 		},
-		update: function(request, reply) {
-			var setName = request.params.set_id;
-			var updatedData = request.payload;
-			SetModel.update({name: setName}, updatedData, function(err, numUpdated) {
-				if (handlingErrorOrMissing(err, numUpdated, reply)) return;
-				return reply();
-			});
-		},
-		destroy: function(request, reply) {
-			var setName = request.params.set_id;
-			SetModel.findOne({name: setName}, function(err, setModel) {
-				if (handlingErrorOrMissing(err, setModel, reply)) return;  // handle 404 case
+		update: {
+			handler: function(request, reply) {
+				if (!verifyAuth(request, reply)) return;
 
-				var stepListDelete = new StepList();
-				var stepListPattern = new StepList();
-				var stepListSong = new StepList();
-
-				setModel.pool.forEach(function(poolEntryId) {
-					stepListDelete.addStep(function(cb) {
-						PoolEntryModel.remove({_id: poolEntryId}, cb);
-					});
+				var setName = request.params.set_id;
+				var updatedData = request.payload;
+				SetModel.update({name: setName}, updatedData, function(err, numUpdated) {
+					if (handlingErrorOrMissing(err, numUpdated, reply)) return;
+					return reply();
 				});
+			},
+			config: {
+				auth: app.authConfig
+			}
+		},
+		destroy: {
+			handler: function(request, reply) {
+				if (!verifyAuth(request, reply)) return;
 
-				// first generate all the delete steps for each song and each song's songrow
-				setModel.songs.forEach(function(songId) {
-					stepListSong.addStep(function(cb) {
-						SongModel.findById(songId, function(err, songModel) {
-							songModel && songModel.rows.forEach(function(songRowId) {
-								stepListDelete.addStep(function(cb) {
-									SongRowModel.remove({_id: songRowId}, cb);
-								});
-							});
-							cb();
+				var setName = request.params.set_id;
+				SetModel.findOne({name: setName}, function(err, setModel) {
+					if (handlingErrorOrMissing(err, setModel, reply)) return;  // handle 404 case
+
+					var stepListDelete = new StepList();
+					var stepListPattern = new StepList();
+					var stepListSong = new StepList();
+
+					setModel.pool.forEach(function(poolEntryId) {
+						stepListDelete.addStep(function(cb) {
+							PoolEntryModel.remove({_id: poolEntryId}, cb);
 						});
 					});
-					stepListDelete.addStep(function(cb) {
-						SongModel.remove({_id: songId}, cb);
-					});
-				});
 
-				// after grabbing all songs and songrows (and generating delete steps for them), do patterns
-				stepListSong.execute(function() {
-					setModel.patterns.forEach(function(patternId) {
-						stepListPattern.addStep(function(cb) {
-							PatternModel.findById(patternId, function(err, patternModel) {
-								patternModel && patternModel.rows.forEach(function(patternRowId) {
+					// first generate all the delete steps for each song and each song's songrow
+					setModel.songs.forEach(function(songId) {
+						stepListSong.addStep(function(cb) {
+							SongModel.findById(songId, function(err, songModel) {
+								songModel && songModel.rows.forEach(function(songRowId) {
 									stepListDelete.addStep(function(cb) {
-										PatternRowModel.remove({_id: patternRowId}, cb);
+										SongRowModel.remove({_id: songRowId}, cb);
 									});
 								});
 								cb();
 							});
 						});
 						stepListDelete.addStep(function(cb) {
-							PatternModel.remove({_id: patternId}, cb);
+							SongModel.remove({_id: songId}, cb);
 						});
 					});
 
-					// after iterating patterns and patternrows, add a delete step for set then execute all deletes
-					stepListPattern.execute(function() {
-						stepListDelete.addStep(function(cb) {
-							SetModel.remove({name: setName}, function(err) {
-								if (handlingError(err, reply)) return cb();
-								cb();
+					// after grabbing all songs and songrows (and generating delete steps for them), do patterns
+					stepListSong.execute(function() {
+						setModel.patterns.forEach(function(patternId) {
+							stepListPattern.addStep(function(cb) {
+								PatternModel.findById(patternId, function(err, patternModel) {
+									patternModel && patternModel.rows.forEach(function(patternRowId) {
+										stepListDelete.addStep(function(cb) {
+											PatternRowModel.remove({_id: patternRowId}, cb);
+										});
+									});
+									cb();
+								});
+							});
+							stepListDelete.addStep(function(cb) {
+								PatternModel.remove({_id: patternId}, cb);
 							});
 						});
 
-						stepListDelete.execute(function() {
-							reply();
+						// after iterating patterns and patternrows, add a delete step for set then execute all deletes
+						stepListPattern.execute(function() {
+							stepListDelete.addStep(function(cb) {
+								SetModel.remove({name: setName}, function(err) {
+									if (handlingError(err, reply)) return cb();
+									cb();
+								});
+							});
+
+							stepListDelete.execute(function() {
+								reply();
+							});
 						});
 					});
 				});
-			});
+			},
+			config: {
+				auth: app.authConfig
+			}
 		}
 	};
 };

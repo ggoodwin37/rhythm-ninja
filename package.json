@@ -40,7 +40,7 @@
     "hapi-auth-cookie": "^2.2.0",
     "joi": "^4.6.1",
     "mongodb": "^1.4.8",
-    "mongoose": "^3.8.14",
+    "mongoose": "3.8.14",
     "mongoose-deep-populate": "0.0.7",
     "moonboots_hapi": "^5.0.0",
     "mudskipper": "^2.3.2",

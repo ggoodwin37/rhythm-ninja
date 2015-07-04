@@ -46,7 +46,11 @@ window.app = {
 				error: function(model, response) {
 					setModel.trigger('model-load-error', setModel, response);
 					self.cachedSets[setName].xhr = null;
-					console.log('error fetching set:', response);
+					if (response.statusCode === 401) {
+						window.app.router.navigate('/401', {trigger: true});
+					} else {
+						console.log('error fetching set:', response.statusCode);
+					}
 				}
 			});
 			this.cachedSets[setName] = {
