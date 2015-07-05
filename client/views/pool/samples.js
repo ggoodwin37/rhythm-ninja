@@ -3,7 +3,7 @@ var templates = require('../../templates');
 var dom = require('ampersand-dom');
 
 module.exports = View.extend({
-	template: templates.views.set.pool,
+	template: templates.views.pool.samples,
 	initialize: function(params) {
 		var self = this;
 
@@ -24,7 +24,7 @@ module.exports = View.extend({
 		this.setLoading(!pool);
 	},
 	setLoading: function(isLoading) {
-		var el = this.queryByHook('pool-view-container');
+		var el = this.queryByHook('samples-container');
 		var className = 'default-loading';
 		if (isLoading) {
 			dom.addClass(el, className);

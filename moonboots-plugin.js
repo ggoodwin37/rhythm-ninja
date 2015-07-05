@@ -16,7 +16,7 @@ function getMoonbootsPlugin(config) {
 					// TODO: investigate the build-time streaming approach
 					if (config.isDev) {
 						var templatizer = require('templatizer');
-						templatizer(__dirname + '/templates', __dirname + '/client/templates.js');
+						templatizer(__dirname + '/client', __dirname + '/client/templates.js');
 					}
 
 				}

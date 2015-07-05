@@ -1,6 +1,6 @@
-div.set-group(data-hook="pool-view-container")
+div.view-group(data-hook="pool-entries-container")
 	if pool && pool.length > 0
-		h3 Sound Pool
+		h3 Pool Entries
 		ul
 			each poolEntry in pool
 				li #{poolEntry.name}
