@@ -2,7 +2,7 @@ var View = require('ampersand-view');
 var templates = require('../templates');
 
 module.exports = View.extend({
-	template: templates.pages.pool(),
+	template: templates.pages.pool,
 	initialize: function(params) {
 		var self = this;
 
@@ -16,11 +16,16 @@ module.exports = View.extend({
 	},
 	render: function() {
 		var self = this;
-		this.renderWithTemplate();
+		this.renderWithTemplate({
+			setName: this.params.setName,
+			slugger: function(input) {
+				return input.replace(' ', '-'); // TODO: better slugger
+			}
+		});
 
 		this.model.fetch({
 			success: function(model, response) {
-				// kind of weird that this can succeed even if response is not json.
+				// TODO: kind of weird that this can succeed even if response is not json.
 				console.log('pool model fetch success: ' + JSON.stringify(response));
 				console.log('  id is: ' + self.id);
 			},

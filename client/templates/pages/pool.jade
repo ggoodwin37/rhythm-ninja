@@ -1,2 +1,4 @@
 section.page.pool
-	h1 Pool
+	h1 Sound Pool
+		- var destRoute = slugger('/set/' + setName);
+		a.back-to-set-link.client-nav(data-dest-route="#{destRoute}" href="#{destRoute}") back to set
