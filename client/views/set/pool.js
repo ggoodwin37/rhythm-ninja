@@ -3,7 +3,7 @@ var templates = require('../../templates');
 var dom = require('ampersand-dom');
 
 module.exports = View.extend({
-	template: templates.includes.set.pool,
+	template: templates.views.set.pool,
 	initialize: function(params) {
 		var self = this;
 

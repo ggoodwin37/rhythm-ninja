@@ -3,7 +3,7 @@ var dom = require('ampersand-dom');
 var templates = require('../../templates');
 
 module.exports = View.extend({
-	template: templates.includes.set.songs,
+	template: templates.views.set.songs,
 	initialize: function(params) {
 		var self = this;
 

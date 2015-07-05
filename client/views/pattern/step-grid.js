@@ -5,7 +5,7 @@ var templates = require('../../templates');
 var UPDATE_DELAY = 500;  // TODO: make this higher
 
 module.exports = View.extend({
-	template: templates.includes.pattern.stepGrid,
+	template: templates.views.pattern.stepGrid,
 	events: {
 		'click td.grid-step': 'handleGridStepClick',
 		'click button.add-row': 'handleAddRowClick',
