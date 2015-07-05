@@ -3,6 +3,17 @@ var templates = require('../templates');
 
 module.exports = View.extend({
 	template: templates.pages.pool(),
+	initialize: function(params) {
+		var self = this;
+
+		this.params = params || {};
+
+		this.model = window.app.getCachedSetModel(this.params.setName);  // TODO: get rid of global ref, pass in app.
+		this.model.on('model-loaded', function(model) {
+			if (self.stepGridSubview) self.stepGridSubview.model = model;
+			self.model = model;
+		});
+	},
 	render: function() {
 		var self = this;
 		this.renderWithTemplate();
