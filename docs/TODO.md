@@ -28,3 +28,8 @@ up next:
     - do users have a concept of location within a set?
   - need to do authorization (we have authentication, but any authenticated user can do anything to any data right now).
   - (add more auth providers besides just twitter)
+
+- think through the model/subview/loaded story more, right now we're kind of haphazardly passing things around.
+  - probably leaking more info than needed
+  - possibly race conditions lurkin
+  
