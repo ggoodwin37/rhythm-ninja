@@ -9,4 +9,4 @@ div.view-group(data-hook="pool-view-container")
 			h3 No pool entries here
 		//- else we're in loading or error state
 	- var poolRoute = slugger('/set/' + setName + '/pool');
-	a.manage-sounds-link.client-nav(data-dest-route="#{poolRoute}" href="#{poolRoute}") Manage Sound Pool
+	a.view-link.client-nav(data-dest-route="#{poolRoute}" href="#{poolRoute}") Manage Sound Pool

@@ -56,8 +56,8 @@ module.exports = View.extend({
 		//       does this no-op if we already loaded set? what about when we load this page directly?
 		this.model.fetch({
 			success: function(model, response) {
-				console.log('pool model fetch success: ' + JSON.stringify(response));
-				console.log('  id is: ' + self.id);
+				// console.log('pool model fetch success: ' + JSON.stringify(response));
+				// console.log('  id is: ' + self.id);
 			},
 			error: function(model, response, options) {
 				console.log('pool model fetch error. response: ' + JSON.stringify(response));

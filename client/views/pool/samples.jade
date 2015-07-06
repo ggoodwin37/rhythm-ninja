@@ -1,3 +1,5 @@
 div.view-group(data-hook="samples-container")
 	h3 No samples here
-	input.file-input-button(type="file", multiple="multiple")
+	div.file-group
+		input.file-input(type="file", multiple="multiple")
+		a.view-link.file-input-link(href="javascript:void(0)") Upload samples

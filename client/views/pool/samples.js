@@ -5,7 +5,8 @@ var dom = require('ampersand-dom');
 module.exports = View.extend({
 	template: templates.views.pool.samples,
 	events: {
-		'change .file-input-button': 'onFileInputChanged'
+		'change .file-input': 'onFileInputChanged',
+		'click .file-input-link': 'onFileInputLinkClicked'
 	},
 	initialize: function(params) {
 		var self = this;
@@ -38,5 +39,8 @@ module.exports = View.extend({
 	onFileInputChanged: function(ev) {
 		var files = ev.target.files;
 		console.log(files);
+	},
+	onFileInputLinkClicked: function(ev) {
+		this.query('.file-input').click();
 	}
 });
