@@ -41,6 +41,7 @@ module.exports = View.extend({
 		console.log(files);
 	},
 	onFileInputLinkClicked: function(ev) {
+		// the file input button can't be styled, so keep it hidden and click it programmatically.
 		this.query('.file-input').click();
 	}
 });
