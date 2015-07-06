@@ -62,9 +62,7 @@ module.exports = View.extend({
 			console.log('upload complete!');
 		});
 		xhr.open('POST', url);
-
-		// TODO: verify once we start using real sample files, need at least wav and mp3 support
-		//xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
+		xhr.setRequestHeader('content-type', file.type);
 
 		reader.onload = function(e) {
 			sendAsBinary(xhr, e.target.result);
