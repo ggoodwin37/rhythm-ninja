@@ -36,12 +36,49 @@ module.exports = View.extend({
 			dom.removeClass(el, className);
 		}
 	},
-	onFileInputChanged: function(ev) {
-		var files = ev.target.files;
-		console.log(files);
+	onFileInputChanged: function(e) {
+		var self = this;
+		var files = e.target.files;
+		var url = '/sample';
+		Array.prototype.forEach.call(files, function(thisFile) {
+			self.uploadFile(thisFile, url, null);  // TODO: container
+		});
 	},
 	onFileInputLinkClicked: function(ev) {
 		// the file input button can't be styled, so keep it hidden and click it programmatically.
 		this.query('.file-input').click();
+	},
+	uploadFile: function(file, url, container) {
+		var reader = new FileReader();
+		// TODO: create some progress UI in container.
+		var xhr = new XMLHttpRequest();  // TODO: consider not using raw?
+		xhr.upload.addEventListener('progress', function(e) {
+			if (e.lengthComputable) {
+				var percentage = Math.round((e.loaded * 100) / e.total);
+				console.log('upload percentage: ' + percentage);
+			}
+		}, false);
+		xhr.upload.addEventListener('load', function(e) {
+			console.log('upload complete!');
+		});
+		xhr.open('POST', url);
+
+		// TODO: verify once we start using real sample files, need at least wav and mp3 support
+		//xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
+
+		reader.onload = function(e) {
+			sendAsBinary(xhr, e.target.result);
+		};
+		reader.readAsBinaryString(file);
 	}
 });
+
+// TODO: investigate better solution to this, just need a portable way to send binary data via an xhr.
+function sendAsBinary(xhr, dataStr) {
+	function byteValue(x) {
+		return x.charCodeAt(0) & 0xff;
+	}
+	var ords = Array.prototype.map.call(dataStr, byteValue);
+	var ui8a = new Uint8Array(ords);
+	xhr.send(ui8a.buffer);
+}

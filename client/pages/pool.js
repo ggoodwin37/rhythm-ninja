@@ -51,18 +51,5 @@ module.exports = View.extend({
 				return input.replace(' ', '-'); // TODO: better slugger
 			}
 		});
-
-		// TODO: do we actually need to fetch here (in addition to seto)?
-		//       does this no-op if we already loaded set? what about when we load this page directly?
-		this.model.fetch({
-			success: function(model, response) {
-				// console.log('pool model fetch success: ' + JSON.stringify(response));
-				// console.log('  id is: ' + self.id);
-			},
-			error: function(model, response, options) {
-				console.log('pool model fetch error. response: ' + JSON.stringify(response));
-			}
-		});
-
 	}
 });
