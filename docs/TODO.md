@@ -1,5 +1,6 @@
 - samples
   - need to be able to upload samples to sample pool
+    - good docs: https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications
   - need to be able to load samples from db to browser
   - need to be able to play a sample using webAudio
 
@@ -32,4 +33,5 @@ up next:
 - think through the model/subview/loaded story more, right now we're kind of haphazardly passing things around.
   - probably leaking more info than needed
   - possibly race conditions lurkin
-  
+
+- pick up here: uploading binary looks right-ish, but is hitting 404. Verify sample resource setup.

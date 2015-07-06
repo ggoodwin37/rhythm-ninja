@@ -51,17 +51,5 @@ module.exports = View.extend({
 				return input.replace(' ', '-'); // TODO: better slugger
 			}
 		});
-
-		this.model.fetch({
-			success: function(model, response) {
-				// TODO: kind of weird that this can succeed even if response is not json.
-				console.log('pool model fetch success: ' + JSON.stringify(response));
-				console.log('  id is: ' + self.id);
-			},
-			error: function(model, response, options) {
-				console.log('pool model fetch error. response: ' + JSON.stringify(response));
-			}
-		});
-
 	}
 });

@@ -1,6 +1,5 @@
 div.view-group(data-hook="samples-container")
 	h3 No samples here
-	form
-		input(type="file", multiple="multiple")
-		input(type="submit", path="/foo")
-		// TODO: fix form, post url, etc.
+	div.file-group
+		input.file-input(type="file", multiple="multiple")
+		a.view-link.file-input-link(href="javascript:void(0)") Upload samples

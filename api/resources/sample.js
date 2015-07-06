@@ -1,24 +1,25 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 
 module.exports = function(app) {
+	var SampleModel = require('../models/sample.js');
+
 	return {
-		index: function(request, reply) {
-			reply([]);
-			// PatternFactory.all(function(err, models, pagination) {
-			// 	if (handlingError(err, reply)) return;
-			// 	reply(models.map(function(model) { return model.toJSON(); }));
-			// });
-		},
 		show: {
 			handler: function(request, reply) {
+				console.log('sample show');
+				inspect(request);
 			}
 		},
 		create: {
 			handler: function(request, reply) {
+				console.log('sample create');
+				inspect(request);
 			}
 		},
 		destroy: {
 			handler: function(request, reply) {
+				console.log('sample delete');
+				inspect(request);
 			}
 		}
 	};
