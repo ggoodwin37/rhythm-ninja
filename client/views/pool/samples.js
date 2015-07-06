@@ -85,6 +85,7 @@ module.exports = View.extend({
 		});
 		xhr.open('POST', url);
 		xhr.setRequestHeader('content-type', file.type);
+		console.log('uploading file with content-type: ' + file.type);
 
 		reader.onload = function(e) {
 			sendAsBinary(xhr, e.target.result);

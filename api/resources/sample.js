@@ -15,7 +15,7 @@ module.exports = function(app) {
 			handler: function(request, reply) {
 				console.log('sample create');
 				// var fields = ['payload', 'mime', 'url', 'query', 'path', 'headers'];
-				var fields = ['path', 'mime', 'payload'];
+				var fields = ['path', 'mime'];
 				inspect(fields.map(function(field) {
 					return {
 						field: field,

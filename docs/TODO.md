@@ -25,6 +25,8 @@ up next:
 
 // backlog
 
+- really need to do some watchify stuff for less, client, and server.
+
 - consider adding some metadata like createdTime, createdBy (user id)
 
 - document json over wire has both id and _id for pretty much every item, bloating payload significantly.
