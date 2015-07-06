@@ -52,9 +52,10 @@ module.exports = View.extend({
 			}
 		});
 
+		// TODO: do we actually need to fetch here (in addition to seto)?
+		//       does this no-op if we already loaded set? what about when we load this page directly?
 		this.model.fetch({
 			success: function(model, response) {
-				// TODO: kind of weird that this can succeed even if response is not json.
 				console.log('pool model fetch success: ' + JSON.stringify(response));
 				console.log('  id is: ' + self.id);
 			},
