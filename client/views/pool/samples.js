@@ -39,7 +39,7 @@ module.exports = View.extend({
 	onFileInputChanged: function(e) {
 		var self = this;
 		var files = e.target.files;
-		var url = '/sample';
+		var url = '/api/sample';
 		Array.prototype.forEach.call(files, function(thisFile) {
 			self.uploadFile(thisFile, url, null);  // TODO: container
 		});
