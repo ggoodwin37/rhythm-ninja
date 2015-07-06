@@ -74,6 +74,9 @@ function beginCommand() {
 	});
 	stepList.addStep(function(cb) {
 		server.inject({method: 'post', url: '/api/set/' + setName + '/pattern', payload: pattern1Data}, function(res) {
+			if (res.statusCode === 401) {
+				console.log('FAILED: 401. Ghetto fix is to remove auth config before running this command.');
+			}
 			pattern1Id = res.result.id;
 			cb();
 		});
