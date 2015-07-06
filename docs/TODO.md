@@ -33,4 +33,5 @@ up next:
 - think through the model/subview/loaded story more, right now we're kind of haphazardly passing things around.
   - probably leaking more info than needed
   - possibly race conditions lurkin
-  
+
+- pick up here: uploading binary looks right-ish, but is hitting 404. Verify sample resource setup.
