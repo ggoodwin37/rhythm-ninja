@@ -23,6 +23,12 @@ module.exports = function(app) {
 					};
 				}));
 				reply();
+			},
+			config: {
+				payload: {
+					parse: false,
+					allow: require('./sample-mime-types')
+				}
 			}
 		},
 		destroy: {

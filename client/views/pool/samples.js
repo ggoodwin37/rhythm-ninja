@@ -57,7 +57,7 @@ module.exports = View.extend({
 		var url = '/api/sample';
 		Array.prototype.forEach.call(files, function(thisFile) {
 			var subview = new SampleEntryView({
-				name: 'foo-sample-subview-name'
+				name: getSampleNameFromFile(thisFile)
 			});
 			self.sampleSubviews.push(subview);
 			self.uploadFile(thisFile, url, subview);
@@ -106,4 +106,8 @@ function sendAsBinary(xhr, dataStr) {
 	var ords = Array.prototype.map.call(dataStr, byteValue);
 	var ui8a = new Uint8Array(ords);
 	xhr.send(ui8a.buffer);
+}
+
+function getSampleNameFromFile(file) {
+	return file.name || 'Untitled';
 }
