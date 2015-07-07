@@ -71,17 +71,15 @@ module.exports = View.extend({
 	uploadFile: function(file, url, subview) {
 		var self = this;
 		var reader = new FileReader();
-		var xhr = new XMLHttpRequest();  // TODO: consider not using raw?
+		var xhr = new XMLHttpRequest();
 		xhr.upload.addEventListener('progress', function(e) {
 			if (e.lengthComputable) {
 				var percentage = Math.round((e.loaded * 100) / e.total);
 				self.onUploadProgress(file, subview, percentage);
-				console.log('upload percentage: ' + percentage);
 			}
 		}, false);
 		xhr.upload.addEventListener('load', function(e) {
 			self.onUploadComplete(file, subview);
-			console.log('upload complete!');
 		});
 		xhr.open('POST', url);
 		xhr.setRequestHeader('content-type', file.type);
@@ -93,12 +91,14 @@ module.exports = View.extend({
 		reader.readAsBinaryString(file);
 	},
 	onUploadComplete: function(file, subview) {
+		subview.setPercentage(100);
 	},
 	onUploadProgress: function(file, subview, percentage) {
+		subview.setPercentage(percentage);
 	}
 });
 
-// TODO: investigate better solution to this, just need a portable way to send binary data via an xhr.
+// a browser-compatible version of the moz-only xhr.sendAsBinary, credit: the internet
 function sendAsBinary(xhr, dataStr) {
 	function byteValue(x) {
 		return x.charCodeAt(0) & 0xff;

@@ -8,31 +8,32 @@ module.exports = View.extend({
 	},
 	initialize: function(params) {
 		var self = this;
-
-		// TODO: what model for this, if any?
-		// this.model = params.model;
-		// this.model.on('change:pool', function() {
-		// 	self.render();
-		// });
+		params = params || {};
+		this.name = params.name || 'Untitled';
+		this.percentage = params.initialPercentage || 0;
+		this.progressBarEl = null;
 	},
 	render: function() {
-		// var pool = (this.model && this.model.pool) ? this.model.pool : null;
-		var loaded = true;
 		this.renderWithTemplate({
-			name: 'TEST-NAME',
+			name: this.name,
 			slugger: function(input) {
 				return input.replace(' ', '-'); // TODO: better slugger
 			}
 		});
-		this.setLoading(!loaded);
+		this.progressBarEl = this.queryByHook('progress-bar');
+		this.setPercentage(this.percentage);
 	},
-	setLoading: function(isLoading) {
-		var el = this.queryByHook('sample-entry-container');
-		var className = 'default-loading';
-		if (isLoading) {
-			dom.addClass(el, className);
-		} else {
-			dom.removeClass(el, className);
+	setPercentage: function(percentage) {
+		this.percentage = Math.max(Math.min(100, Math.round(percentage)), 0);
+		if (this.progressBarEl) {
+			if (this.percentage === 100) {
+				//dom.css(this.progressBarEl, 'width', '0');  // TODO: get a way to write css, ampersand-dom doesn't have it
+				dom.text(this.progressBarEl, 'Loaded');
+				return;
+			}
+			var percentStr = '' + percentage + '%';
+			dom.text(this.progressBarEl, percentStr);
+			//dom.css(this.progressBarEl, 'width', percentStr);
 		}
-	},
+	}
 });

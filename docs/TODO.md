@@ -49,3 +49,5 @@ up next:
 - think through the model/subview/loaded story more, right now we're kind of haphazardly passing things around.
   - probably leaking more info than needed
   - possibly race conditions lurkin
+
+- figure out how to make hapi (via mudskipper) allow other content types.
