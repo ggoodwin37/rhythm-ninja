@@ -1,7 +1,10 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 
 module.exports = function(app) {
-	var SampleModel = require('../models/sample.js');
+	var verifyAuth = require('./verify-auth')(app);
+	var handlingError = require('../handling-error');
+	var SampleMetaModel = require('../models/sample-meta.js')(app);
+	var SampleBlobModel = require('../models/sample-blob.js')(app);
 
 	return {
 		show: {
@@ -13,16 +16,30 @@ module.exports = function(app) {
 		},
 		create: {
 			handler: function(request, reply) {
-				console.log('sample create');
-				// var fields = ['payload', 'mime', 'url', 'query', 'path', 'headers'];
-				var fields = ['path', 'mime'];
-				inspect(fields.map(function(field) {
-					return {
-						field: field,
-						value: request[field]
-					};
-				}));
-				reply();
+				if (!verifyAuth(request, reply)) return;
+
+				// first store the blob
+				// TODO: handle max buffer size, avoid copy, generally make this better
+				var data = new Buffer(request.payload);
+				var sampleBlob = new SampleBlobModel({
+					data: data
+				});
+				sampleBlob.save(function(err, savedBlob) {
+					if (handlingError(err, reply)) return reply();
+
+					// blob is stored, write the metadata
+					var sampleMeta = new SampleMetaModel({
+						name: 'TODO-fix-sample-meta-name',  // TODO: err, query param?
+						blobId: savedBlob.id,
+						ownerUserKey: (request.auth && request.auth.credentials) ? request.auth.credentials.rnUserKey : null,
+						isPublic: true
+					});
+					sampleMeta.save(function(err, savedMeta) {
+						if (handlingError(err, reply)) return reply();
+
+						reply(savedMeta.toJSON());
+					});
+				});
 			},
 			config: {
 				payload: {

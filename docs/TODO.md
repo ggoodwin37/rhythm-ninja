@@ -1,7 +1,8 @@
 - pick up here:
   - basic infrastructure for uploading UI is in place, needs styling and fleshing out.
   - uploading binary looks right-ish, start working on new models and do GET
-    - immediate goal: verify we can roundtrip a WAV.
+    - how to post info besides the actual blob data on upload? can we get away with query params? (cringe)
+	- figure out how to write tests for this.
 
 
 // near term

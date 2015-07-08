@@ -5,14 +5,9 @@ module.exports = function(app) {
 
 	if (factory) return factory;
 
-	var modelName = 'sample';
+	var modelName = 'sample-blob';
 	var schema = mongoose.Schema({
-		// name: String,
-		// swing: Number,
-		// bpm: Number,
-		// pool: [{type: String, ref: 'pool-entry'}],
-		// patterns: [{type: String, ref: 'pattern'}],
-		// songs: [{type: String, ref: 'song'}]
+		data: Buffer
 	});
 	require('./schema-id')(schema);
 
