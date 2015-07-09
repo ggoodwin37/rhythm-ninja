@@ -36,8 +36,9 @@ module.exports = function(app) {
 					});
 					sampleMeta.save(function(err, savedMeta) {
 						if (handlingError(err, reply)) return reply();
-
-						reply(savedMeta.toJSON());
+						var result = savedMeta.toJSON();
+						delete result.blobId;  // don't expose blobId to client, they don't need it.
+						reply(result);
 					});
 				});
 			},
