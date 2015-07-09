@@ -9,6 +9,7 @@ module.exports = function(app) {
 	return {
 		show: {
 			handler: function(request, reply) {
+				// TODO: lookup blob by meta id.
 				console.log('sample show');
 				inspect(Object.keys(request));
 				reply();
