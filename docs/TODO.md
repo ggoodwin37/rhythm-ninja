@@ -1,8 +1,8 @@
 - pick up here:
   - basic infrastructure for uploading UI is in place, needs styling and fleshing out.
   - uploading binary looks right-ish, start working on new models and do GET
-    - how to post info besides the actual blob data on upload? can we get away with query params? (cringe)
-	- figure out how to write tests for this.
+    - posting metadata: how about an encoded query string blob, that's not too bad. could also consider doing two calls.
+    - figure out how to write tests for this.
 
 
 // near term
@@ -50,3 +50,9 @@ up next:
 - think through the model/subview/loaded story more, right now we're kind of haphazardly passing things around.
   - probably leaking more info than needed
   - possibly race conditions lurkin
+
+- consider ripping out mongo and slapping in mysql.
+  - There was no real reasoning behind the mongo choice in the first place.
+  - getting away from an orm will help with some of the trickier hierarchy issues you've hit.
+
+- switch from tabs to spaces, for the love of god
