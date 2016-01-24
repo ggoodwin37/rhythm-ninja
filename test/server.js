@@ -1,19 +1,18 @@
-module.exports = function(ctx) {
-	var Lab = require('lab');
+module.exports = function(ctx, lab) {
 	var inspect = require('eyes').inspector({maxLength: null});
 
 	// Test shortcuts
-	var expect = Lab.expect;
-	var before = Lab.before;
-	var after = Lab.after;
-	var describe = Lab.experiment;
-	var it = Lab.test;
+	var expect = require('code').expect;
+	var before = lab.before;
+	var after = lab.after;
+	var describe = lab.experiment;
+	var it = lab.test;
 
 	describe('server init, routing, etc', function () {
 
 		it('loaded config', function(done) {
 			expect(!!ctx.app.config).to.equal(true);
-			expect(ctx.app.config.logThings).to.be.an('object');
+			expect(ctx.app.config.logThings).to.be.an.object();
 			if (ctx.app.config.logThings['test--show-config']) {
 				inspect(ctx.app.config);
 			}

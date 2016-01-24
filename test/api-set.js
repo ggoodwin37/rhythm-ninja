@@ -1,12 +1,10 @@
-module.exports = function(ctx) {
-	var Lab = require('lab');
-
+module.exports = function(ctx, lab) {
 	// Test shortcuts
-	var expect = Lab.expect;
-	var before = Lab.before;
-	var after = Lab.after;
-	var describe = Lab.experiment;
-	var it = Lab.test;
+	var expect = require('code').expect;
+	var before = lab.before;
+	var after = lab.after;
+	var describe = lab.experiment;
+	var it = lab.test;
 
 	ctx.setName = 'reserved-test-set';
 	ctx.baseSetUrl = '/api/set/' + ctx.setName;
@@ -38,7 +36,7 @@ module.exports = function(ctx) {
 				url: ctx.baseSetUrl
 			}, function(res) {
 				expect(res.statusCode).to.equal(200);
-				expect(res.result).to.be.an('object');
+				expect(res.result).to.be.an.object();
 				expect(res.result.name).to.equal(ctx.setName);
 				expect(res.result.songs === undefined).to.equal(false);
 
@@ -62,7 +60,7 @@ module.exports = function(ctx) {
 					url: ctx.baseSetUrl
 				}, function(res) {
 					expect(res.statusCode).to.equal(200);
-					expect(res.result).to.be.an('object');
+					expect(res.result).to.be.an.object();
 					expect(res.result.bpm).to.equal(161);
 					expect(res.result.songs === undefined).to.equal(false);
 					done();
