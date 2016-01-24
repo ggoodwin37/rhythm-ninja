@@ -1,0 +1,12 @@
+// super basic mongo cli commands, cuz I always forget this shit
+
+mongo  // start shell
+show dbs   // list dbs
+use rn-dev // typically this one
+show collections
+db.sets.find()              // or
+db['sample-blobs'].find()   // this
+
+db['sample-blobs'].drop()   // deletes entire collection with no confirmation ;)
+
+// also don't forget to switch on mongoose debugging at config if needed.
