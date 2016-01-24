@@ -26,7 +26,7 @@ module.exports = function(app) {
 					data: data
 				});
 				sampleBlob.save(function(err, savedBlob) {
-					if (handlingError(err, reply)) return reply();
+					if (handlingError(err, reply)) return;
 
 					// blob is stored, write the metadata
 					var sampleMeta = new SampleMetaModel({
@@ -36,7 +36,7 @@ module.exports = function(app) {
 						isPublic: true
 					});
 					sampleMeta.save(function(err, savedMeta) {
-						if (handlingError(err, reply)) return reply();
+						if (handlingError(err, reply)) return;
 						var result = savedMeta.toJSON();
 						delete result.blobId;  // don't expose blobId to client, they don't need it.
 						reply(result);
