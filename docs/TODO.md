@@ -1,12 +1,7 @@
-- I think something is fucked up between mongoose/mongodb/bson, maybe installed it wrong somehow?
-  - see here: http://stackoverflow.com/questions/28651028/cannot-find-module-build-release-bson-code-module-not-found-js-bson
-  - or here: http://stackoverflow.com/questions/8319743/node-js-mongoose-and-mongodb-a-pain-to-install
-  - https://github.com/mccormicka/Mockgoose/issues/128
-  - https://github.com/Automattic/mongoose/issues/2718
-- basic infrastructure for uploading UI is in place, needs styling and fleshing out.
 - uploading binary looks right-ish, start working on new models and do GET
   - posting metadata: how about an encoded query string blob, that's not too bad. could also consider doing two calls.
   - figure out how to write tests for this.
+- basic infrastructure for uploading UI is in place, needs styling and fleshing out.
 
 
 // near term
