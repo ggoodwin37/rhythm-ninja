@@ -1,5 +1,6 @@
 - pick up here:
   - basic infrastructure for uploading UI is in place, needs styling and fleshing out.
+  - uploading samples broke due to bit rot, getting a nonhelpful mongoose error although looks like bits made it to server ok.
   - uploading binary looks right-ish, start working on new models and do GET
     - posting metadata: how about an encoded query string blob, that's not too bad. could also consider doing two calls.
     - figure out how to write tests for this.
