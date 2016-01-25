@@ -26,7 +26,11 @@ module.exports = function(app) {
 					data: data
 				});
 				sampleBlob.save(function(err, savedBlob) {
-					if (handlingError(err, reply)) return;
+					if (handlingError(err, reply)) {
+						// saw an error here due to some bit rot in mongoose/mongo. This was 500'ing with an empty error.
+						// after I nuked node_modules and reinstalled, it went away :shrug:
+						return;
+					}
 
 					// blob is stored, write the metadata
 					var sampleMeta = new SampleMetaModel({
