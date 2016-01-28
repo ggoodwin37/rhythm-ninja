@@ -1,6 +1,7 @@
 - uploading binary looks right-ish, start working on new models and do GET
   - posting metadata: how about an encoded query string blob, that's not too bad. could also consider doing two calls.
-  - figure out how to write tests for this.
+  - posting metadata: I think we need another endpoint for metadata updates. We can pick defaults on sample (blob) post,
+    - then they can go back and edit it. I think this will actually be slightly easier for user too.
 - basic infrastructure for uploading UI is in place, needs styling and fleshing out.
 
 
@@ -24,6 +25,9 @@ up next:
 
 
 // backlog
+
+- how do we handle mime type? a server-side lib to look at incoming file and determine it? then save with sample metadata?
+  - or does browser typically send us the right thing (via upload dialog)?
 
 - really need to do some watchify stuff for less, client, and server.
 

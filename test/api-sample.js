@@ -38,7 +38,9 @@ module.exports = function(ctx, lab) {
 				url: '/api/sample/' + testSampleId
 			}, (res) => {
 				expect(res.statusCode).to.equal(200);
-				// TODO: test payload size
+				expect(res.headers['content-type']).to.equal(testAssetContentType);
+				expect(res.headers['content-length']).to.equal(testAssetSize);
+				expect(res.rawPayload.length).to.equal(testAssetSize);
 				done();
 			});
 		});

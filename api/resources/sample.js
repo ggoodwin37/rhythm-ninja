@@ -12,11 +12,16 @@ module.exports = function(app) {
 			handler: function(request, reply) {
 				if (!verifyAuth(request, reply)) return;
 
-				// TODO: lookup blob by meta id.
 				var sampleMetaId = request.params.sample_id;  // lol magic
-				SampleMetaModel.findById(sampleMetaId).exec((err, setModel) => {
-					if (handlingErrorOrMissing(err, setModel, reply)) return;
-					return reply(setModel.toJSON());  // TODO: blob payload instead
+				SampleMetaModel.findById(sampleMetaId).exec((err, metaModel) => {
+					if (handlingErrorOrMissing(err, metaModel, reply)) return;
+					var sampleBlobId = metaModel.blobId;
+					SampleBlobModel.findById(sampleBlobId).exec((err, blobModel) => {
+						if (handlingErrorOrMissing(err, blobModel, reply)) return;
+						var response = reply(blobModel.data);
+						response.type(metaModel.contentType);
+						return;
+					});
 				});
 			}
 		},
@@ -25,7 +30,7 @@ module.exports = function(app) {
 				if (!verifyAuth(request, reply)) return;
 
 				// first store the blob
-				// TODO: handle max buffer size, avoid copy, generally make this better
+				// TODO: handle max buffer size
 				var data = new Buffer(request.payload);
 				var sampleBlob = new SampleBlobModel({
 					data: data
@@ -38,9 +43,14 @@ module.exports = function(app) {
 					}
 
 					// blob is stored, write the metadata
+					// TODO: probably shouldn't just trust request mimeType here.
+					var contentType = request.mime;
+					// TODO: reconsider this. I think we do want a default name here, we'll have a separate meta update endpoint.
+					var sampleName = 'Unnamed-' + Math.floor(Math.random() * 1000);
 					var sampleMeta = new SampleMetaModel({
-						name: 'TODO-fix-sample-meta-name',  // TODO: err, query param?
+						name: sampleName,
 						blobId: savedBlob.id,
+						contentType: contentType,
 						ownerUserKey: (request.auth && request.auth.credentials) ? request.auth.credentials.rnUserKey : null,
 						isPublic: true
 					});
@@ -56,6 +66,7 @@ module.exports = function(app) {
 			config: {
 				payload: {
 					parse: false,
+					output: 'data',  // TODO: consider stream instead
 					allow: require('./sample-mime-types')
 				}
 			}
@@ -63,8 +74,7 @@ module.exports = function(app) {
 		destroy: {
 			handler: function(request, reply) {
 				if (!verifyAuth(request, reply)) return;
-
-				console.log('sample delete for id: ' + request.params.sample_id);
+				// TODO
 				reply();
 			}
 		}

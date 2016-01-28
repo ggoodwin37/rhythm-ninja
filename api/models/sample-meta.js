@@ -8,6 +8,7 @@ module.exports = function(app) {
 	var modelName = 'sample-meta';
 	var schema = mongoose.Schema({
 		name: String,
+		contentType: String,
 		blobId: String,   // TODO: consider mongoose.Types.ObjectId?
 		ownerUserKey: String,
 		isPublic: Boolean
