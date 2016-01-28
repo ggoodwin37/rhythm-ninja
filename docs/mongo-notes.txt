@@ -20,3 +20,7 @@ db['sample-blobs'].drop()   // deletes entire collection with no confirmation ;)
   - or here: http://stackoverflow.com/questions/8319743/node-js-mongoose-and-mongodb-a-pain-to-install
   - https://github.com/mccormicka/Mockgoose/issues/128
   - https://github.com/Automattic/mongoose/issues/2718
+
+- these were useful:
+db['sample-blobs'].find({},{data:0});  // don't return the sample blob binary data
+db['sample-blobs'].count();

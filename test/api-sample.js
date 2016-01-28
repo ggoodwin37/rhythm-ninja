@@ -33,8 +33,14 @@ module.exports = function(ctx, lab) {
 			});
 		});
 		it('should allow me to read the new sample back', (done) => {
-			// TODO
-			done();
+			ctx.server.inject({
+				method: 'get',
+				url: '/api/sample/' + testSampleId
+			}, (res) => {
+				expect(res.statusCode).to.equal(200);
+				// TODO: test payload size
+				done();
+			});
 		});
 		it('should allow me to delete the new sample', (done) => {
 			ctx.server.inject({

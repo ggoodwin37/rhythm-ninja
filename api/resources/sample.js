@@ -3,16 +3,21 @@ var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 module.exports = function(app) {
 	var verifyAuth = require('./verify-auth')(app);
 	var handlingError = require('../handling-error');
+	var handlingErrorOrMissing = require('../handling-error-or-missing');
 	var SampleMetaModel = require('../models/sample-meta.js')(app);
 	var SampleBlobModel = require('../models/sample-blob.js')(app);
 
 	return {
 		show: {
 			handler: function(request, reply) {
+				if (!verifyAuth(request, reply)) return;
+
 				// TODO: lookup blob by meta id.
-				console.log('sample show');
-				inspect(Object.keys(request));
-				reply();
+				var sampleMetaId = request.params.sample_id;  // lol magic
+				SampleMetaModel.findById(sampleMetaId).exec((err, setModel) => {
+					if (handlingErrorOrMissing(err, setModel, reply)) return;
+					return reply(setModel.toJSON());  // TODO: blob payload instead
+				});
 			}
 		},
 		create: {
@@ -43,6 +48,7 @@ module.exports = function(app) {
 						if (handlingError(err, reply)) return;
 						var result = savedMeta.toJSON();
 						delete result.blobId;  // don't expose blobId to client, they don't need it.
+						//console.log('created new sample with sampleMetaId: ' + savedMeta.id + ' and blobId: ' + savedBlob.id);
 						reply(result);
 					});
 				});
@@ -56,8 +62,9 @@ module.exports = function(app) {
 		},
 		destroy: {
 			handler: function(request, reply) {
-				console.log('sample delete');
-				inspect(Object.keys(request));
+				if (!verifyAuth(request, reply)) return;
+
+				console.log('sample delete for id: ' + request.params.sample_id);
 				reply();
 			}
 		}
