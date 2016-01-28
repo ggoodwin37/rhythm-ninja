@@ -1,10 +1,8 @@
-module.exports = function(ctx, setName, expectedCode) {
-	var Lab = require('lab');
-
+module.exports = function(ctx, lab, setName, expectedCode) {
 	// Test shortcuts
-	var expect = Lab.expect;
-	var describe = Lab.experiment;
-	var it = Lab.test;
+	var expect = require('code').expect;
+	var describe = lab.experiment;
+	var it = lab.test;
 
 	expectedCode = expectedCode || 200;
 

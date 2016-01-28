@@ -1,13 +1,12 @@
-module.exports = function(ctx) {
-	var Lab = require('lab');
+module.exports = function(ctx, lab) {
 	var async = require('async');
 
 	// Test shortcuts
-	var expect = Lab.expect;
-	var before = Lab.before;
-	var after = Lab.after;
-	var describe = Lab.experiment;
-	var it = Lab.test;
+	var expect = require('code').expect;
+	var before = lab.before;
+	var after = lab.after;
+	var describe = lab.experiment;
+	var it = lab.test;
 
 	var treeOpsSetName = 'reserved-test-set-step-updates';
 	var treeOpsSetUrl = '/api/set/' + treeOpsSetName;
@@ -30,7 +29,7 @@ module.exports = function(ctx) {
 				url: treeOpsSetUrl
 			}, function(res) {
 				expect(res.statusCode).to.equal(200);
-				expect(res.result).to.be.an('object');
+				expect(res.result).to.be.an.object();
 				expect(res.result.name).to.equal(treeOpsSetName);
 				expect(res.result.songs === undefined).to.equal(false);
 

@@ -1,0 +1,26 @@
+// super basic mongo cli commands, cuz I always forget this shit
+
+mongo  // start shell
+show dbs   // list dbs
+use rn-dev // typically this one
+show collections
+db.sets.find()              // or
+db['sample-blobs'].find()   // this
+
+db['sample-blobs'].drop()   // deletes entire collection with no confirmation ;)
+
+// also don't forget to switch on mongoose debugging at config if needed.
+
+- I think something is fucked up between mongoose/mongodb/bson, maybe installed it wrong somehow?
+  - basically I "solved" this with:
+    'cd node_modules/mongoose/node_modules/mongodb ; npm install'
+  - either I fucked up somewhere installing mongo, or this is a fucked up dependency within mongo.
+  - some similar reports:
+  - see here: http://stackoverflow.com/questions/28651028/cannot-find-module-build-release-bson-code-module-not-found-js-bson
+  - or here: http://stackoverflow.com/questions/8319743/node-js-mongoose-and-mongodb-a-pain-to-install
+  - https://github.com/mccormicka/Mockgoose/issues/128
+  - https://github.com/Automattic/mongoose/issues/2718
+
+- these were useful:
+db['sample-blobs'].find({},{data:0});  // don't return the sample blob binary data
+db['sample-blobs'].count();

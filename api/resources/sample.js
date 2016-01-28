@@ -1,35 +1,92 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 
 module.exports = function(app) {
-	var SampleModel = require('../models/sample.js');
+	var verifyAuth = require('./verify-auth')(app);
+	var handlingError = require('../handling-error');
+	var handlingErrorOrMissing = require('../handling-error-or-missing');
+	var SampleMetaModel = require('../models/sample-meta.js')(app);
+	var SampleBlobModel = require('../models/sample-blob.js')(app);
 
 	return {
 		show: {
 			handler: function(request, reply) {
-				console.log('sample show');
-				inspect(Object.keys(request));
-				reply();
+				if (!verifyAuth(request, reply)) return;
+
+				var sampleMetaId = request.params.sample_id;  // lol magic
+				SampleMetaModel.findById(sampleMetaId).exec((err, metaModel) => {
+					if (handlingErrorOrMissing(err, metaModel, reply)) return;
+					var sampleBlobId = metaModel.blobId;
+					SampleBlobModel.findById(sampleBlobId).exec((err, blobModel) => {
+						if (handlingErrorOrMissing(err, blobModel, reply)) return;
+						var response = reply(blobModel.data);
+						response.type(metaModel.contentType);
+						return;
+					});
+				});
 			}
 		},
 		create: {
 			handler: function(request, reply) {
-				console.log('sample create');
-				// var fields = ['payload', 'mime', 'url', 'query', 'path', 'headers'];
-				var fields = ['path', 'mime', 'payload'];
-				inspect(fields.map(function(field) {
-					return {
-						field: field,
-						value: request[field]
-					};
-				}));
-				reply();
+				if (!verifyAuth(request, reply)) return;
+
+				// first store the blob
+				// TODO: handle max buffer size
+				var data = new Buffer(request.payload);
+				var sampleBlob = new SampleBlobModel({
+					data: data
+				});
+				sampleBlob.save(function(err, savedBlob) {
+					if (handlingError(err, reply)) {
+						// saw an error here due to some bit rot in mongoose/mongo. This was 500'ing with an empty error.
+						// after I nuked node_modules and reinstalled, it went away :shrug:
+						return;
+					}
+
+					// blob is stored, write the metadata
+					// TODO: probably shouldn't just trust request mimeType here.
+					var contentType = request.mime;
+					// TODO: reconsider this. I think we do want a default name here, we'll have a separate meta update endpoint.
+					var sampleName = 'Unnamed-' + Math.floor(Math.random() * 1000);
+					var sampleMeta = new SampleMetaModel({
+						name: sampleName,
+						blobId: savedBlob.id,
+						contentType: contentType,
+						ownerUserKey: (request.auth && request.auth.credentials) ? request.auth.credentials.rnUserKey : null,
+						isPublic: true
+					});
+					sampleMeta.save(function(err, savedMeta) {
+						if (handlingError(err, reply)) return;
+						var result = savedMeta.toJSON();
+						delete result.blobId;  // don't expose blobId to client, they don't need it.
+						//console.log('created new sample with sampleMetaId: ' + savedMeta.id + ' and blobId: ' + savedBlob.id);
+						reply(result);
+					});
+				});
+			},
+			config: {
+				payload: {
+					parse: false,
+					output: 'data',  // TODO: consider stream instead
+					allow: require('./sample-mime-types')
+				}
 			}
 		},
 		destroy: {
 			handler: function(request, reply) {
-				console.log('sample delete');
-				inspect(Object.keys(request));
-				reply();
+				if (!verifyAuth(request, reply)) return;
+
+				var sampleMetaId = request.params.sample_id;
+				SampleMetaModel.findById(sampleMetaId).exec((err, metaModel) => {
+					if (handlingErrorOrMissing(err, metaModel, reply)) return;
+					var sampleBlobId = metaModel.blobId;
+					SampleBlobModel.remove({_id: sampleBlobId}, (err) => {
+						if (handlingError(err, reply)) return;
+						SampleMetaModel.remove({_id: sampleMetaId}, (err) => {
+							if (handlingError(err, reply)) return;
+							return reply();
+						});
+					});
+				});
 			}
 		}
 	};

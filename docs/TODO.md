@@ -1,16 +1,15 @@
-- pick up here:
-  - basic infrastructure for uploading UI is in place, needs styling and fleshing out.
-  - uploading binary looks right-ish, start working on new models and do GET
-    - immediate goal: verify we can roundtrip a WAV.
-
+- posting sample metadata: we need another endpoint for metadata updates. We can pick defaults on sample (blob) post,
+    - then they can go back and edit it. I think this will actually be slightly easier for user too.
+- hook up samples to sets. sample meta probably needs a set id, then populate sample pool view with those.
+  - how do we get list of samples? populated with pool? or separate call?
 
 // near term
 
 - samples
-  - need to be able to upload samples to sample pool
-    - good docs: https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications
-  - need to be able to load samples from db to browser
-  - need to be able to play a sample using webAudio
+  - need to be able to play a sample using webAudio as a proof of concept. browser playing wavs works.
+
+- get page->view destroy chain working when we nav around.
+  - ensure subviews are destroyed
 
 up next:
 - do a TODO pass to find pressing stuff.
@@ -21,9 +20,9 @@ up next:
   - dirty/conflict basics
   - ??
 
-
-
 // backlog
+
+- really need to do some watchify stuff for less, client, and server.
 
 - consider adding some metadata like createdTime, createdBy (user id)
 
@@ -31,9 +30,6 @@ up next:
 
 - what conflict scenarios do we have?
   - the main scenario where two users are editing the same pattern. do we need some sense of "recently touched" or can it be simpler than that?
-
-- get page->view destroy chain working when we nav around.
-  - ensure subviews are destroyed
 
 - extract slugger
 - make loading UI common
@@ -47,3 +43,10 @@ up next:
 - think through the model/subview/loaded story more, right now we're kind of haphazardly passing things around.
   - probably leaking more info than needed
   - possibly race conditions lurkin
+
+- consider ripping out mongo and slapping in mysql.
+  - There was no real reasoning behind the mongo choice in the first place.
+  - getting away from an orm will help with some of the trickier hierarchy issues you've hit.
+
+- switch from tabs to spaces, for the love of god
+- "use strict"

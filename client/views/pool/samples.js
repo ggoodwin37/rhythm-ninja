@@ -57,7 +57,7 @@ module.exports = View.extend({
 		var url = '/api/sample';
 		Array.prototype.forEach.call(files, function(thisFile) {
 			var subview = new SampleEntryView({
-				name: 'foo-sample-subview-name'
+				name: getSampleNameFromFile(thisFile)
 			});
 			self.sampleSubviews.push(subview);
 			self.uploadFile(thisFile, url, subview);
@@ -71,33 +71,37 @@ module.exports = View.extend({
 	uploadFile: function(file, url, subview) {
 		var self = this;
 		var reader = new FileReader();
-		var xhr = new XMLHttpRequest();  // TODO: consider not using raw?
+		var xhr = new XMLHttpRequest();
 		xhr.upload.addEventListener('progress', function(e) {
 			if (e.lengthComputable) {
 				var percentage = Math.round((e.loaded * 100) / e.total);
 				self.onUploadProgress(file, subview, percentage);
-				console.log('upload percentage: ' + percentage);
 			}
 		}, false);
-		xhr.upload.addEventListener('load', function(e) {
-			self.onUploadComplete(file, subview);
-			console.log('upload complete!');
+		xhr.addEventListener('load', function(e) {
+			var response = JSON.parse(this.responseText);
+			self.onUploadComplete(file, response, subview);
 		});
 		xhr.open('POST', url);
 		xhr.setRequestHeader('content-type', file.type);
+		console.log('uploading file with content-type: ' + file.type);
 
 		reader.onload = function(e) {
 			sendAsBinary(xhr, e.target.result);
 		};
 		reader.readAsBinaryString(file);
 	},
-	onUploadComplete: function(file, subview) {
+	onUploadComplete: function(file, response, subview) {
+		subview.setTestUrl('/api/sample/' + response.id);
+		subview.setPercentage(100);
+		subview.render();
 	},
 	onUploadProgress: function(file, subview, percentage) {
+		subview.setPercentage(percentage);
 	}
 });
 
-// TODO: investigate better solution to this, just need a portable way to send binary data via an xhr.
+// a browser-compatible version of the moz-only xhr.sendAsBinary, credit: the internet
 function sendAsBinary(xhr, dataStr) {
 	function byteValue(x) {
 		return x.charCodeAt(0) & 0xff;
@@ -105,4 +109,8 @@ function sendAsBinary(xhr, dataStr) {
 	var ords = Array.prototype.map.call(dataStr, byteValue);
 	var ui8a = new Uint8Array(ords);
 	xhr.send(ui8a.buffer);
+}
+
+function getSampleNameFromFile(file) {
+	return file.name || 'Untitled';
 }

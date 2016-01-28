@@ -6,7 +6,8 @@ var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 var startServerInstance = require('../server-instance');
 
 // Test shortcuts
-var before = Lab.before;
+var lab = exports.lab = Lab.script();
+var before = lab.before;
 
 // shared test context
 var ctx = {
@@ -34,18 +35,19 @@ before(function(done) {
 	});
 });
 
-require('./server')(ctx);
-require('./mongo-mongoose')(ctx);
-require('./api-set')(ctx);
-require('./api-pool-entry')(ctx);
-require('./api-pattern')(ctx);
-require('./api-set-pattern')(ctx);
-require('./api-song')(ctx);
-require('./delete-set')(ctx, 'reserved-test-set');
-require('./api-tree-ops')(ctx);
-require('./delete-set')(ctx, 'reserved-test-tree-stuff');
-require('./api-set-tree-ops')(ctx);
-require('./api-set-step-updates')(ctx);
-require('./api-order')(ctx);
-require('./delete-set')(ctx, 'reserved-test-order-stuff');
-require('./delete-set')(ctx, 'bogus', 404);
+require('./server')(ctx, lab);
+require('./mongo-mongoose')(ctx, lab);
+require('./api-set')(ctx, lab);
+require('./api-pool-entry')(ctx, lab);
+require('./api-pattern')(ctx, lab);
+require('./api-set-pattern')(ctx, lab);
+require('./api-song')(ctx, lab);
+require('./delete-set')(ctx, lab, 'reserved-test-set');
+require('./api-tree-ops')(ctx, lab);
+require('./delete-set')(ctx, lab, 'reserved-test-tree-stuff');
+require('./api-set-tree-ops')(ctx, lab);
+require('./api-set-step-updates')(ctx, lab);
+require('./api-order')(ctx, lab);
+require('./delete-set')(ctx, lab, 'reserved-test-order-stuff');
+require('./delete-set')(ctx, lab, 'bogus', 404);
+require('./api-sample')(ctx, lab);

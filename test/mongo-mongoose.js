@@ -1,14 +1,13 @@
-module.exports = function(ctx) {
-	var Lab = require('lab');
+module.exports = function(ctx, lab) {
 	var inspect = require('eyes').inspector({maxLength: null});
 	var mongoose = require('mongoose');
 
 	// Test shortcuts
-	var expect = Lab.expect;
-	var before = Lab.before;
-	var after = Lab.after;
-	var describe = Lab.experiment;
-	var it = Lab.test;
+	var expect = require('code').expect;
+	var before = lab.before;
+	var after = lab.after;
+	var describe = lab.experiment;
+	var it = lab.test;
 
 	before(function(done) {
 		// TODO: shared setup?
