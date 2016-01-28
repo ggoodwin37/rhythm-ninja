@@ -38,6 +38,9 @@ module.exports = View.extend({
 			//dom.css(this.progressBarEl, 'width', percentStr);
 		}
 	},
+	setName: function(name) {
+		this.name = name;
+	},
 	setTestUrl: function(url) {
 		this.testUrl = url;
 	}

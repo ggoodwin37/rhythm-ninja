@@ -21,7 +21,8 @@ module.exports = function(ctx, lab) {
 					method: 'post',
 					url: '/api/sample',
 					headers: {
-						'content-type': testAssetContentType
+						'content-type': testAssetContentType,
+						'x-sample-name': 'api-sample-test'
 					},
 					payload: data
 				}, (res) => {

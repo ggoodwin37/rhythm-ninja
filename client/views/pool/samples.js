@@ -56,9 +56,7 @@ module.exports = View.extend({
 		var files = e.target.files;
 		var url = '/api/sample';
 		Array.prototype.forEach.call(files, function(thisFile) {
-			var subview = new SampleEntryView({
-				name: getSampleNameFromFile(thisFile)
-			});
+			var subview = new SampleEntryView();
 			self.sampleSubviews.push(subview);
 			self.uploadFile(thisFile, url, subview);
 		});
@@ -84,6 +82,7 @@ module.exports = View.extend({
 		});
 		xhr.open('POST', url);
 		xhr.setRequestHeader('content-type', file.type);
+		xhr.setRequestHeader('x-sample-name', getSampleNameFromFile(file));
 		console.log('uploading file with content-type: ' + file.type);
 
 		reader.onload = function(e) {
@@ -92,6 +91,7 @@ module.exports = View.extend({
 		reader.readAsBinaryString(file);
 	},
 	onUploadComplete: function(file, response, subview) {
+		subview.setName(response.name);
 		subview.setTestUrl('/api/sample/' + response.id);
 		subview.setPercentage(100);
 		subview.render();

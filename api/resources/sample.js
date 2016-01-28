@@ -45,8 +45,7 @@ module.exports = function(app) {
 					// blob is stored, write the metadata
 					// TODO: probably shouldn't just trust request mimeType here.
 					var contentType = request.mime;
-					// TODO: reconsider this. I think we do want a default name here, we'll have a separate meta update endpoint.
-					var sampleName = 'Unnamed-' + Math.floor(Math.random() * 1000);
+					var sampleName = request.headers['x-sample-name'] || 'Unnamed';
 					var sampleMeta = new SampleMetaModel({
 						name: sampleName,
 						blobId: savedBlob.id,
