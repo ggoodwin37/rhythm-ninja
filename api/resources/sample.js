@@ -74,8 +74,19 @@ module.exports = function(app) {
 		destroy: {
 			handler: function(request, reply) {
 				if (!verifyAuth(request, reply)) return;
-				// TODO
-				reply();
+
+				var sampleMetaId = request.params.sample_id;
+				SampleMetaModel.findById(sampleMetaId).exec((err, metaModel) => {
+					if (handlingErrorOrMissing(err, metaModel, reply)) return;
+					var sampleBlobId = metaModel.blobId;
+					SampleBlobModel.remove({_id: sampleBlobId}, (err) => {
+						if (handlingError(err, reply)) return;
+						SampleMetaModel.remove({_id: sampleMetaId}, (err) => {
+							if (handlingError(err, reply)) return;
+							return reply();
+						});
+					});
+				});
 			}
 		}
 	};
