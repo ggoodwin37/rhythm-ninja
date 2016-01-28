@@ -78,8 +78,9 @@ module.exports = View.extend({
 				self.onUploadProgress(file, subview, percentage);
 			}
 		}, false);
-		xhr.upload.addEventListener('load', function(e) {
-			self.onUploadComplete(file, subview);
+		xhr.addEventListener('load', function(e) {
+			var response = JSON.parse(this.responseText);
+			self.onUploadComplete(file, response, subview);
 		});
 		xhr.open('POST', url);
 		xhr.setRequestHeader('content-type', file.type);
@@ -90,8 +91,10 @@ module.exports = View.extend({
 		};
 		reader.readAsBinaryString(file);
 	},
-	onUploadComplete: function(file, subview) {
+	onUploadComplete: function(file, response, subview) {
+		subview.setTestUrl('/api/sample/' + response.id);
 		subview.setPercentage(100);
+		subview.render();
 	},
 	onUploadProgress: function(file, subview, percentage) {
 		subview.setPercentage(percentage);

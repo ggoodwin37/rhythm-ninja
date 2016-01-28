@@ -10,12 +10,14 @@ module.exports = View.extend({
 		var self = this;
 		params = params || {};
 		this.name = params.name || 'Untitled';
+		this.testUrl = null;
 		this.percentage = params.initialPercentage || 0;
 		this.progressBarEl = null;
 	},
 	render: function() {
 		this.renderWithTemplate({
 			name: this.name,
+			testUrl: this.testUrl,
 			slugger: function(input) {
 				return input.replace(' ', '-'); // TODO: better slugger
 			}
@@ -35,5 +37,8 @@ module.exports = View.extend({
 			dom.text(this.progressBarEl, percentStr);
 			//dom.css(this.progressBarEl, 'width', percentStr);
 		}
+	},
+	setTestUrl: function(url) {
+		this.testUrl = url;
 	}
 });

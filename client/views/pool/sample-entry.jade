@@ -1,4 +1,7 @@
 div.sample-entry(data-hook="sample-entry-container")
 	div.sample-name #{name}
+	if testUrl
+	div.sample-test-url
+		a(href="#{testUrl}") Test it
 	div.sample-status
 		div(data-hook="progress-bar")

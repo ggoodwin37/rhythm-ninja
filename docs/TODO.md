@@ -1,17 +1,15 @@
-- uploading binary looks right-ish, start working on new models and do GET
-  - posting metadata: how about an encoded query string blob, that's not too bad. could also consider doing two calls.
-  - posting metadata: I think we need another endpoint for metadata updates. We can pick defaults on sample (blob) post,
+- posting sample metadata: we need another endpoint for metadata updates. We can pick defaults on sample (blob) post,
     - then they can go back and edit it. I think this will actually be slightly easier for user too.
-- basic infrastructure for uploading UI is in place, needs styling and fleshing out.
-
+- hook up samples to sets. sample meta probably needs a set id, then populate sample pool view with those.
+  - how do we get list of samples? populated with pool? or separate call?
 
 // near term
 
 - samples
-  - need to be able to upload samples to sample pool
-    - good docs: https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications
-  - need to be able to load samples from db to browser
-  - need to be able to play a sample using webAudio
+  - need to be able to play a sample using webAudio as a proof of concept. browser playing wavs works.
+
+- get page->view destroy chain working when we nav around.
+  - ensure subviews are destroyed
 
 up next:
 - do a TODO pass to find pressing stuff.
@@ -22,12 +20,7 @@ up next:
   - dirty/conflict basics
   - ??
 
-
-
 // backlog
-
-- how do we handle mime type? a server-side lib to look at incoming file and determine it? then save with sample metadata?
-  - or does browser typically send us the right thing (via upload dialog)?
 
 - really need to do some watchify stuff for less, client, and server.
 
@@ -37,9 +30,6 @@ up next:
 
 - what conflict scenarios do we have?
   - the main scenario where two users are editing the same pattern. do we need some sense of "recently touched" or can it be simpler than that?
-
-- get page->view destroy chain working when we nav around.
-  - ensure subviews are destroyed
 
 - extract slugger
 - make loading UI common
@@ -59,3 +49,4 @@ up next:
   - getting away from an orm will help with some of the trickier hierarchy issues you've hit.
 
 - switch from tabs to spaces, for the love of god
+- "use strict"
