@@ -10,20 +10,15 @@ module.exports = function(app) {
 		show: {
 			handler: function(request, reply) {
 				if (!verifyAuth(request, reply)) return;
-				inspect(request.params); // TODO:what's the param name here?
-				return reply();
-
-				// var sampleMetaId = request.params.sample_id;  // lol magic
-				// SampleMetaModel.findById(sampleMetaId).exec((err, metaModel) => {
-				// 	if (handlingErrorOrMissing(err, metaModel, reply)) return;
-				// 	var sampleBlobId = metaModel.blobId;
-				// 	SampleBlobModel.findById(sampleBlobId).exec((err, blobModel) => {
-				// 		if (handlingErrorOrMissing(err, blobModel, reply)) return;
-				// 		var response = reply(blobModel.data);
-				// 		response.type(metaModel.contentType);
-				// 		return;
-				// 	});
-				// });
+				var userId = request.params.userSample_id;
+				SampleMetaModel.find({ownerUserKey: userId}).exec((err, metaModels) => {
+					// TODO: if we don't find anything, should we return an empty array, or 404?
+					var resultList = [];
+					metaModels.forEach(model => {
+						resultList.push(model.toJSON());
+					});
+					reply({ samples: resultList });
+				});
 			}
 		}
 	};
