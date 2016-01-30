@@ -46,11 +46,22 @@ module.exports = function(app) {
 					// TODO: probably shouldn't just trust request mimeType here.
 					var contentType = request.mime;
 					var sampleName = request.headers['x-sample-name'] || 'Unnamed';
+
+					// check for special header flag indicating this is running from a test.
+					// this is only used to avoid the need to have the test be auth'd
+					var underTest = !!request.headers['x-under-test'];
+					var sampleOwner;
+					if (underTest) {
+						sampleOwner = 'test_user_key';
+					} else {
+						sampleOwner = (request.auth && request.auth.credentials) ? request.auth.credentials.rnUserKey : null;
+					}
+
 					var sampleMeta = new SampleMetaModel({
 						name: sampleName,
 						blobId: savedBlob.id,
 						contentType: contentType,
-						ownerUserKey: (request.auth && request.auth.credentials) ? request.auth.credentials.rnUserKey : null,
+						ownerUserKey: sampleOwner,
 						isPublic: true
 					});
 					sampleMeta.save(function(err, savedMeta) {
