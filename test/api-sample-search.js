@@ -8,7 +8,7 @@ module.exports = function(ctx, lab) {
 	var describe = lab.experiment;
 	var it = lab.test;
 
-	var testAssetPath = 'test/assets/test-wav.wav';
+	var testAssetPath = 'test/assets/test-wav-1.wav';
 	var testAssetContentType = 'audio/wav';
 	var testAssetSize = null;
 	var testSampleId = null;
