@@ -1,5 +1,7 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 
+const testUserId = 'test_user_id';
+
 module.exports = function(app) {
 	var verifyAuth = require('./verify-auth')(app);
 	var handlingError = require('../handling-error');
@@ -52,7 +54,7 @@ module.exports = function(app) {
 					var underTest = !!request.headers['x-under-test'];
 					var sampleOwner;
 					if (underTest) {
-						sampleOwner = 'test_user_key';
+						sampleOwner = testUserId;
 					} else {
 						sampleOwner = (request.auth && request.auth.credentials) ? request.auth.credentials.rnUserKey : null;
 					}

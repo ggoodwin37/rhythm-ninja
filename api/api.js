@@ -4,7 +4,7 @@ module.exports = function(app) {
 	var resources = {
 		set: require('./resources/set')(app),
 		sample: require('./resources/sample')(app),
-		sampleInfoByUser: require('./resources/sample-info-by-user')(app)
+		userSamples: require('./resources/user-samples')(app)
 	};
 
 	var apiServerPack = {

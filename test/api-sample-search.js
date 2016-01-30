@@ -1,6 +1,6 @@
 var fs = require('fs');
 var async = require('async');
-var stepList = require('../step-list');
+var StepList = require('../step-list');
 
 module.exports = function(ctx, lab) {
 	// Test shortcuts
@@ -10,6 +10,7 @@ module.exports = function(ctx, lab) {
 	var describe = lab.experiment;
 	var it = lab.test;
 
+	var testUserId = 'test_user_id';
 	var testAssetPaths = [
 		'test/assets/test-wav-1.wav',
 		'test/assets/test-wav-2.wav',
@@ -22,7 +23,7 @@ module.exports = function(ctx, lab) {
 		it('should let me check any existing samples', (done) => {
 			ctx.server.inject({
 				method: 'get',
-				url: '/api/user-sample-info'
+				url: '/api/userSamples/' + testUserId
 			}, (res) => {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.samples).to.be.an.array();
@@ -63,7 +64,7 @@ module.exports = function(ctx, lab) {
 		it('should serve me the sample info for all the samples my user has uploaded', (done) => {
 			ctx.server.inject({
 				method: 'get',
-				url: '/api/user-sample-info'
+				url: '/api/userSamples/' + testUserId
 			}, (res) => {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.samples).to.be.an.array();
@@ -92,7 +93,7 @@ module.exports = function(ctx, lab) {
 		it('should return 0 new items if I ask for my samples after deleting them', (done) => {
 			ctx.server.inject({
 				method: 'get',
-				url: '/api/user-sample-info'
+				url: '/api/userSamples/' + testUserId
 			}, (res) => {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.samples).to.be.an.array();
@@ -101,12 +102,22 @@ module.exports = function(ctx, lab) {
 			});
 		});
 		it('should not post', (done) => {
-			// TODO
-			done();
+			ctx.server.inject({
+				method: 'post',
+				url: '/api/userSamples/' + testUserId
+			}, (res) => {
+				expect(res.statusCode).to.equal(404);
+				done();
+			});
 		});
 		it('should not delete', (done) => {
-			// TODO
-			done();
+			ctx.server.inject({
+				method: 'delete',
+				url: '/api/userSamples/' + testUserId
+			}, (res) => {
+				expect(res.statusCode).to.equal(404);
+				done();
+			});
 		});
 
 	});
