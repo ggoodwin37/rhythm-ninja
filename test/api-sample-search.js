@@ -10,7 +10,8 @@ module.exports = function(ctx, lab) {
 	var describe = lab.experiment;
 	var it = lab.test;
 
-	var testUserId = 'test_user_id';
+	var testUserId = 'test_user_id_1';
+	var otherUserId = 'test_user_id_2';
 	var testAssetPaths = [
 		'test/assets/test-wav-1.wav',
 		'test/assets/test-wav-2.wav',
@@ -19,6 +20,7 @@ module.exports = function(ctx, lab) {
 	var testAssetContentType = 'audio/wav';
 	var origNumSamples;
 	var testSampleIds = null;
+	var otherUserSampleId = null;
 	describe('verify sample search api', () => {
 		it('should let me check any existing samples', (done) => {
 			ctx.server.inject({
@@ -45,7 +47,7 @@ module.exports = function(ctx, lab) {
 							headers: {
 								'content-type': testAssetContentType,
 								'x-sample-name': 'api-sample-test-' + path,
-								'x-under-test': true
+								'x-under-test': '1'
 							},
 							payload: data
 						}, (res) => {
@@ -78,7 +80,10 @@ module.exports = function(ctx, lab) {
 				stepList.addStep(cb => {
 					ctx.server.inject({
 						method: 'delete',
-						url: '/api/sample/' + thisId
+						url: '/api/sample/' + thisId,
+						headers: {
+							'x-under-test': '1'
+						}
 					}, (res) => {
 						expect(res.statusCode).to.equal(200)
 						cb();
@@ -119,11 +124,75 @@ module.exports = function(ctx, lab) {
 				done();
 			});
 		});
-		it('should only return samples belonging to currenrt user.', done => {
-			// TODO: figure out a way to override test user id with a secondary one, then verify
-			//  we do not get that one back when searching for this user's shit.
-			expect(false).to.equal(true);
-			done();
+		it('should let me post another sample from a different user id.', done => {
+			var path = testAssetPaths[0];
+			fs.readFile(path, (err, data) => {
+				if (err) return done(err);
+				ctx.server.inject({
+					method: 'post',
+					url: '/api/sample',
+					headers: {
+						'content-type': testAssetContentType,
+						'x-sample-name': 'api-sample-test-' + path,
+						'x-under-test': '2'
+					},
+					payload: data
+				}, (res) => {
+					expect(res.statusCode).to.equal(200)
+					otherUserSampleId = res.result.id;
+					done();
+				});
+			});
+		});
+		it('should only return samples belonging to current user.', done => {
+			ctx.server.inject({
+				method: 'get',
+				url: '/api/userSamples/' + testUserId
+			}, (res) => {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.samples).to.be.an.array();
+				expect(res.result.samples.filter(sample => {
+					return sample.id === otherUserSampleId;
+				}).length).to.equal(0);
+				done();
+			});
+		});
+		it('should only return samples belonging to other user.', done => {
+			ctx.server.inject({
+				method: 'get',
+				url: '/api/userSamples/' + otherUserId
+			}, (res) => {
+				expect(res.statusCode).to.equal(200);
+				expect(res.result.samples).to.be.an.array();
+				expect(res.result.samples.filter(sample => {
+					return sample.id === otherUserSampleId;
+				}).length).to.equal(1);
+				done();
+			});
+		});
+		it('should not allow me to delete the otherUser sample as the first user', (done) => {
+			ctx.server.inject({
+				method: 'delete',
+				url: '/api/sample/' + otherUserSampleId,
+				headers: {
+					'x-under-test': '1'
+				}
+			}, (res) => {
+				expect(res.statusCode).to.equal(401);
+				done();
+			});
+		});
+		it('should allow me to delete the otherUser sample as the other user', (done) => {
+			ctx.server.inject({
+				method: 'delete',
+				url: '/api/sample/' + otherUserSampleId,
+				headers: {
+					'x-under-test': '2'
+				}
+			}, (res) => {
+				expect(res.statusCode).to.equal(200);
+				done();
+			});
 		});
 
 	});

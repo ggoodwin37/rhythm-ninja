@@ -23,7 +23,7 @@ module.exports = function(ctx, lab) {
 					headers: {
 						'content-type': testAssetContentType,
 						'x-sample-name': 'api-sample-test',
-						'x-under-test': true
+						'x-under-test': '0'
 					},
 					payload: data
 				}, (res) => {
@@ -49,7 +49,10 @@ module.exports = function(ctx, lab) {
 		it('should allow me to delete the new sample', (done) => {
 			ctx.server.inject({
 				method: 'delete',
-				url: '/api/sample/' + testSampleId
+				url: '/api/sample/' + testSampleId,
+				headers: {
+					'x-under-test': '0'
+				}
 			}, (res) => {
 				expect(res.statusCode).to.equal(200);
 				done();
@@ -58,7 +61,10 @@ module.exports = function(ctx, lab) {
 		it('should 404 if I try to delete the new sample again', (done) => {
 			ctx.server.inject({
 				method: 'delete',
-				url: '/api/sample/' + testSampleId
+				url: '/api/sample/' + testSampleId,
+				headers: {
+					'x-under-test': '0'
+				}
 			}, (res) => {
 				expect(res.statusCode).to.equal(404);
 				done();
