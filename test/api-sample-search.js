@@ -57,7 +57,7 @@ module.exports = function(ctx, lab) {
 				});
 			});
 			stepList.execute(() => {
-				expect(testSampleIds.length).to.equal(origNumSamples + testAssetPaths.length);
+				expect(testSampleIds.length).to.equal(testAssetPaths.length);
 				done();
 			});
 		});
