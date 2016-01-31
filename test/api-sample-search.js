@@ -119,6 +119,12 @@ module.exports = function(ctx, lab) {
 				done();
 			});
 		});
+		it('should only return samples belonging to currenrt user.', done => {
+			// TODO: figure out a way to override test user id with a secondary one, then verify
+			//  we do not get that one back when searching for this user's shit.
+			expect(false).to.equal(true);
+			done();
+		});
 
 	});
 };
