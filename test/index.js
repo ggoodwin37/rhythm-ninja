@@ -52,3 +52,4 @@ require('./delete-set')(ctx, lab, 'reserved-test-order-stuff');
 require('./delete-set')(ctx, lab, 'bogus', 404);
 require('./api-sample')(ctx, lab);
 require('./api-sample-search')(ctx, lab);
+require('./api-me')(ctx, lab);

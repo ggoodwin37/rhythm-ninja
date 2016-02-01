@@ -1,19 +1,26 @@
 var inspect = require('eyes').inspector({hideFunctions: true, maxLength: null});
 
-function getUserIdFromRequest(request) {
-	// check for special header indicating this is running from a test.
-	// this is only used to avoid the need to have the test be auth'd
-	// if set, build an id out of this value, letting us have a few different
-	// test ids to faciliate cross-user test scenarios.
+function checkTestAuth(request, reply) {
+	// TODO: consider moving this under-test shit into verify-auth
 	const underTest = request.headers['x-under-test'];
-	var sampleOwner;
-	if (!!underTest && underTest.length < 2) {  // :shrug:
-		const testUserIdBase = 'test_user_id_';
-		sampleOwner = testUserIdBase + underTest;
-	} else {
-		sampleOwner = (request.auth && request.auth.credentials) ? request.auth.credentials.rnUserKey : null;
+	if (!!underTest && underTest.length < 2) {
+		const testUserName = 'test_user_id_' + underTest;
+
+		reply({
+			isAuthenticated: true,
+			credentials: {
+				rnUserKey: testUserName
+			},
+			artifacts: {
+				rnUserKey: testUserName
+			},
+			session: {},
+			mode: 'required',
+			strategy: 'session'
+		});
+		return true;
 	}
-	return sampleOwner;
+	return false;
 }
 
 module.exports = function(app) {
@@ -26,10 +33,19 @@ module.exports = function(app) {
 	return {
 		show: {
 			handler: function(request, reply) {
-				if (!verifyAuth(request, reply)) return;
+				// first, check for our janky test user auth scheme
+				console.log('checking test auth');
+				if (checkTestAuth(request, reply)) return;
+				console.log('no test auth, proceeding');
 
-				inspect(request);
-				// TODO: handle 'me', others NYI
+				// not a test user, check for real auth
+				if (!verifyAuth(request, reply)) return;
+				console.log('passed verify auth check, oh noes');
+
+				if (request.params.user_id !== 'me') {
+					return reply(boom.notImplemented());
+				}
+				reply(request.auth);
 			}
 		},
 		create: {

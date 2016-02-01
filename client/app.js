@@ -3,6 +3,7 @@ var domready = require('domready');
 var MainView = require('./views/main');
 var Router = require('./router');
 
+var Me = require('./models/me');
 var SetModel = require('./models/set');
 
 var clientConfig = require('./client-config.json');
