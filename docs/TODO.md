@@ -1,7 +1,7 @@
 - posting sample metadata: we need another endpoint for metadata updates. We can pick defaults on sample (blob) post,
     - then they can go back and edit it. I think this will actually be slightly easier for user too.
-- hook up samples to sets. sample meta probably needs a set id, then populate sample pool view with those.
-  - how do we get list of samples? populated with pool? or separate call?
+- need client code to have a concept of current logged in user
+  - then can use the current user id to fetch userSamples in the pool page.
 
 // near term
 

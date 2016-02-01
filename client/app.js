@@ -9,10 +9,12 @@ var clientConfig = require('./client-config.json');
 
 window.app = {
 	config: clientConfig,
+	me: null,
 	init: function() {
 		var self = this;
 
-		//this.me = new Me();
+		this.me = new Me();
+		this.me.fetch();
 
 		this.cachedSets = {};
 
