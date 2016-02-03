@@ -19,6 +19,11 @@ module.exports = View.extend({
 		this.model.on('change:pool', function() {
 			self.render();
 		});
+		window.app.me.on('sync', function() {
+			self.render();
+		});
+		console.log(window.app.me); // TODO: how to tell if me is already loaded? and how to handle that case in a consolidated way.
+		console.log('initialized samples subview');
 	},
 	render: function() {
 		var pool = (this.model && this.model.pool) ? this.model.pool : null;
@@ -40,6 +45,7 @@ module.exports = View.extend({
 		} else {
 			dom.show(emptyEl);
 		}
+		// TODO: loading state should be dependent on sample collection model, not pool.
 		this.setLoading(!pool);
 	},
 	setLoading: function(isLoading) {
