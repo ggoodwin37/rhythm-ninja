@@ -15,7 +15,20 @@ window.app = {
 		var self = this;
 
 		this.me = new Me();
-		this.me.fetch();
+		this.me.fetch({
+			success: function(model, response) {
+				var me = {
+					accessToken: model.accessToken,
+					id: model.id,
+					username: model.username
+				};
+				console.log('got me', model, me);
+				// TODO: store me, figure out triggers
+			},
+			error: function(model, response) {
+				console.log('error getting me', model, response);
+			}
+		});
 
 		this.cachedSets = {};
 
