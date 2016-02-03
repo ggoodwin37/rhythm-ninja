@@ -24,8 +24,7 @@ module.exports = Model.extend({
 		});
 	},
 	props: {
-		id: 'string',
-		username: 'string'
+		rnUserKey: 'string'
 	},
 	session: {
 		accessToken: 'string'

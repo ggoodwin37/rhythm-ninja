@@ -34,18 +34,18 @@ module.exports = function(app) {
 		show: {
 			handler: function(request, reply) {
 				// first, check for our janky test user auth scheme
-				console.log('checking test auth');
 				if (checkTestAuth(request, reply)) return;
-				console.log('no test auth, proceeding');
 
 				// not a test user, check for real auth
 				if (!verifyAuth(request, reply)) return;
-				console.log('passed verify auth check, oh noes');
 
 				if (request.params.user_id !== 'me') {
 					return reply(boom.notImplemented());
 				}
-				reply(request.auth);
+				reply({
+					rnUserKey: request.auth.credentials.rnUserKey,
+					accessToken: 'FOR FUCK SAKE FIX THIS'
+				});
 			}
 		},
 		create: {
