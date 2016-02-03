@@ -18,8 +18,7 @@ window.app = {
 		this.me.fetch({
 			success: function(model, response) {
 				var me = {
-					username: model.rnUserKey,
-					accessToken: model.accessToken
+					username: model.rnUserKey
 				};
 				console.log('got me', model, me);
 				// TODO: store me, figure out triggers

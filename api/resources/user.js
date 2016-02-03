@@ -43,8 +43,7 @@ module.exports = function(app) {
 					return reply(boom.notImplemented());
 				}
 				reply({
-					rnUserKey: request.auth.credentials.rnUserKey,
-					accessToken: 'FOR FUCK SAKE FIX THIS'
+					rnUserKey: request.auth.credentials.rnUserKey
 				});
 			}
 		},
