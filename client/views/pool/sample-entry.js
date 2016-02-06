@@ -10,7 +10,7 @@ module.exports = View.extend({
 		var self = this;
 		params = params || {};
 		this.name = params.name || 'Untitled';
-		this.testUrl = null;
+		this.testUrl = params.testUrl || null;
 		this.percentage = params.initialPercentage || 0;
 		this.progressBarEl = null;
 	},

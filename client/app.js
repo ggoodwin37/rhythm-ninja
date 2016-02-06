@@ -17,7 +17,6 @@ window.app = {
 		var self = this;
 
 		this.me = new Me();
-		console.log('fetching me');
 		this.me.fetch({
 			success: function(model, response) {
 				self.eventBus.trigger('me-loaded');

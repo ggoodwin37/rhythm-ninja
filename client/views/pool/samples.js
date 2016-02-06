@@ -15,16 +15,14 @@ module.exports = View.extend({
 	initialize: function(params) {
 		var self = this;
 
-		this.sampleSubviews = [];
+		// when uploading samples, we'll have local-only views, keep track so we can render as needed.
+		this.localSubviews = [];
 
 		this.model = params.model;
-		// TODO: this block only needed if we care about changing the sample list if the pool changes.
-		//       conceptually I don't think we need to, but right now loading state is tied to pool too.
-		//       this can go away when you fix that to be based on sample collection instead.
-		this.model.on('change:pool', function() {
-			self.render();
-		});
+
+		// TODO: consider caching user samples? now we'll refetch every time we nav to pool
 		this.meSamples = new UserSamples();
+		this.didLoadMeSamples = false;
 
 		// we need to have our current user name to grab their samples. we might already have it,
 		// or we might still be waiting for the app to load it (in the case where we are loading
@@ -39,34 +37,42 @@ module.exports = View.extend({
 		}
 	},
 	render: function() {
-		// TODO: revisit this whole func. why do we care about pool
+		this.setLoading(!this.didLoadMeSamples);
 
-
-		// if (!window.app.meLoaded()) {
-		// 	return;
-		// }
-
-		var pool = (this.model && this.model.pool) ? this.model.pool : null;
 		this.renderWithTemplate({
-			pool: pool,
 			setName: this.model.name,
 			slugger: function(input) {
 				return input.replace(' ', '-'); // TODO: better slugger
 			}
 		});
+
 		var sampleContainer = this.queryByHook('sample-entries-container');
-		var emptyEl = this.query('.no-samples');
-		if (this.sampleSubviews.length) {
-			this.sampleSubviews.forEach(function(subview) {
+		var isEmpty = true;
+
+		// render subviews for any loaded samples
+		if (this.meSamples.samples.length) {
+			isEmpty = false;
+			this.meSamples.samples.forEach(function(thisSample) {
+				var subview = new SampleEntryView({
+					name: thisSample.name,
+					testUrl: '/api/sample/' + thisSample.id,
+					initialPercentage: 100
+				});
 				subview.render();
 				sampleContainer.appendChild(subview.el);
 			});
-			dom.hide(emptyEl);
-		} else {
-			dom.show(emptyEl);
 		}
-		// TODO: loading state should be dependent on sample collection model, not pool.
-		this.setLoading(!pool);
+		// render stored subviews for any samples uploaded recently
+		if (this.localSubviews.length) {
+			isEmpty = false;
+			this.localSubviews.forEach(function(thisLocalSubview) {
+				thisLocalSubview.render();
+				sampleContainer.appendChild(thisLocalSubview.el);
+			});
+		}
+
+		var emptyEl = this.query('.no-samples');
+		isEmpty ? dom.show(emptyEl) : dom.hide(emptyEl);
 	},
 	fetchMeSamples: function(userKey) {
 		var self = this;
@@ -74,7 +80,7 @@ module.exports = View.extend({
 		this.meSamples.set('userId', userKey);
 		this.meSamples.fetch({
 			success: function(model, response) {
-				console.log('mesamples length is: ' + self.meSamples.samples.length);
+				self.didLoadMeSamples = true;
 				self.render();
 			},
 			error: function(model, response) {
@@ -97,7 +103,7 @@ module.exports = View.extend({
 		var url = '/api/sample';
 		Array.prototype.forEach.call(files, function(thisFile) {
 			var subview = new SampleEntryView();
-			self.sampleSubviews.push(subview);
+			self.localSubviews.push(subview);
 			self.uploadFile(thisFile, url, subview);
 		});
 		self.render();
