@@ -30,7 +30,6 @@ module.exports = function(ctx, lab) {
 				expect(res.statusCode).to.equal(200);
 				expect(res.result.samples).to.be.an.array();
 				origNumSamples = res.result.samples.length;
-				console.log('see this many existing samples: ' + origNumSamples);
 				done();
 			});
 		});
