@@ -1,12 +1,16 @@
-- posting sample metadata: we need another endpoint for metadata updates. We can pick defaults on sample (blob) post,
-    - then they can go back and edit it. I think this will actually be slightly easier for user too.
-- hook up samples to sets. sample meta probably needs a set id, then populate sample pool view with those.
-  - how do we get list of samples? populated with pool? or separate call?
+- touch up ui for samples. add a hook for our web audio test player. consider metadata editing. flag if in pool.
+
 
 // near term
 
+- posting sample metadata: we need another endpoint for metadata updates. We can pick defaults on sample (blob) post,
+    - then they can go back and edit it. I think this will actually be slightly easier for user too.
+
 - samples
   - need to be able to play a sample using webAudio as a proof of concept. browser playing wavs works.
+
+- grep 'WHY IS THIS TRIGGERING SO MUCH', something is firing too much. can't tell if subviews leaking or just overrendering.
+  - could be related to loading states changing
 
 - get page->view destroy chain working when we nav around.
   - ensure subviews are destroyed
@@ -50,3 +54,5 @@ up next:
 
 - switch from tabs to spaces, for the love of god
 - "use strict"
+
+- bug: pool -> set -> pool, "Upload samples" link no longer works.

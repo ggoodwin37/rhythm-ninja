@@ -13,7 +13,7 @@ module.exports = View.extend({
 			console.log('set pattern view: rerendering on model patterns change.');
 			self.render();
 		}).on('model-loaded', function() {
-			console.log('set pattern view: rerendering on model load.');
+			console.log('set pattern view: rerendering on model load. WHY IS THIS TRIGGERING SO MUCH');
 			self.render();
 		});
 	},

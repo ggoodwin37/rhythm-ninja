@@ -2,8 +2,10 @@ var mongoose = require('mongoose');
 module.exports = function(app) {
 
 	var resources = {
+		user: require('./resources/user')(app),
 		set: require('./resources/set')(app),
-		sample: require('./resources/sample')(app)
+		sample: require('./resources/sample')(app),
+		userSamples: require('./resources/user-samples')(app)
 	};
 
 	var apiServerPack = {
