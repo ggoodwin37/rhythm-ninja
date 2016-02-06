@@ -44,6 +44,7 @@
     "mongoose-deep-populate": "0.0.7",
     "moonboots_hapi": "^5.0.0",
     "mudskipper": "^2.3.2",
+    "slug": "^0.9.1",
     "templatizer": "^0.3.6",
     "underscore": "^1.6.0",
     "verymodel": "^1.10.1",

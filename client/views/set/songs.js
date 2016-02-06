@@ -1,3 +1,4 @@
+var slug = require('slug');
 var View = require('ampersand-view');
 var dom = require('ampersand-dom');
 var templates = require('../../templates');
@@ -17,9 +18,7 @@ module.exports = View.extend({
 		this.renderWithTemplate({
 			songs: songs,
 			setName: this.model.name,
-			slugger: function(input) {
-				return input.replace(' ', '-'); // TODO: better slugger
-			}
+			slugger: slug
 		});
 		this.setLoading(!songs);
 	},
