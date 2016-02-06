@@ -1,5 +1,4 @@
 var View = require('ampersand-view');
-var Events = require('ampersand-events');
 var templates = require('../templates');
 var PoolView = require('../views/set/pool.js');
 var PatternsView = require('../views/set/patterns.js');

@@ -5,9 +5,9 @@ var SampleModel = AmpModel.extend({
 		id: 'string',
 		name: 'string'
 	},
-	initialize: function(id, name) {
-		this.id = id;
-		this.name = name;
+	initialize: function(sampleData, options) {
+		this.id = sampleData.id;
+		this.name = sampleData.name;
 	},
 	url: function() {
 		return '/api/sample/' + this.id;

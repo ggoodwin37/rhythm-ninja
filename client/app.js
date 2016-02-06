@@ -1,4 +1,5 @@
 var domready = require('domready');
+var events = require('ampersand-events');
 
 var MainView = require('./views/main');
 var Router = require('./router');
@@ -10,6 +11,7 @@ var clientConfig = require('./client-config.json');
 
 window.app = {
 	config: clientConfig,
+	eventBus: events.createEmitter(),
 	me: null,
 	init: function() {
 		var self = this;
@@ -18,11 +20,7 @@ window.app = {
 		console.log('fetching me');
 		this.me.fetch({
 			success: function(model, response) {
-				var me = {
-					username: model.rnUserKey
-				};
-				console.log('got me', model, me);
-				// TODO: store me, figure out triggers
+				self.eventBus.trigger('me-loaded');
 			},
 			error: function(model, response) {
 				console.log('error getting me', model, response);
@@ -74,6 +72,10 @@ window.app = {
 			}
 		}
 		return setModel;
+	},
+	// TODO: improve this, there must be a native way to tell if a model is loaded
+	meLoaded: function() {
+		return this.me && this.me.rnUserKey;
 	}
 };
 

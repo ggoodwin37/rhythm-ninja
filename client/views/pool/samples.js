@@ -4,6 +4,8 @@ var dom = require('ampersand-dom');
 
 var SampleEntryView = require('./sample-entry');
 
+var UserSamples = require('../../models/user-samples');
+
 module.exports = View.extend({
 	template: templates.views.pool.samples,
 	events: {
@@ -16,16 +18,34 @@ module.exports = View.extend({
 		this.sampleSubviews = [];
 
 		this.model = params.model;
+		// TODO: this block only needed if we care about changing the sample list if the pool changes.
+		//       conceptually I don't think we need to, but right now loading state is tied to pool too.
+		//       this can go away when you fix that to be based on sample collection instead.
 		this.model.on('change:pool', function() {
 			self.render();
 		});
-		window.app.me.on('sync', function() {
-			self.render();
-		});
-		console.log(window.app.me); // TODO: how to tell if me is already loaded? and how to handle that case in a consolidated way.
-		console.log('initialized samples subview');
+		this.meSamples = new UserSamples();
+
+		// we need to have our current user name to grab their samples. we might already have it,
+		// or we might still be waiting for the app to load it (in the case where we are loading
+		// pool page directly). We want to do the same thing in either case.
+		var onMeLoaded = function() {
+			window.app.me.rnUserKey || console.log('expected user key to be ready');
+			self.fetchMeSamples(window.app.me.rnUserKey);
+		};
+		window.app.eventBus.on('me-loaded', onMeLoaded);
+		if (window.app.meLoaded()) {
+			onMeLoaded();
+		}
 	},
 	render: function() {
+		// TODO: revisit this whole func. why do we care about pool
+
+
+		// if (!window.app.meLoaded()) {
+		// 	return;
+		// }
+
 		var pool = (this.model && this.model.pool) ? this.model.pool : null;
 		this.renderWithTemplate({
 			pool: pool,
@@ -47,6 +67,20 @@ module.exports = View.extend({
 		}
 		// TODO: loading state should be dependent on sample collection model, not pool.
 		this.setLoading(!pool);
+	},
+	fetchMeSamples: function(userKey) {
+		var self = this;
+
+		this.meSamples.set('userId', userKey);
+		this.meSamples.fetch({
+			success: function(model, response) {
+				console.log('mesamples length is: ' + self.meSamples.samples.length);
+				self.render();
+			},
+			error: function(model, response) {
+				console.log('mesample fetch error', response);
+			}
+		});
 	},
 	setLoading: function(isLoading) {
 		var el = this.queryByHook('samples-container');

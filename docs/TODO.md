@@ -8,6 +8,8 @@
 - samples
   - need to be able to play a sample using webAudio as a proof of concept. browser playing wavs works.
 
+- grep 'WHY IS THIS TRIGGERING SO MUCH', something is firing too much. can't tell if subviews leaking or just overrendering.
+
 - get page->view destroy chain working when we nav around.
   - ensure subviews are destroyed
 
@@ -50,3 +52,5 @@ up next:
 
 - switch from tabs to spaces, for the love of god
 - "use strict"
+
+- bug: pool -> set -> pool, "Upload samples" link no longer works.
