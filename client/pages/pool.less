@@ -8,21 +8,34 @@ section.pool {
 	[data-hook="samples-container"] {
 		min-height: 100px;
 	}
+	.file-group {
+		clear: both;
+	}
 	.file-input {
 		display: none;
 	}
 
 	// TODO: should really live in a less file next to view.
 	.sample-entry {
-		.sample-name {
-			font-size: 14px;
-			font-weight: bold;
-		}
-		.sample-status {
-			[data-hook="progress-bar"] {
-				height: 12px;
-				font-size: 10px;
+		background-color: green;
+		.sample-entry-inner {
+			padding: 4px;
+			background-color: red;
+			.sample-name {
+				font-size: 14px;
+				font-weight: bold;
+			}
+			.sample-status {
+				[data-hook="progress-bar"] {
+					height: 12px;
+					font-size: 10px;
+				}
 			}
 		}
+		//border: 1px solid black;
+		//padding: 3px;
+		//margin: -3px;
+		float: left;
+		width: 25%;
 	}
 }

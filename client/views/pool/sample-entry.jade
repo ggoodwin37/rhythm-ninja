@@ -1,8 +1,11 @@
 div.sample-entry(data-hook="sample-entry-container")
-	if name
-		div.sample-name #{name}
-	if testUrl
-		div.sample-test-url
-			a(href="#{testUrl}") Test it
-	div.sample-status
-		div(data-hook="progress-bar")
+	// TODO: revert this inner container, use flex box instead
+	// https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+	div.sample-entry-inner
+		if name
+			div.sample-name #{name}
+		if testUrl
+			div.sample-test-url
+				a(href="#{testUrl}") Test it
+		div.sample-status
+			div(data-hook="progress-bar")
