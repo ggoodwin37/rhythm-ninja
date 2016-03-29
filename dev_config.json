@@ -7,13 +7,13 @@
 
 	fakeDelayOnGetMs: 350,
 
-	cookieEncryptionPassword: '$aladIsTast33',
+	cookieEncryptionPassword: '$aladIsTast33PlusIngredientsAreHealthy',
 
 	twitterAuth: {
 		clientId: '5XrggjLUXj2fi87xQQbM54GOZ',
 		clientSecret: 'oLDf91CULF0llCGfbJVFE69745ivxpljoEAcxdfaHYvCoexXqv'
 	},
-	cookiePassword: 'Cookie$AreTast33',
+	cookiePassword: '$aladIsTast33PlusIngredientsAreHealthy',
 
 	logThings: {
 		'test--show-config': false,
