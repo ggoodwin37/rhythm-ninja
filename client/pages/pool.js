@@ -1,3 +1,4 @@
+var slug = require('slug');
 var View = require('ampersand-view');
 var templates = require('../templates');
 var PoolEntriesView = require('../views/pool/pool-entries.js');
@@ -47,9 +48,7 @@ module.exports = View.extend({
 		var self = this;
 		this.renderWithTemplate({
 			setName: this.params.setName,
-			slugger: function(input) {
-				return input.replace(' ', '-'); // TODO: better slugger
-			}
+			slugger: slug
 		});
 	}
 });

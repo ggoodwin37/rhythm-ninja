@@ -4,8 +4,10 @@ div.view-group(data-hook="patterns-view-container")
 		ul
 			each pattern in patterns
 				li
-					- var destRoute = slugger('/set/' + setName + '/pattern/' + pattern.name);
-					a.client-nav(data-dest-route="#{destRoute}" href="#{destRoute}") #{pattern.name}
+					- if (setName && pattern && pattern.name) {
+						- var destRoute = '/set/' + slugger(setName) + '/pattern/' + slugger(pattern.name);
+						a.client-nav(data-dest-route="#{destRoute}" href="#{destRoute}") #{pattern.name}
+					- }
 	else
 		if patterns
 			h3 No patterns here

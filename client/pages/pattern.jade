@@ -1,6 +1,8 @@
 section.page.pattern
 	h1 Pattern
-		- var destRoute = slugger('/set/' + setName);
-		a.back-to-set-link.client-nav(data-dest-route="#{destRoute}" href="#{destRoute}") back to set
+		- if (setName) {
+			- var destRoute = '/set/' + slugger(setName);
+			a.back-to-set-link.client-nav(data-dest-route="#{destRoute}" href="#{destRoute}") back to set
+		- }
 	//- TODO: name, length, locked go in here
 	div(data-hook="step-grid")

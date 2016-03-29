@@ -4,8 +4,10 @@ div.view-group(data-hook="songs-view-container")
 		ul
 			each song in songs
 				li
-					- var destRoute = slugger('/set/' + setName + '/song/' + song.name);
-					a.client-nav(data-dest-route="#{destRoute}" href="#{destRoute}") #{song.name}
+					- if (setName && song && song.name) {
+						- var destRoute = '/set/' + slugger(setName) + '/song/' + slugger(song.name);
+						a.client-nav(data-dest-route="#{destRoute}" href="#{destRoute}") #{song.name}
+					- }
 	else
 		if songs
 			h3 No songs here

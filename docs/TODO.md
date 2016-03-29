@@ -35,7 +35,6 @@ up next:
 - what conflict scenarios do we have?
   - the main scenario where two users are editing the same pattern. do we need some sense of "recently touched" or can it be simpler than that?
 
-- extract slugger
 - make loading UI common
 
 - resume working on users and auth:

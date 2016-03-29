@@ -8,12 +8,16 @@ section.pool {
 	[data-hook="samples-container"] {
 		min-height: 100px;
 	}
+	.file-group {
+		clear: both;
+	}
 	.file-input {
 		display: none;
 	}
 
 	// TODO: should really live in a less file next to view.
 	.sample-entry {
+		background-color: green;
 		.sample-name {
 			font-size: 14px;
 			font-weight: bold;
@@ -24,5 +28,10 @@ section.pool {
 				font-size: 10px;
 			}
 		}
+		//border: 1px solid black;
+		//padding: 3px;
+		//margin: -3px;
+		float: left;
+		width: 25%;
 	}
 }

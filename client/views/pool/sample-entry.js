@@ -1,3 +1,4 @@
+var slug = require('slug');
 var View = require('ampersand-view');
 var templates = require('../../templates');
 var dom = require('ampersand-dom');
@@ -18,9 +19,7 @@ module.exports = View.extend({
 		this.renderWithTemplate({
 			name: this.name,
 			testUrl: this.testUrl,
-			slugger: function(input) {
-				return input.replace(' ', '-'); // TODO: better slugger
-			}
+			slugger: slug
 		});
 		this.progressBarEl = this.queryByHook('progress-bar');
 		this.setPercentage(this.percentage);
