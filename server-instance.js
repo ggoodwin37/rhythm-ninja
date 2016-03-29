@@ -34,14 +34,10 @@ function startServerInstance(done) {
 
 		server.route({
 			method: 'GET',
-			path: '/static/{staticId}',
+			path: '/static/{staticPath*}',
 			handler: function(request, reply) {
-				const staticId = request.params.staticId;
-				if (staticId === 'react-test') {
-					reply.file(__dirname + '/static/react-test.html');
-					return;
-				}
-				reply('Unknown static ID');
+				const fullPath = __dirname + '/static/' + request.params.staticPath;
+				reply.file(fullPath);
 			}
 		});
 		server.start(function () {
