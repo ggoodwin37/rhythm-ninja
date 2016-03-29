@@ -22,7 +22,8 @@ function startServerInstance(done) {
 	var plugins = [
 		getMoonbootsPlugin(config),
 		require('bell'),
-		require('hapi-auth-cookie')
+		require('hapi-auth-cookie'),
+		require('./static/static-plugin')
 	];
 	server.register(plugins, function (err) {
 		if (err) throw err;
