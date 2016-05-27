@@ -22,7 +22,9 @@ function startServerInstance(done) {
 	var plugins = [
 		getMoonbootsPlugin(config),
 		require('bell'),
-		require('hapi-auth-cookie')
+		require('hapi-auth-cookie'),
+		require('inert'),
+		getApiPlugin(app)
 	];
 	server.register(plugins, function (err) {
 		if (err) throw err;
@@ -30,13 +32,17 @@ function startServerInstance(done) {
 		// set up oauth login and auth session cookie schemes, needed by API.
 		registerAuth(server, app);
 
-		server.register(getApiPlugin(app), function(err) {
-			if (err) throw err;
-
-			server.start(function () {
-				console.log('rhythm-ninja is running at', server.info.uri);
-				done && done(server, app);
-			});
+		server.route({
+			method: 'GET',
+			path: '/static/{staticPath*}',
+			handler: function(request, reply) {
+				const fullPath = __dirname + '/static/' + request.params.staticPath;
+				reply.file(fullPath);
+			}
+		});
+		server.start(function () {
+			console.log('rhythm-ninja is running at', server.info.uri);
+			done && done(server, app);
 		});
 	});
 	return server;
